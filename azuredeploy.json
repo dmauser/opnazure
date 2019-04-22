@@ -38,7 +38,9 @@
     "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnet1Name'))]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnet2Name'))]",
     "networkSecurityGroupName": "OPN-NSG",
-    "location": "[resourceGroup().location]"
+    "location": "[resourceGroup().location]",
+    "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
+    "baseUriAzureCloud": "[variables('_artifactsLocation')]"
   },
   "resources": [
     {
@@ -136,6 +138,7 @@
         "[variables('virtualNetworkName')]"
       ],
       "properties": {
+        "enableIPForwarding": true,
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -144,7 +147,6 @@
                 "id": "[variables('subnet1Ref')]"
               },
               "privateIPAllocationMethod": "Dynamic",
-              "enableIPForwarding": true,
               "publicIpAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
               }
@@ -163,6 +165,7 @@
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
       ],
       "properties": {
+        "enableIPForwarding": true,
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -170,8 +173,7 @@
               "subnet": {
                 "id": "[variables('subnet2Ref')]"
               },
-              "privateIPAllocationMethod": "Dynamic",
-              "enableIPForwarding": true
+              "privateIPAllocationMethod": "Dynamic"
             }
           }
         ]
@@ -222,6 +224,29 @@
               }  
           }
         ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'),'/configureopnsense')]",
+      "apiVersion": "2015-06-15",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            ""
+          ]
+        },
+        "protectedSettings": {
+          "commandToExecute": "[concat('sh configureopnsense.sh ', parameters('_artifactsLocation'),' ', reference(concat(parameters('virtualMachineName'),'-publicip')).dnsSettings.fqdn)]"
+        }
       }
     }
   ],
