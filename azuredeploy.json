@@ -230,22 +230,22 @@
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('virtualMachineName'),'/configureopnsense')]",
       "apiVersion": "2015-06-15",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "2.0",
+        "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            ""
+            "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh"
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('sh configureopnsense.sh ', parameters('_artifactsLocation'),' ', reference(concat(parameters('virtualMachineName'),'-publicip')).dnsSettings.fqdn)]"
+          "commandToExecute": "sh configureopnsense.sh"
         }
       }
     }

@@ -211,7 +211,7 @@
         "enableIPForwarding": true,
         "ipConfigurations": [
           {
-            "name": "ip1",
+            "name": "ip1", 
             "properties": {
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('publicNicIP')]",
