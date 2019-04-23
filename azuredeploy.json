@@ -29,6 +29,7 @@
     }
   },
   "variables": {
+    "extensionName":"CustomScript",
     "nic1": "Untrusted",
     "nic2": "Trusted",
     "virtualNetworkName": "OPN-VNET",
@@ -98,6 +99,9 @@
       "apiVersion": "2017-06-01",
       "location": "[variables('location')]",
       "comments": "This will build a Virtual Network.",
+      "dependsOn": [
+        "[variables('networkSecurityGroupName')]"
+      ],
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -228,7 +232,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('virtualMachineName'),'/configureopnsense')]",
+      "name": "[concat(parameters('virtualMachineName'), '/', variables('extensionName'))]",
       "apiVersion": "2015-06-15",
       "location": "[variables('location')]",
       "dependsOn": [
