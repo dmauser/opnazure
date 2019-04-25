@@ -30,6 +30,7 @@ Here what you will see when you deploy this Template:
 
 ## Design
 Here a visual representation of this design:
+
 ![opnsense design](./images/OPN-SenseProject.png)
 
 ## Deployment
