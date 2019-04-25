@@ -28,6 +28,10 @@ Here what you will see when you deploy this Template:
 4) Internal NIC named Trusted Linked to Trusted-Subnet (10.0.1.0/24)
 5) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS. Same NSG is associated to both Subnets.
 
+## Design
+Here a visual representation of this design:
+![opnsense design](./images/OPN-SenseProject.png)
+
 ## Deployment
 Here few observations to use this solution correctly.
 
