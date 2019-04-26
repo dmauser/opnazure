@@ -39,6 +39,7 @@ Here few observations to use this solution correctly.
 - When you deploy this template, it will leave only TCP 22 listening to Internet while OPNSense gets installed.
 - To monitor the installation process during template deployment you can just probe the port 22 on OPNSense VM public IP (psping or tcping). 
 - When port is down which means OPNSense is installed and VM will get restarted automatically. At this point you will have only TCP 443. 
+
 ***Note:*** It will take about 10 min to complete the whole process when VM is created and a new VM CustomScript is started to install OPNSense.
 
 
