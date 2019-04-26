@@ -40,18 +40,45 @@
       "metadata": {
         "description": "Default Admin password"
       }
+    },
+   "virtualNetworkName": {
+    "type": "string",
+    "defaultValue": "OPN-VNET",
+    "metadata": {
+      "description": "Virtual Nework Name"
+      }
+   },
+    "VNETAddress": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16",
+      "metadata": {
+      "description": "Virtual Address Space"
+        }
+    },
+    "Subnet1Address": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+      "description": "Untrusted-Subnet Address Space"
+        }
+    },
+    "Subnet2Address": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/24",
+      "metadata": {
+      "description": "Trusted-Subnet Address Space"
+        }
     }
   },
   "variables": {
     "extensionName":"CustomScript",
     "nic1": "Untrusted",
     "nic2": "Trusted",
-    "virtualNetworkName": "OPN-VNET",
     "subnet1Name": "Untrusted-Subnet",
     "subnet2Name": "Trusted-Subnet",
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
-    "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnet1Name'))]",
-    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnet2Name'))]",
+    "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet1Name'))]",
+    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
     "networkSecurityGroupName": "OPN-NSG",
     "location": "[resourceGroup().location]",
     "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
@@ -109,7 +136,7 @@
     },
     {
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[variables('virtualNetworkName')]",
+      "name": "[parameters('virtualNetworkName')]",
       "apiVersion": "2017-06-01",
       "location": "[variables('location')]",
       "comments": "This will build a Virtual Network.",
@@ -119,14 +146,14 @@
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "10.0.0.0/16"
+            "[parameters('VNETAddress')]"
           ]
         },
         "subnets": [
           {
             "name": "[variables('subnet1Name')]",
             "properties": {
-              "addressPrefix": "10.0.0.0/24",
+              "addressPrefix": "[parameters('Subnet1Address')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
               }
@@ -135,7 +162,7 @@
           {
             "name": "[variables('subnet2Name')]",
             "properties": {
-              "addressPrefix": "10.0.1.0/24",
+              "addressPrefix": "[parameters('Subnet2Address')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
               }
@@ -153,7 +180,7 @@
       "dependsOn": [
         "[variables('publicIpAddressName')]",
         "[variables('networkSecurityGroupName')]",
-        "[variables('virtualNetworkName')]"
+        "[parameters('virtualNetworkName')]"
       ],
       "properties": {
         "enableIPForwarding": true,
@@ -180,7 +207,7 @@
       "location": "[variables('location')]",
       "comments": "This will be your Secondary NIC",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
       ],
       "properties": {
         "enableIPForwarding": true,

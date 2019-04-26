@@ -23,9 +23,9 @@ After deployment, you can go to https://PublicIP:443 , then input the user and p
 This OPNSense solution is installed in FreeBSD 11.2 (Azure Image). 
 Here what you will see when you deploy this Template:
 1) VNET with Two Subnets and OPNSense with two NICs.
-2) VNET Address space is: 10.0.0.0/16
-3) External NIC named Untrusted Linked to Untrusted-Subnet (10.0.0.0/24)
-4) Internal NIC named Trusted Linked to Trusted-Subnet (10.0.1.0/24)
+2) VNET Address space is: 10.0.0.0/16 (suggested Address space, you may change that).
+3) External NIC named Untrusted Linked to Untrusted-Subnet (10.0.0.0/24).
+4) Internal NIC named Trusted Linked to Trusted-Subnet (10.0.1.0/24).
 5) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS. Same NSG is associated to both Subnets.
 
 ## Design
@@ -38,7 +38,9 @@ Here few observations to use this solution correctly.
 
 - When you deploy this template, it will leave only TCP 22 listening to Internet while OPNSense gets installed.
 - To monitor the installation process during template deployment you can just probe the port 22 on OPNSense VM public IP (psping or tcping). 
-- When port is down which means OPNSense is installed and VM will get restarted automatically. At this point you will have only TCP 443.
+- When port is down which means OPNSense is installed and VM will get restarted automatically. At this point you will have only TCP 443. 
+***Note:*** It will take about 10 min to complete the whole process when VM is created and a new VM CustomScript is started to install OPNSense.
+
 
 ## Usage
 - First access can be done using HTTPS://PublicIP. Please ignore SSL/TLS errors and proceed.
@@ -49,7 +51,7 @@ Here few observations to use this solution correctly.
 ## Roadmap
 
 The following improvements will be added soon:
-1) Give an option to specify VNET Address during deployment.
+1) Give an option to specify VNET Address during deployment (Completed on 04/26/2019).
 2) Give an option or new template to add extra Subnets like management and DMZ.
 3) Create Jumpbox automatically on Trusted Subnet or DMZ.
 4) Create default UDR from Trusted to route traffic to OPNSense.
