@@ -1,7 +1,9 @@
 #!/bin/sh
+#OPNSense default configuration template
 fetch https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/config.xml
 cp config.xml /usr/local/etc/config.xml
 
+#Package to get root certificate bundle from the Mozilla Project (FreeBSD)
 env ASSUME_ALWAYS_YES=YES pkg install ca_root_nss
 
 #Permit Root Remote Login
