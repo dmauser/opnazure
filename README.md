@@ -29,7 +29,7 @@ Here what you will see when you deploy this Template:
 5) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS. Same NSG is associated to both Subnets.
 
 ## Design
-Here a visual representation of this design:
+Here is a visual representation of this design:
 
 ![opnsense design](./images/OPN-SenseProject.png)
 
