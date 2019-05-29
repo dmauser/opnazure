@@ -41,10 +41,7 @@
         "description": "Default Admin password"
       }
     },
-    "networkInterfaceName": {
-      "type": "string"
-  }, 
-  "existingVirtualNetworkName": {
+    "existingVirtualNetworkName": {
     "type": "string",
     "metadata": {
       "description": "Existing Virtual Nework Name"
@@ -52,17 +49,23 @@
    },
     "existingSubnetName": {
       "type": "string",
-       "metadata": {
-      "description": "Type Existing Subnet Name"
-        }
-      }
-  },
-  "variables": {
-    "extensionName":"CustomScript",
+      "metadata": {
+       "description": "Type Existing Subnet Name"
+       }
+    },
+    "networkInterfaceName": {
+      "type": "string",
+      "metadata": {
+       "description": "Creates Network Interface on designated Subnet"
+       }
+    }
+   },
+    "variables": {
+     "extensionName":"CustomScript",
      "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingSubnetName'))]",
-    "location": "[resourceGroup().location]",
-    "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
-    "baseUriAzureCloud": "[variables('_artifactsLocation')]"
+     "location": "[resourceGroup().location]",
+     "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
+     "baseUriAzureCloud": "[variables('_artifactsLocation')]"
   },
   "resources": [
     {
