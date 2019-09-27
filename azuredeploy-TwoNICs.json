@@ -47,25 +47,25 @@
       "description": "Existing Virtual Nework Name"
       }
     },
-    "existingSubnetName1": {
+    "existingUntrustedSubnet": {
       "type": "string",
       "metadata": {
       "description": "Type Existing (Untrusted) Subnet Name"
        }
     },
-    "networkInterfaceName1": {
+    "UntrustedNIC": {
       "type": "string",
       "metadata": {
       "description": "NIC1 - Untrusted"
        }
       },
-    "existingSubnetName2": {
+    "existingTrustedSubnet": {
       "type": "string",
        "metadata": {
        "description": "Type Existing (Trusted) Subnet Name"
           }
       },
-    "networkInterfaceName2": {
+    "TrustedNIC": {
        "type": "string",
        "metadata": {
          "description": "NIC2 - Trusted"
@@ -75,8 +75,8 @@
   "variables": {
     "extensionName":"CustomScript",
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
-    "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingSubnetName1'))]",
-    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingSubnetName2'))]",
+    "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingUntrustedSubnet'))]",
+    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingTrustedSubnet'))]",
     "location": "[resourceGroup().location]",
     "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
     "baseUriAzureCloud": "[variables('_artifactsLocation')]"
@@ -89,7 +89,7 @@
       "location": "[variables('location')]",
       "comments": "This is the virtual machine that you're building.",
       "dependsOn": [
-        "[parameters('networkInterfaceName1')]"
+        "[parameters('UntrustedNIC')]"
       ],
       "properties": {
         "osProfile": {
@@ -118,20 +118,20 @@
               "properties": {
                 "primary": true
               },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName1'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('UntrustedNIC'))]"
             },
             {
               "properties": {
                 "primary": false
               },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName2'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('TrustedNIC'))]"
               }
           ]
         }
       }
     },
     {
-      "name": "[parameters('networkInterfaceName1')]",
+      "name": "[parameters('UntrustedNIC')]",
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-06-01",
       "location": "[variables('location')]",
@@ -158,7 +158,7 @@
       }
     },
     {
-        "name": "[parameters('networkInterfaceName2')]",
+        "name": "[parameters('TrustedNIC')]",
         "type": "Microsoft.Network/networkInterfaces",
         "apiVersion": "2017-06-01",
         "location": "[variables('location')]",
