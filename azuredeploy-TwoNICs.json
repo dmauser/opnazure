@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "virtualMachineSize": {
@@ -56,7 +56,7 @@
     "UntrustedNIC": {
       "type": "string",
       "metadata": {
-      "description": "NIC1 - Untrusted"
+      "description": "NIC1 - Untrusted NIC name"
        }
       },
     "existingTrustedSubnet": {
@@ -68,7 +68,7 @@
     "TrustedNIC": {
        "type": "string",
        "metadata": {
-         "description": "NIC2 - Trusted"
+         "description": "NIC2 - Trusted NIC Name"
          }
     }
   },
