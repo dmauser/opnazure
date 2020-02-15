@@ -49,6 +49,9 @@ Here few observations to use this solution correctly.
 - To access SSH you can either deploy a Jumpbox VM on Trusted Subnet or create a Firewall Rule to allow SSH to Internet.
 - To send traffic to OPNSense you need to create UDR 0.0.0.0 and set IP of trusted NIC (10.0.1.4) as NVA. Associate that NVA to Trusted-Subnet.
 
+## Update
+Two new templates have been added to allow create OPNSense on existing VNETs. One using a Single NIC only and a second using Two NICs. Please check this link for more info: https://github.com/dmauser/opnazure/wiki/OPNsense-on-Azure
+
 ## Roadmap
 
 The following improvements will be added soon:
