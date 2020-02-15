@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "virtualMachineSize": {
@@ -72,8 +72,8 @@
   },
   "variables": {
     "extensionName":"CustomScript",
-    "nic1": "Untrusted",
-    "nic2": "Trusted",
+    "nic1": "[concat(parameters('virtualMachineName'),'-Untrusted-NIC')]",
+    "nic2": "[concat(parameters('virtualMachineName'),'-Trusted-NIC')]",
     "subnet1Name": "Untrusted-Subnet",
     "subnet2Name": "Trusted-Subnet",
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
