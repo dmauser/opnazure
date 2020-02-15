@@ -53,27 +53,17 @@
       "description": "Type Existing (Untrusted) Subnet Name"
        }
     },
-    "UntrustedNIC": {
-      "type": "string",
-      "metadata": {
-      "description": "NIC1 - Untrusted NIC name"
-       }
-      },
     "existingTrustedSubnet": {
       "type": "string",
        "metadata": {
        "description": "Type Existing (Trusted) Subnet Name"
           }
-      },
-    "TrustedNIC": {
-       "type": "string",
-       "metadata": {
-         "description": "NIC2 - Trusted NIC Name"
-         }
     }
   },
   "variables": {
     "extensionName":"CustomScript",
+    "UntrustedNIC": "[concat(parameters('virtualMachineName'),'-Untrusted-NIC')]",
+    "TrustedNIC": "[concat(parameters('virtualMachineName'),'-Trusted-NIC')]",
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
     "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingUntrustedSubnet'))]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingTrustedSubnet'))]",
@@ -89,7 +79,8 @@
       "location": "[variables('location')]",
       "comments": "This is the virtual machine that you're building.",
       "dependsOn": [
-        "[parameters('UntrustedNIC')]"
+        "[variables('UntrustedNIC')]",
+        "[variables('TrustedNIC')]"
       ],
       "properties": {
         "osProfile": {
@@ -118,20 +109,20 @@
               "properties": {
                 "primary": true
               },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('UntrustedNIC'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('UntrustedNIC'))]"
             },
             {
               "properties": {
                 "primary": false
               },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('TrustedNIC'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('TrustedNIC'))]"
               }
           ]
         }
       }
     },
     {
-      "name": "[parameters('UntrustedNIC')]",
+      "name": "[variables('UntrustedNIC')]",
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2017-06-01",
       "location": "[variables('location')]",
@@ -158,7 +149,7 @@
       }
     },
     {
-        "name": "[parameters('TrustedNIC')]",
+        "name": "[variables('TrustedNIC')]",
         "type": "Microsoft.Network/networkInterfaces",
         "apiVersion": "2017-06-01",
         "location": "[variables('location')]",
