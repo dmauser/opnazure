@@ -47,7 +47,7 @@ Here are few considerations to deploy this solution correctly:
 - To monitor the installation process during template deployment you can just probe the port 22 on OPNSense VM public IP (psping or tcping).
 - When port is down which means OPNSense is installed and VM will get restarted automatically. At this point you will have only TCP 443.
 
-_ **Note** :_ It takes about 10 min to complete the whole process when VM is created and a new VM CustomScript is started to install OPNSense.
+**Note**: It takes about 10 min to complete the whole process when VM is created and a new VM CustomScript is started to install OPNSense.
 
 ## Usage
 
