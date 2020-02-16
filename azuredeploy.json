@@ -32,13 +32,13 @@
     "adminUsername": {
       "type": "string",
       "metadata": {
-        "description": "Default Admin username"
+        "description": "Default Temporary Admin username (Only used to deploy)"
       }
     },
     "adminPassword": {
       "type": "securestring",
       "metadata": {
-        "description": "Default Admin password"
+        "description": "Default Temporary Admin password (Only used to deploy)"
       }
     },
    "virtualNetworkName": {
