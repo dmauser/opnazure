@@ -11,12 +11,12 @@ This template allows you to deploy an OPNsense Firewall VM using the opnsense-bo
 
 The login credentials are set during the installation process to:
 
-username: root
-password: opnsense (lowercase)
+- Username: root
+- Password: opnsense (lowercase)
 
-***Please*** change default password and update the Network Security Group to remove access via public ip!
+*** **Please** *** change *default password* !
 
-After deployment, you can go to <https://PublicIP:443> , then input the user and password, to configure the OPNsense firewall.
+After deployment, you can go to <https://PublicIP>, then input the user and password, to configure the OPNsense firewall.
 
 ## Updates
 
@@ -52,9 +52,10 @@ Here are few considerations to deploy this solution correctly:
 ## Usage
 
 - First access can be done using <HTTPS://PublicIP.> Please ignore SSL/TLS errors and proceed.
-- Your first login is going to be username "root" and password "opnsense" (PLEASE change your password right the way).
+- Your first login is going to be username "root" and password "opnsense" (**PLEASE change your password right the way**).
 - To access SSH you can either deploy a Jumpbox VM on Trusted Subnet or create a Firewall Rule to allow SSH to Internet.
-- To send traffic to OPNSense you need to create UDR 0.0.0.0 and set IP of trusted NIC IP (10.0.1.4) as next hop. Associate that NVA to Trusted-Subnet. Note that is necessary to create appropriate Firewall rules inside OPNSense to desired traffic to work properly.
+- To send traffic to OPNSense you need to create UDR 0.0.0.0 and set IP of trusted NIC IP (10.0.1.4) as next hop. Associate that NVA to Trusted-Subnet. 
+**Note:** It is necessary to create appropriate Firewall rules inside OPNSense to desired traffic to work properly.
 
 ## Roadmap
 
