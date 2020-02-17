@@ -54,8 +54,8 @@ Here are few considerations to deploy this solution correctly:
 - First access can be done using <HTTPS://PublicIP.> Please ignore SSL/TLS errors and proceed.
 - Your first login is going to be username "root" and password "opnsense" (**PLEASE change your password right the way**).
 - To access SSH you can either deploy a Jumpbox VM on Trusted Subnet or create a Firewall Rule to allow SSH to Internet.
-- To send traffic to OPNSense you need to create UDR 0.0.0.0 and set IP of trusted NIC IP (10.0.1.4) as next hop. Associate that NVA to Trusted-Subnet. 
-**Note:** It is necessary to create appropriate Firewall rules inside OPNSense to desired traffic to work properly.
+- To send traffic to OPNSense you need to create UDR 0.0.0.0 and set IP of trusted NIC IP (10.0.1.4) as next hop. Associate that NVA to Trusted-Subnet.
+- **Note:** It is necessary to create appropriate Firewall rules inside OPNSense to desired traffic to work properly.
 
 ## Roadmap
 
