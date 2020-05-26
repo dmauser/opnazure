@@ -68,4 +68,6 @@ The following improvements will be added soon:
 
 ## Feedback
 
-Please use Github [issues tab](https://github.com/dmauser/opnazure/issues) to provide feedback. Thanks!
+Please use Github [issues tab](https://github.com/dmauser/opnazure/issues) to provide feedback. 
+
+Thanks!
