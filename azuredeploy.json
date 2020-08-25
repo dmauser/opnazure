@@ -79,7 +79,7 @@
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
     "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet1Name'))]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
-    "networkSecurityGroupName": "OPN-NSG",
+    "networkSecurityGroupName": "[concat(parameters('virtualNetworkName'),'-NSG')]",
     "location": "[resourceGroup().location]",
     "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
     "baseUriAzureCloud": "[variables('_artifactsLocation')]"
