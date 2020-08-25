@@ -188,10 +188,10 @@
         "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
       ],
       "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
-        "type": "CustomScript",
-        "typeHandlerVersion": "2.1",
-        "autoUpgradeMinorVersion": true,
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
             "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh"
