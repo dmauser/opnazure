@@ -90,7 +90,7 @@
           "imageReference": {
             "publisher": "MicrosoftOSTC",
             "offer": "FreeBSD",
-            "sku": "11.2",
+            "sku": "12.0",
             "version": "latest"
           },
           "osDisk": {
