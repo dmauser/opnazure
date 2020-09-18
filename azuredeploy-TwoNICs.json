@@ -191,7 +191,7 @@
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.4",
-        "autoUpgradeMinorVersion": true,
+        "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
             "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh"
