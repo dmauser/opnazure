@@ -29,13 +29,13 @@
         "description": "OPN NVA Manchine Name"
       }
     },
-    "adminUsername": {
+    "TempUsername": {
       "type": "string",
       "metadata": {
         "description": "Default Temporary Admin username (Only used to deploy)"
       }
     },
-    "adminPassword": {
+    "TempPassword": {
       "type": "securestring",
       "metadata": {
         "description": "Default Temporary Admin password (Only used to deploy)"
@@ -55,14 +55,14 @@
       "description": "Virtual Address Space"
         }
     },
-    "Subnet1Address": {
+    "UntrustedSubnetCIDR": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
       "metadata": {
       "description": "Untrusted-Subnet Address Space"
         }
     },
-    "Subnet2Address": {
+    "TrustedSubnetCIDR": {
       "type": "string",
       "defaultValue": "10.0.1.0/24",
       "metadata": {
@@ -98,8 +98,8 @@
       "properties": {
         "osProfile": {
           "computerName": "[parameters('virtualMachineName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminUsername": "[parameters('TempUsername')]",
+          "adminPassword": "[parameters('TempPassword')]"
         },
         "hardwareProfile": {
           "vmSize": "[parameters('virtualMachineSize')]"
@@ -153,16 +153,13 @@
           {
             "name": "[variables('subnet1Name')]",
             "properties": {
-              "addressPrefix": "[parameters('Subnet1Address')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-              }
+              "addressPrefix": "[parameters('UntrustedSubnetCIDR')]"
             }
           },
           {
             "name": "[variables('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('Subnet2Address')]",
+              "addressPrefix": "[parameters('TrustedSubnetCIDR')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
               }
