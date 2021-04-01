@@ -1,0 +1,267 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_B2s",
+      "allowedValues":[
+        "Standard_A1_v2",
+        "Standard_A2_v2",
+        "Standard_A4_v2",
+        "Standard_B1s",
+        "Standard_B1ms",
+        "Standard_B2s",
+        "Standard_B2ms",
+        "Standard_B4ms",
+        "Standard_F1s",
+        "Standard_F2s",
+        "Standard_F4s",
+        "Standard_DS1_v2"
+      ],
+      "metadata": {
+        "description": "VM size, please choose a size which allow 2 NICs."
+      }
+    },
+    "virtualMachineName": {
+      "type": "string",
+      "metadata": {
+        "description": "OPN NVA Manchine Name"
+      }
+    },
+    "TempUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Default Temporary Admin username (Only used to deploy)"
+      }
+    },
+    "TempPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Default Temporary Admin password (Only used to deploy)"
+      }
+    },
+   "virtualNetworkName": {
+    "type": "string",
+    "defaultValue": "OPN-VNET",
+    "metadata": {
+      "description": "Virtual Nework Name"
+      }
+   },
+    "VNETAddress": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16",
+      "metadata": {
+      "description": "Virtual Address Space"
+        }
+    },
+    "OPNSenseSubnetCIDR": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/24",
+      "metadata": {
+      "description": "Trusted-Subnet Address Space"
+        }
+    },
+    "PublicIPAddressSku": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"
+      }
+    },
+    "OPNScriptURI": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/dev/scripts/configureopnsense-snic.sh",
+            "metadata": {
+      "description": "URI for Custom OPN Script and Config"
+      }
+    }
+  },
+  "variables": {
+    "extensionName":"CustomScript",
+    "nic": "[concat(parameters('virtualMachineName'),'-NIC')]",
+    "subnet2Name": "OPNSenseSubnet",
+    "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
+    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
+    "networkSecurityGroupName": "[concat(parameters('virtualNetworkName'),'-NSG')]",
+    "location": "[resourceGroup().location]",
+  },
+  "resources": [
+    {
+      "name": "[parameters('virtualMachineName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2017-03-30",
+      "location": "[variables('location')]",
+      "comments": "This is the virtual machine that you're building.",
+      "dependsOn": [
+        "[variables('nic')]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineName')]",
+          "adminUsername": "[parameters('TempUsername')]",
+          "adminPassword": "[parameters('TempPassword')]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftOSTC",
+            "offer": "FreeBSD",
+            "sku": "12.0",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "properties": {
+                "primary": true
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('virtualNetworkName')]",
+      "apiVersion": "2017-06-01",
+      "location": "[variables('location')]",
+      "comments": "This will build a Virtual Network.",
+      "dependsOn": [
+        "[variables('networkSecurityGroupName')]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('VNETAddress')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnet2Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('OPNSenseSubnetCIDR')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2017-06-01",
+      "location": "[variables('location')]",
+      "comments": "This will be your Primary NIC",
+      "dependsOn": [
+        "[variables('publicIpAddressName')]",
+        "[variables('networkSecurityGroupName')]",
+        "[parameters('virtualNetworkName')]"
+      ],
+      "properties": {
+        "enableIPForwarding": true,
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnet2Ref')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('publicIpAddressName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2017-06-01",
+      "location": "[variables('location')]",
+      "comments": "Public IP for your Primary NIC",
+      "sku": {
+        "name": "[parameters('PublicIPAddressSku')]",
+        "tier": "Regional"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[variables('networkSecurityGroupName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2016-09-01",
+      "location": "[variables('location')]",
+      "comments": "Network Security Group (NSG) for your Primary NIC",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-https",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "443",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-ssh",
+            "properties": {
+            "priority": 1001,
+            "sourceAddressPrefix": "*",
+            "protocol": "Tcp",
+            "destinationPortRange": "22",
+            "access": "Allow",
+            "direction": "Inbound",
+            "sourcePortRange": "*",
+            "destinationAddressPrefix": "*"
+              }  
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'), '/', variables('extensionName'))]",
+      "apiVersion": "2015-06-15",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": false,
+        "settings": {
+          "fileUris": [
+            "[parameters('OPNScriptURI')]" 
+          ],
+          "commandToExecute": "sh configureopnsense-snic.sh"
+        }        
+      }
+    }
+  ],
+  "outputs": {}
+}
