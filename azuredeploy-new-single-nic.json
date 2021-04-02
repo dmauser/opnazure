@@ -61,7 +61,7 @@
     },
     "OPNScriptURI": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense-snic.sh",
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
       }
