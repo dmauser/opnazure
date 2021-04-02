@@ -41,7 +41,7 @@
       "description": "Virtual Address Space"
         }
     },
-    "OPNsenseSubnetCIDR": {
+    "OpnsenseSubnetCIDR": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
       "metadata": {
@@ -145,7 +145,7 @@
           {
             "name": "[variables('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('OPNsenseSubnetCIDR')]",
+              "addressPrefix": "[parameters('OpnsenseSubnetCIDR')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
               }
