@@ -20,7 +20,7 @@
         "Standard_DS1_v2"
       ],
       "metadata": {
-        "description": "VM size, please choose a size which allow 2 NICs."
+        "description": "Choose VM size"
       }
     },
     "virtualMachineName": {
