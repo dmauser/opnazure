@@ -242,7 +242,7 @@
     {
       "name": "[variables('publicIpAddressName')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2017-06-01",
+      "apiVersion": "2020-07-01",
       "location": "[variables('location')]",
       "comments": "Public IP for your Primary NIC",
       "sku": {
