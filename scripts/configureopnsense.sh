@@ -1,6 +1,6 @@
 #!/bin/sh
 #OPNSense default configuration template
-fetch https://raw.githubusercontent.com/dmauser/opnazure/dev/scripts/config.xml
+fetch https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/config.xml
 cp config.xml /usr/local/etc/config.xml
 
 # 1. Package to get root certificate bundle from the Mozilla Project (FreeBSD)
