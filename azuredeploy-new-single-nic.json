@@ -79,6 +79,13 @@
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
       }
+    },
+    "OPNConfigFile": {
+      "type": "string",
+      "defaultValue": "config-snic.xml",
+            "metadata": {
+      "description": "OPNSense XML Config File"
+      }
     }
   },
   "variables": {
@@ -258,7 +265,7 @@
           "fileUris": [
             "[parameters('OPNScriptURI')]" 
           ],
-          "commandToExecute": "sh configureopnsense-snic.sh"
+          "commandToExecute": "[concat('sh configureopnsense-snic.sh', parameters('OPNConfigFile'))]" 
         }        
       }
     }
