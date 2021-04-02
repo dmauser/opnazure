@@ -61,7 +61,7 @@
     },
     "OPNScriptURI": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense-snicp.sh",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh",
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
       }
@@ -251,7 +251,7 @@
           "fileUris": [
             "[parameters('OPNScriptURI')]" 
           ],
-          "commandToExecute": "[concat('sh configureopnsense-snicp.sh ', parameters('OPNConfigFile'))]" 
+          "commandToExecute": "[concat('sh configureopnsense.sh ', parameters('OPNConfigFile'))]" 
         }        
       }
     }

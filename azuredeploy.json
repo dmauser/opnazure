@@ -54,7 +54,33 @@
       "metadata": {
       "description": "Trusted-Subnet Address Space"
         }
+    },
+    "PublicIPAddressSku": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"
+      }
+    },
+    "OPNScriptURI": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh",
+            "metadata": {
+      "description": "URI for Custom OPN Script and Config"
+      }
+    },
+    "OPNConfigFile": {
+      "type": "string",
+      "defaultValue": "config.xml",
+            "metadata": {
+      "description": "OPNSense XML Config File"
+      }
     }
+  
   },
   "variables": {
     "extensionName":"CustomScript",
@@ -213,8 +239,12 @@
       "apiVersion": "2017-06-01",
       "location": "[variables('location')]",
       "comments": "Public IP for your Primary NIC",
+      "sku": {
+        "name": "[parameters('PublicIPAddressSku')]",
+        "tier": "Regional"
+      },
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Static"
       }
     },
     {
@@ -269,9 +299,9 @@
         "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh"
+            "[parameters('OPNScriptURI')]" 
           ],
-          "commandToExecute": "sh configureopnsense.sh"
+          "commandToExecute": "[concat('sh configureopnsense.sh ', parameters('OPNConfigFile'))]" 
         }        
       }
     }
