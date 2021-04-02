@@ -251,7 +251,7 @@
           "fileUris": [
             "[parameters('OPNScriptURI')]" 
           ],
-          "commandToExecute": "[concat('sh configureopnsense.sh ', parameters('OPNConfigFile'))]" 
+          "commandToExecute": "[concat('sh configureopnsense-snic.sh ', parameters('OPNConfigFile'))]" 
         }        
       }
     }
