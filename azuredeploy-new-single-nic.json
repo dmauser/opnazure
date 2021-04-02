@@ -73,9 +73,16 @@
         "description": "Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"
       }
     },
+    "OPNScriptFile": {
+      "type": "string",
+      "defaultValue": "configureopnsense-snic.sh",
+            "metadata": {
+      "description": "URI for Custom OPN Script and Config"
+      }
+    },    
     "OPNScriptURI": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense-snic.sh",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/",
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
       }
@@ -256,9 +263,9 @@
         "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
-            "[parameters('OPNScriptURI')]" 
+            "[concat(parameters('OPNScriptURI'),parameters('OPNScriptFile'))]" 
           ],
-          "commandToExecute": "sh configureopnsense-snic.sh"
+          "commandToExecute": "[concat('sh',parameters('OPNScriptFile'))]"
         }        
       }
     }
