@@ -55,7 +55,7 @@
       "description": "Virtual Address Space"
         }
     },
-    "OPNSenseSubnetCIDR": {
+    "OPNsenseSubnetCIDR": {
       "type": "string",
       "defaultValue": "10.0.1.0/24",
       "metadata": {
@@ -75,7 +75,7 @@
     },
     "OPNScriptURI": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/dev/scripts/configureopnsense-snic.sh",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense-snic.sh",
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
       }
@@ -88,7 +88,7 @@
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
     "networkSecurityGroupName": "[concat(parameters('virtualNetworkName'),'-NSG')]",
-    "location": "[resourceGroup().location]",
+    "location": "[resourceGroup().location]"
   },
   "resources": [
     {
@@ -152,7 +152,7 @@
           {
             "name": "[variables('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('OPNSenseSubnetCIDR')]",
+              "addressPrefix": "[parameters('OPNsenseSubnetCIDR')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
               }
