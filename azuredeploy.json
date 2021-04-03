@@ -98,9 +98,7 @@
     "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet1Name'))]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
     "networkSecurityGroupName": "[concat(parameters('virtualNetworkName'),'-NSG')]",
-    "location": "[resourceGroup().location]",
-    "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
-    "baseUriAzureCloud": "[variables('_artifactsLocation')]"
+    "location": "[resourceGroup().location]"
   },
   "resources": [
     {
