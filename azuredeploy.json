@@ -91,7 +91,7 @@
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
     "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet1Name'))]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
-    "networkSecurityGroupName": "[concat(parameters('virtualNetworkName'),'-NSG')]",
+    "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-NSG')]",
     "location": "[resourceGroup().location]"
   },
   "resources": [
@@ -169,10 +169,7 @@
           {
             "name": "[variables('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('TrustedSubnetCIDR')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-              }
+              "addressPrefix": "[parameters('TrustedSubnetCIDR')]"
             }
           }
         ]
@@ -191,6 +188,9 @@
       ],
       "properties": {
         "enableIPForwarding": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+          },
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -218,6 +218,9 @@
       ],
       "properties": {
         "enableIPForwarding": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+          },
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -254,12 +257,12 @@
       "properties": {
         "securityRules": [
           {
-            "name": "default-allow-https",
+            "name": "In-Any",
             "properties": {
-              "priority": 1000,
+              "priority": 4096,
               "sourceAddressPrefix": "*",
-              "protocol": "Tcp",
-              "destinationPortRange": "443",
+              "protocol": "*",
+              "destinationPortRange": "*",
               "access": "Allow",
               "direction": "Inbound",
               "sourcePortRange": "*",
@@ -267,14 +270,14 @@
             }
           },
           {
-            "name": "default-allow-ssh",
+            "name": "Out-Any",
             "properties": {
-            "priority": 1001,
+            "priority": 4096,
             "sourceAddressPrefix": "*",
-            "protocol": "Tcp",
-            "destinationPortRange": "22",
+            "protocol": "*",
+            "destinationPortRange": "*",
             "access": "Allow",
-            "direction": "Inbound",
+            "direction": "Outbound",
             "sourcePortRange": "*",
             "destinationAddressPrefix": "*"
               }  
