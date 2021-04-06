@@ -68,9 +68,16 @@
     },
     "OpnScriptURI": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense-snic.sh",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/",
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
+      }
+    },
+    "ShellScriptName": {
+      "type": "string",
+      "defaultValue": "configureopnsense-snic.sh",
+            "metadata": {
+      "description": "Shell Script to be executed"
       }
     },
     "OpnConfigFile": {
@@ -79,8 +86,7 @@
             "metadata": {
       "description": "OPNSense XML Config File"
       }
-    }
-
+    }  
   },
   "variables": {
     "extensionName":"CustomScript",
@@ -239,7 +245,7 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2020-07-01",
       "location": "[variables('location')]",
-      "comments": "Public IP for your Primary NIC",
+      "comments": "Public IP for your WAN NIC",
       "sku": {
         "name": "[parameters('PublicIPAddressSku')]",
         "tier": "Regional"
@@ -300,9 +306,9 @@
         "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
-            "[parameters('OPNScriptURI')]" 
+            "[concat(parameters('OPNScriptURI'),parameters('ShellScriptName'))]" 
           ],
-          "commandToExecute": "[concat('sh configureopnsense-snic.sh ', parameters('OPNConfigFile'))]" 
+          "commandToExecute": "[concat('sh ',parameters('ShellScriptName'),' ',parameters('OPNConfigFile'))]"
         }             
       }
     }

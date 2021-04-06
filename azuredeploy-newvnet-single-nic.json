@@ -41,11 +41,18 @@
       "description": "Virtual Address Space"
         }
     },
+    "OpnsenseSubnetName": {
+      "type": "string",
+      "defaultValue": "OPNSenseSubnet",
+      "metadata": {
+      "description": "OPNSense Subnet Name"
+        }
+    },  
     "OpnsenseSubnetCIDR": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
       "metadata": {
-      "description": "Trusted-Subnet Address Space"
+      "description": "OPNSense Subnet Address Space"
         }
     },
     "PublicIPAddressSku": {
@@ -59,11 +66,18 @@
         "description": "Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"
       }
     },
-    "OPNScriptURI": {
+    "OpnScriptURI": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense-snic.sh",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/",
             "metadata": {
       "description": "URI for Custom OPN Script and Config"
+      }
+    },
+    "ShellScriptName": {
+      "type": "string",
+      "defaultValue": "configureopnsense-snic.sh",
+            "metadata": {
+      "description": "Shell Script to be executed"
       }
     },
     "OPNConfigFile": {
@@ -77,10 +91,9 @@
   "variables": {
     "extensionName":"CustomScript",
     "nic": "[concat(parameters('virtualMachineName'),'-NIC')]",
-    "subnet2Name": "OPNSenseSubnet",
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
-    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnet2Name'))]",
-    "networkSecurityGroupName": "[concat(parameters('virtualNetworkName'),'-NSG')]",
+    "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('OpnsenseSubnetName'))]",
+    "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-NSG')]",
     "location": "[resourceGroup().location]"
   },
   "resources": [
@@ -143,12 +156,9 @@
         },
         "subnets": [
           {
-            "name": "[variables('subnet2Name')]",
+            "name": "[parameters('OpnsenseSubnetName')]",
             "properties": {
-              "addressPrefix": "[parameters('OpnsenseSubnetCIDR')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-              }
+              "addressPrefix": "[parameters('OpnsenseSubnetCIDR')]"
             }
           }
         ]
@@ -167,6 +177,9 @@
       ],
       "properties": {
         "enableIPForwarding": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+        },
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -249,9 +262,9 @@
         "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
-            "[parameters('OPNScriptURI')]" 
+            "[concat(parameters('OPNScriptURI'),parameters('ShellScriptName'))]" 
           ],
-          "commandToExecute": "[concat('sh configureopnsense-snic.sh ', parameters('OPNConfigFile'))]" 
+          "commandToExecute": "[concat('sh ',parameters('ShellScriptName'),' ',parameters('OPNConfigFile'))]"
         }        
       }
     }

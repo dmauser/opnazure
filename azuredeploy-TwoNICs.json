@@ -15,13 +15,13 @@
         "description": "OPN NVA Manchine Name"
       }
     },
-    "adminUsername": {
+    "TempUsername": {
       "type": "string",
       "metadata": {
         "description": "Default Temporary Admin username (Only used to deploy)"
       }
     },
-    "adminPassword": {
+    "TempPassword": {
       "type": "securestring",
       "metadata": {
         "description": "Default Temporary Admin password (Only used to deploy)"
@@ -44,7 +44,39 @@
        "metadata": {
        "description": "Type Existing (Trusted) Subnet Name"
           }
-    }
+    },
+      "PublicIPAddressSku": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"
+      }
+    },
+    "OpnScriptURI": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/",
+            "metadata": {
+      "description": "URI for Custom OPN Script and Config"
+      }
+    },
+    "ShellScriptName": {
+      "type": "string",
+      "defaultValue": "configureopnsense-snic.sh",
+            "metadata": {
+      "description": "Shell Script to be executed"
+      }
+    },
+    "OpnConfigFile": {
+      "type": "string",
+      "defaultValue": "config.xml",
+            "metadata": {
+      "description": "OPNSense XML Config File"
+      }
+    }  
   },
   "variables": {
     "extensionName":"CustomScript",
@@ -53,9 +85,8 @@
     "publicIPAddressName": "[concat(parameters('virtualMachineName'),'-PublicIP')]",
     "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingUntrustedSubnet'))]",
     "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('existingTrustedSubnet'))]",
-    "location": "[resourceGroup().location]",
-    "_artifactsLocation": "https://raw.githubusercontent.com/dmauser/opnazure/master/",
-    "baseUriAzureCloud": "[variables('_artifactsLocation')]"
+    "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-NSG')]",
+    "location": "[resourceGroup().location]"
   },
   "resources": [
     {
@@ -71,8 +102,8 @@
       "properties": {
         "osProfile": {
           "computerName": "[parameters('virtualMachineName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminUsername": "[parameters('TempUsername')]",
+          "adminPassword": "[parameters('TempPassword')]"
         },
         "hardwareProfile": {
           "vmSize": "[parameters('virtualMachineSize')]"
@@ -114,10 +145,14 @@
       "location": "[variables('location')]",
       "comments": "This will be your Primary NIC Untrusted",
       "dependsOn": [
-        "[variables('publicIpAddressName')]"
+        "[variables('publicIpAddressName')]",
+        "[variables('networkSecurityGroupName')]"
       ],
       "properties": {
         "enableIPForwarding": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+          },
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -135,34 +170,81 @@
       }
     },
     {
-        "name": "[variables('TrustedNIC')]",
-        "type": "Microsoft.Network/networkInterfaces",
-        "apiVersion": "2017-06-01",
-        "location": "[variables('location')]",
-        "comments": "This will be your NIC2 Trusted",
-        "properties": {
-          "enableIPForwarding": true,
-          "ipConfigurations": [
-            {
-              "name": "ipconfig1",
-              "properties": {
-                "subnet": {
-                  "id": "[variables('subnet2Ref')]"
-                },
-                "privateIPAllocationMethod": "Dynamic"
-              }
+      "name": "[variables('TrustedNIC')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2017-06-01",
+      "location": "[variables('location')]",
+      "comments": "This will be your NIC2 Trusted",
+      "dependsOn": [
+        "[variables('networkSecurityGroupName')]"
+      ],          
+      "properties": {
+        "enableIPForwarding": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+          },
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnet2Ref')]"
+              },
+              "privateIPAllocationMethod": "Dynamic"
             }
-          ]
-        }
+          }
+        ]
+       }
       },
     {
       "name": "[variables('publicIpAddressName')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2017-06-01",
+      "apiVersion": "2020-07-01",
       "location": "[variables('location')]",
-      "comments": "Public IP for your Primary NIC",
+      "comments": "Public IP for your WAN NIC",
+      "sku": {
+        "name": "[parameters('PublicIPAddressSku')]",
+        "tier": "Regional"
+      },
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+{
+      "name": "[variables('networkSecurityGroupName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2016-09-01",
+      "location": "[variables('location')]",
+      "comments": "Network Security Group (NSG) for your Primary NIC",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "In-Any",
+            "properties": {
+              "priority": 4096,
+              "sourceAddressPrefix": "*",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Out-Any",
+            "properties": {
+            "priority": 4096,
+            "sourceAddressPrefix": "*",
+            "protocol": "*",
+            "destinationPortRange": "*",
+            "access": "Allow",
+            "direction": "Outbound",
+            "sourcePortRange": "*",
+            "destinationAddressPrefix": "*"
+              }  
+          }
+        ]
       }
     },
     {
@@ -180,9 +262,9 @@
         "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/configureopnsense.sh"
-          ],
-          "commandToExecute": "sh configureopnsense.sh"
+            "[concat(parameters('OPNScriptURI'),parameters('ShellScriptName'))]" 
+            ],
+          "commandToExecute": "[concat('sh ',parameters('ShellScriptName'),' ',parameters('OPNConfigFile'))]" 
         }        
       }
     }

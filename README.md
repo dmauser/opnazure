@@ -1,22 +1,43 @@
 # OPNsense Firewall on FreeBSD VM
 
+**New VNET + OPNSense with two NICs (Untrusted/Trusted)**
+
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy.json)
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy.json)
 
-This template allows you to deploy an OPNsense Firewall VM using the opnsense-bootsrtap installation method. It creates an FreeBSD VM, does a silent install of OPNsense using a modified version of opnsense-bootstrap.sh with the settings provided.
+**Existing VNET + OPNSense with two NICs (Untrusted/Trusted)**
+
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-TwoNICs.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-TwoNICs.json)
+
+**New VNET + OPNSense with single NIC**
+
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-newvnet-single-nic.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-newvnet-single-nic.json)
+
+**Existing VNET + OPNSense with single NIC**
+
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-SingleNIC.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-SingleNIC.json)
+
+
+Those template allows you to deploy an OPNsense Firewall VM using the opnsense-bootsrtap installation method. It creates an FreeBSD VM, does a silent install of OPNsense using a modified version of opnsense-bootstrap.sh with the settings provided.
 
 The login credentials are set during the installation process to:
 
 - Username: root
 - Password: opnsense (lowercase)
 
-*** **Please** *** change *default password* !
+*** **Please** *** Change *default password!!!*
 
 After deployment, you can go to <https://PublicIP>, then input the user and password, to configure the OPNsense firewall.
 
-## Updates
+## Updates (Apr-2021)
 
-Two new templates have been added to allow create OPNSense on existing VNETs. One using a Single NIC only and a second using Two NICs. Please check this link for more info: <https://github.com/dmauser/opnazure/wiki/OPNsense-on-Azure>
+- Added all templates on main page for new VNET and existing VNETs for both two NICs and single NIC.
+- Added options to specific your own deployment script and configuration file.
+- Added NSG to support Standard SKU Public and Internal Load Balancer.
+
 
 ## Overview
 
@@ -31,7 +52,7 @@ Here is what you will see when you deploy this Template:
 
 ## Design
 
-Here is a visual representation of this design:
+Here is a visual representation of this design of the two NIC deployment:
 
 ![opnsense design](./images/OPN-SenseProject.png)
 
@@ -56,14 +77,12 @@ Here are few considerations to deploy this solution correctly:
 ## Roadmap
 
 The following improvements will be added soon:
+- Add option to create Jumpbox VM for management
 
-1) Give an option to specify VNET Address during deployment (Completed on 04/26/2019).
-2) Give an option or new template to add extra Subnets like management and DMZ.
-3) Create Jumpbox option on Trusted Subnet or DMZ.
-4) Create default UDR from Trusted to route traffic to OPNSense.
+## Feedbacks
 
-## Feedback
+Please use Github [issues tab](https://github.com/dmauser/opnazure/issues) to provide feedback.
 
-Please use Github [issues tab](https://github.com/dmauser/opnazure/issues) to provide feedback. 
+## Credits
 
-Thanks!
+Thanks for direct feedbacks and contributions from: Adam Torkar, Brian Wurzbacher, Victor Santana and Brady Sondreal.
