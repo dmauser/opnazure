@@ -65,7 +65,7 @@
     },
     "ShellScriptName": {
       "type": "string",
-      "defaultValue": "configureopnsense-snic.sh",
+      "defaultValue": "configureopnsense.sh",
             "metadata": {
       "description": "Shell Script to be executed"
       }
