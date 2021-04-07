@@ -1,7 +1,7 @@
 #!/bin/sh
 #OPNSense default configuration template
-fetch https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/config.xml
-cp config.xml /usr/local/etc/config.xml
+fetch https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/$1
+cp $1 /usr/local/etc/config.xml
 
 # 1. Package to get root certificate bundle from the Mozilla Project (FreeBSD)
 # 2. Install bash to support Azure Backup integration
