@@ -13,7 +13,7 @@ sed -i "" 's/#PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 #OPNSense
 sed -i "" "s/reboot/shutdown -r +1/g" opnsense-bootstrap.sh.in
-sh ./opnsense-bootstrap.sh.in
+sh ./opnsense-bootstrap.sh.in -y -r "21.1"
 #Adds support to LB probe from IP 168.63.129.16
 fetch https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/lb-conf.sh
 sh ./lb-conf.sh
