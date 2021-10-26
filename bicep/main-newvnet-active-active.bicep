@@ -144,7 +144,7 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
 }
 
 // Create OPNsense
-module opnSense1 'modules/VM/virtualmachine.bicep' = {
+module opnSense1 'modules/VM/virtualmachine-active-active.bicep' = {
   name: '${virtualMachineName}-1'
   params: {
     OPNConfigFile: OpnConfigFile
@@ -156,7 +156,6 @@ module opnSense1 'modules/VM/virtualmachine.bicep' = {
     untrustedSubnetId: untrustedSubnet.id
     virtualMachineName: '${virtualMachineName}-1'
     virtualMachineSize: virtualMachineSize
-    //publicIPId: publicip.outputs.publicipId
     nsgId: nsgappgwsubnet.outputs.nsgID
   }
   dependsOn:[
@@ -165,7 +164,7 @@ module opnSense1 'modules/VM/virtualmachine.bicep' = {
   ]
 }
 
-module opnSense2 'modules/VM/virtualmachine.bicep' = {
+module opnSense2 'modules/VM/virtualmachine-active-active.bicep' = {
   name: '${virtualMachineName}-2'
   params: {
     OPNConfigFile: OpnConfigFile
@@ -177,7 +176,6 @@ module opnSense2 'modules/VM/virtualmachine.bicep' = {
     untrustedSubnetId: untrustedSubnet.id
     virtualMachineName: '${virtualMachineName}-2'
     virtualMachineSize: virtualMachineSize
-    //publicIPId: publicip.outputs.publicipId
     nsgId: nsgappgwsubnet.outputs.nsgID
   }
   dependsOn:[
