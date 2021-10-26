@@ -92,3 +92,6 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
     }
   }
 }
+
+output untrustedNicIP string = untrustedNic.outputs.nicIP
+output trustedNicIP string = trustedNic.outputs.nicIP
