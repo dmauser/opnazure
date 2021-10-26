@@ -1,130 +1,155 @@
-targetScope = 'subscription'
-
 // Parameters
-param rgName string
-param vnetHubName string
-param hubVNETaddPrefixes array
-param hubSubnets array
-param azfwName string
-param rtVMSubnetName string
-param fwapplicationRuleCollections array
-param fwnetworkRuleCollections array
-param fwnatRuleCollections array
+@sys.description('VM size, please choose a size which allow 2 NICs.')
+param virtualMachineSize string = 'Standard_B2s'
 
-module rg 'modules/resource-group/rg.bicep' = {
-  name: rgName
+@sys.description('OPN NVA Manchine Name')
+param virtualMachineName string
+
+@sys.description('Default Temporary Admin username (Only used to deploy FreeBSD VM)')
+param TempUsername string
+
+@sys.description('Default Temporary Admin password (Only used to deploy FreeBSD VM)')
+@secure()
+param TempPassword string
+
+@sys.description('Virtual Nework Name')
+param virtualNetworkName string = 'OPN-VNET'
+
+@sys.description('Virtual Address Space')
+param VNETAddress array = [
+  '10.0.0.0/16'
+]
+
+@sys.description('Untrusted-Subnet Address Space')
+param UntrustedSubnetCIDR string = '10.0.0.0/24'
+
+@sys.description('Trusted-Subnet Address Space')
+param TrustedSubnetCIDR string = '10.0.1.0/24'
+
+@sys.description('Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"')
+@allowed([
+  'Basic'
+  'Standard'
+])
+param PublicIPAddressSku string = 'Standard'
+
+@sys.description('URI for Custom OPN Script and Config')
+param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/'
+
+@sys.description('Shell Script to be executed')
+param ShellScriptName string = 'configureopnsense.sh'
+
+@sys.description('OPNSense XML Config File')
+param OpnConfigFile string = 'config.xml'
+
+// Variables
+var untrustedSubnetName = 'Untrusted-Subnet'
+var trustedSubnetName = 'Trusted-Subnet'
+var publicIPAddressName = '${virtualMachineName}-PublicIP'
+var networkSecurityGroupName = '${virtualMachineName}-NSG'
+
+// Resources
+// Create NSG
+module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
+  name: networkSecurityGroupName
   params: {
-    rgName: rgName
-    location: deployment().location
-  }
-}
-
-module vnethub 'modules/vnet/vnet.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: vnetHubName
-  params: {
-    vnetAddressSpace: {
-        addressPrefixes: hubVNETaddPrefixes
-    }
-    vnetName: vnetHubName
-    subnets: hubSubnets
-  }
-  dependsOn: [
-    rg
-  ]
-}
-
-module publicipfw 'modules/vnet/publicip.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'AZFW-PIP'
-  params: {
-    publicipName: 'AZFW-PIP'
-    publicipproperties: {
-      publicIPAllocationMethod: 'Static'      
-    }
-    publicipsku: {
-      name: 'Standard'
-      tier: 'Regional'      
-    }
-  } 
-}
-
-resource subnetfw 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: '${vnethub.name}/AzureFirewallSubnet'
-}
-
-module azfirewall 'modules/vnet/firewall.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: azfwName
-  params: {
-    fwname: azfwName
-    fwipConfigurations: [
+    nsgName: networkSecurityGroupName
+    securityRules: [
       {
-        name: 'AZFW-PIP'
+        name: 'In-Any'
         properties: {
-          subnet: {
-            id: subnetfw.id
-          }
-          publicIPAddress: {
-            id: publicipfw.outputs.publicipId
-          }
+          priority: 4096
+          sourceAddressPrefix: '*'
+          protocol: '*'
+          destinationPortRange: '*'
+          access: 'Allow'
+          direction: 'Inbound'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
+      {
+        name: 'Out-Any'
+        properties: {
+          priority: 4096
+          sourceAddressPrefix: '*'
+          protocol: '*'
+          destinationPortRange: '*'
+          access: 'Allow'
+          direction: 'Outbound'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
         }
       }
     ]
-    fwapplicationRuleCollections: fwapplicationRuleCollections
-    fwnatRuleCollections: fwnatRuleCollections
-    fwnetworkRuleCollections: fwnetworkRuleCollections
-  } 
+  }
 }
 
-module publicipbastion 'modules/vnet/publicip.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'publicipbastion'
+// Create VNET
+module vnet 'modules/vnet/vnet.bicep' = {
+  name: virtualNetworkName
   params: {
-    publicipName: 'bastion-pip'
+    vnetAddressSpace: VNETAddress
+    vnetName: virtualNetworkName
+    subnets: [
+      {
+        name: untrustedSubnetName
+        properties:{
+          addressPrefix: UntrustedSubnetCIDR
+        }
+      }
+      {
+        name: trustedSubnetName
+        properties:{
+          addressPrefix: TrustedSubnetCIDR
+        }
+      }
+    ]
+  }
+}
+
+// Create OPNsense Public IP
+module publicip 'modules/vnet/publicip.bicep' = {
+  name: publicIPAddressName
+  params: {
+    publicipName: publicIPAddressName
     publicipproperties: {
-      publicIPAllocationMethod: 'Static'      
+      publicIPAllocationMethod: 'Static'
     }
     publicipsku: {
-      name: 'Standard'
-      tier: 'Regional'      
-    }
-  } 
-}
-
-resource subnetbastion 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: '${vnethub.name}/AzureBastionSubnet'
-}
-
-module bastion 'modules/VM/bastion.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'bastion'
-  params: {
-    bastionpipId: publicipbastion.outputs.publicipId
-    subnetId: subnetbastion.id
-  }
-}
-
-module routetable 'modules/vnet/routetable.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: rtVMSubnetName
-  params: {
-    rtName: rtVMSubnetName
-  } 
-}
-
-module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'vm-to-internet'
-  params: {
-    routetableName: routetable.name
-    routeName: 'vm-to-internet'
-    properties: {
-      nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: azfirewall.outputs.fwPrivateIP
-      addressPrefix: '0.0.0.0/0'      
+      name: PublicIPAddressSku
+      tier: 'Regional'
     }
   }
+}
+
+// Build reference of existing subnets
+resource untrustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
+  name: '${virtualNetworkName}/${untrustedSubnetName}'
+}
+
+resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
+  name: '${virtualNetworkName}/${trustedSubnetName}'
+}
+
+// Create OPNsense
+module opnSense 'modules/VM/virtualmachine.bicep' = {
+  name: virtualMachineName
+  params: {
+    OPNConfigFile: OpnConfigFile
+    OPNScriptURI: OpnScriptURI
+    ShellScriptName: ShellScriptName
+    TempPassword: TempPassword
+    TempUsername: TempUsername
+    trustedSubnetId: trustedSubnet.id
+    untrustedSubnetId: untrustedSubnet.id
+    virtualMachineName: virtualMachineName
+    virtualMachineSize: virtualMachineSize
+    publicIPId: publicip.outputs.publicipId
+    nsgId: nsgappgwsubnet.outputs.nsgID
+  }
+  dependsOn:[
+    vnet
+    nsgappgwsubnet
+  ]
 }

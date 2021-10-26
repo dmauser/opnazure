@@ -35,8 +35,10 @@
       }
    },
     "VNETAddress": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/16",
+      "type": "array",
+      "defaultValue": [
+        "10.0.0.0/16"
+      ],
       "metadata": {
       "description": "Virtual Address Space"
         }
@@ -86,7 +88,7 @@
             "metadata": {
       "description": "OPNSense XML Config File"
       }
-    }  
+    }
   },
   "variables": {
     "extensionName":"CustomScript",
@@ -286,7 +288,7 @@
             "direction": "Outbound",
             "sourcePortRange": "*",
             "destinationAddressPrefix": "*"
-              }  
+              }
           }
         ]
       }
@@ -306,10 +308,10 @@
         "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [
-            "[concat(parameters('OPNScriptURI'),parameters('ShellScriptName'))]" 
+            "[concat(parameters('OPNScriptURI'),parameters('ShellScriptName'))]"
           ],
           "commandToExecute": "[concat('sh ',parameters('ShellScriptName'),' ',parameters('OPNConfigFile'))]"
-        }             
+        }
       }
     }
   ],

@@ -1,71 +1,94 @@
-param subnetId string
-param publicKey string
-//param script64 string
+param untrustedSubnetId string
+param trustedSubnetId string
+param publicIPId string = ''
+param virtualMachineName string
+param TempUsername string
+param TempPassword string
+param virtualMachineSize string
+param OPNScriptURI string
+param ShellScriptName string
+param OPNConfigFile string
+param nsgId string = ''
 
-module jbnic '../vnet/nic.bicep' = {
-  name: 'jbnic'
-  params: {
-    subnetId: subnetId
+var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
+var trustedNicName = '${virtualMachineName}-Trusted-NIC'
+
+module untrustedNic '../vnet/publicnic.bicep' = {
+  name: untrustedNicName
+  params:{
+    nicName: untrustedNicName
+    subnetId: untrustedSubnetId
+    publicIPId: publicIPId
+    enableIPForwarding: true
+    nsgId: nsgId
   }
 }
 
-resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
-  name: 'jumpbox'
+module trustedNic '../vnet/privatenic.bicep' = {
+  name: trustedNicName
+  params:{
+    nicName: trustedNicName
+    subnetId: trustedSubnetId
+    enableIPForwarding: true
+    nsgId: nsgId
+  }
+}
+
+resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+  name: virtualMachineName
   location: resourceGroup().location
   properties: {
     osProfile: {
-      computerName: 'jumpbox'
-      adminUsername: 'azureuser'
-      linuxConfiguration: {
-        ssh: {
-          publicKeys: [
-            {
-              path: '/home/azureuser/.ssh/authorized_keys'
-              keyData: publicKey
-            }
-          ]
-        }
-        disablePasswordAuthentication: true
-      }
+      computerName: virtualMachineName
+      adminUsername: TempUsername
+      adminPassword: TempPassword
     }
     hardwareProfile: {
-      vmSize: 'Standard_A2'
+      vmSize: virtualMachineSize
     }
     storageProfile: {
       osDisk: {
         createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Standard_LRS'
-        }
       }
       imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
+        publisher: 'MicrosoftOSTC'
+        offer: 'FreeBSD'
+        sku: '12.0'
         version: 'latest'
       }
     }
     networkProfile: {
       networkInterfaces: [
         {
-          id: jbnic.outputs.nicId
+          id: untrustedNic.outputs.nicId
+          properties:{
+            primary: true
+          }
+        }
+        {
+          id: trustedNic.outputs.nicId
+          properties:{
+            primary: false
+          }
         }
       ]
     }
   }
 }
 
-// resource vmext 'Microsoft.Compute/virtualMachines/extensions@2021-03-01' = {
-//   name: '${jumpbox.name}/csscript'
-//   location: resourceGroup().location
-//   properties: {
-//     publisher: 'Microsoft.Azure.Extensions'
-//     type: 'CustomScript'
-//     typeHandlerVersion: '2.1'
-//     autoUpgradeMinorVersion: true
-//     settings: {}
-//     protectedSettings: {
-//       script: script64
-//     }
-//   }
-// }
+resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
+  name: '${OPNsense.name}/CustomScript'
+  location: resourceGroup().location
+  properties: {
+    publisher: 'Microsoft.OSTCExtensions'
+    type: 'CustomScriptForLinux'
+    typeHandlerVersion: '1.4'
+    autoUpgradeMinorVersion: false
+    settings:{
+      fileUris: [
+        '${OPNScriptURI}${ShellScriptName}'
+      ]
+      commandToExecute: 'sh ${ShellScriptName} ${OPNConfigFile}'
+    }
+  }
+}
