@@ -8,27 +8,31 @@ param OPNScriptURI string
 param ShellScriptName string
 param OPNConfigFile string
 param nsgId string = ''
+param ExternalLoadBalancerBackendAddressPoolId string
+param InternalLoadBalancerBackendAddressPoolId string
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-module untrustedNic '../vnet/privatenic.bicep' = {
+module untrustedNic '../vnet/privateNicLb.bicep' = {
   name: untrustedNicName
   params:{
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
     enableIPForwarding: true
     nsgId: nsgId
+    loadBalancerBackendAddressPoolId: ExternalLoadBalancerBackendAddressPoolId
   }
 }
 
-module trustedNic '../vnet/privatenic.bicep' = {
+module trustedNic '../vnet/privateNicLb.bicep' = {
   name: trustedNicName
   params:{
     nicName: trustedNicName
     subnetId: trustedSubnetId
     enableIPForwarding: true
     nsgId: nsgId
+    loadBalancerBackendAddressPoolId: InternalLoadBalancerBackendAddressPoolId
   }
 }
 

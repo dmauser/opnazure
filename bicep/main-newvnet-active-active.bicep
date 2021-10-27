@@ -143,48 +143,6 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
   name: '${virtualNetworkName}/${trustedSubnetName}'
 }
 
-// Create OPNsense
-module opnSense1 'modules/VM/opnsense-vm-active-active.bicep' = {
-  name: '${virtualMachineName}-1'
-  params: {
-    OPNConfigFile: OpnConfigFile
-    OPNScriptURI: OpnScriptURI
-    ShellScriptName: ShellScriptName
-    TempPassword: TempPassword
-    TempUsername: TempUsername
-    trustedSubnetId: trustedSubnet.id
-    untrustedSubnetId: untrustedSubnet.id
-    virtualMachineName: '${virtualMachineName}-1'
-    virtualMachineSize: virtualMachineSize
-    nsgId: nsgappgwsubnet.outputs.nsgID
-  }
-  dependsOn:[
-    vnet
-    nsgappgwsubnet
-  ]
-}
-
-module opnSense2 'modules/VM/opnsense-vm-active-active.bicep' = {
-  name: '${virtualMachineName}-2'
-  params: {
-    OPNConfigFile: OpnConfigFile
-    OPNScriptURI: OpnScriptURI
-    ShellScriptName: ShellScriptName
-    TempPassword: TempPassword
-    TempUsername: TempUsername
-    trustedSubnetId: trustedSubnet.id
-    untrustedSubnetId: untrustedSubnet.id
-    virtualMachineName: '${virtualMachineName}-2'
-    virtualMachineSize: virtualMachineSize
-    nsgId: nsgappgwsubnet.outputs.nsgID
-  }
-  dependsOn:[
-    vnet
-    nsgappgwsubnet
-    opnSense1
-  ]
-}
-
 // External Load Balancer
 module elb 'modules/vnet/lb.bicep' = {
   name: externalLoadBalanceName
@@ -203,28 +161,6 @@ module elb 'modules/vnet/lb.bicep' = {
     backendAddressPools: [
       {
         name: externalLoadBalanceBAPName
-        properties: {
-          loadBalancerBackendAddresses:[
-            {
-              name: guid('guid1')
-              properties: {
-                ipAddress: opnSense1.outputs.untrustedNicIP
-                virtualNetwork: {
-                  id: vnet.outputs.vnetId
-                }
-              }
-            }
-            {
-              name: guid('guid2')
-              properties: {
-                ipAddress: opnSense2.outputs.untrustedNicIP
-                virtualNetwork: {
-                  id: vnet.outputs.vnetId
-                }
-              }
-            }
-          ]
-        }
       }
     ]
     loadBalancingRules: [
@@ -306,28 +242,6 @@ module ilb 'modules/vnet/lb.bicep' = {
     backendAddressPools: [
       {
         name: internalLoadBalanceBAPName
-        properties: {
-          loadBalancerBackendAddresses:[
-            {
-              name: guid('guid1internal')
-              properties: {
-                ipAddress: opnSense1.outputs.trustedNicIP
-                virtualNetwork: {
-                  id: vnet.outputs.vnetId
-                }
-              }
-            }
-            {
-              name: guid('guid2internal')
-              properties: {
-                ipAddress: opnSense2.outputs.trustedNicIP
-                virtualNetwork: {
-                  id: vnet.outputs.vnetId
-                }
-              }
-            }
-          ]
-        }
       }
     ]
 
@@ -370,3 +284,51 @@ module ilb 'modules/vnet/lb.bicep' = {
     ]
   }
 }
+
+// Create OPNsense
+module opnSense1 'modules/VM/opnsense-vm-active-active.bicep' = {
+  name: '${virtualMachineName}-1'
+  params: {
+    OPNConfigFile: OpnConfigFile
+    OPNScriptURI: OpnScriptURI
+    ShellScriptName: ShellScriptName
+    TempPassword: TempPassword
+    TempUsername: TempUsername
+    trustedSubnetId: trustedSubnet.id
+    untrustedSubnetId: untrustedSubnet.id
+    virtualMachineName: '${virtualMachineName}-1'
+    virtualMachineSize: virtualMachineSize
+    nsgId: nsgappgwsubnet.outputs.nsgID
+    ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
+    InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
+  }
+  dependsOn:[
+    vnet
+    nsgappgwsubnet
+  ]
+}
+
+module opnSense2 'modules/VM/opnsense-vm-active-active.bicep' = {
+  name: '${virtualMachineName}-2'
+  params: {
+    OPNConfigFile: OpnConfigFile
+    OPNScriptURI: OpnScriptURI
+    ShellScriptName: ShellScriptName
+    TempPassword: TempPassword
+    TempUsername: TempUsername
+    trustedSubnetId: trustedSubnet.id
+    untrustedSubnetId: untrustedSubnet.id
+    virtualMachineName: '${virtualMachineName}-2'
+    virtualMachineSize: virtualMachineSize
+    nsgId: nsgappgwsubnet.outputs.nsgID
+    ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
+    InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
+  }
+  dependsOn:[
+    vnet
+    nsgappgwsubnet
+    opnSense1
+  ]
+}
+
+

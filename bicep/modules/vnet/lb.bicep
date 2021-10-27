@@ -20,3 +20,5 @@ resource elb 'Microsoft.Network/loadBalancers@2021-03-01' = {
     outboundRules: outboundRules
   }
 }
+
+output backendAddressPools array = elb.properties.backendAddressPools
