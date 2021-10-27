@@ -133,7 +133,7 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
 }
 
 // Create OPNsense
-module opnSense 'modules/VM/virtualmachine.bicep' = {
+module opnSense 'modules/VM/opnsense-vm.bicep' = {
   name: virtualMachineName
   params: {
     OPNConfigFile: OpnConfigFile

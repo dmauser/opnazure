@@ -144,7 +144,7 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
 }
 
 // Create OPNsense
-module opnSense1 'modules/VM/virtualmachine-active-active.bicep' = {
+module opnSense1 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: '${virtualMachineName}-1'
   params: {
     OPNConfigFile: OpnConfigFile
@@ -164,7 +164,7 @@ module opnSense1 'modules/VM/virtualmachine-active-active.bicep' = {
   ]
 }
 
-module opnSense2 'modules/VM/virtualmachine-active-active.bicep' = {
+module opnSense2 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: '${virtualMachineName}-2'
   params: {
     OPNConfigFile: OpnConfigFile
@@ -235,19 +235,19 @@ module elb 'modules/vnet/lb.bicep' = {
           backendPort: 443
           protocol: 'Tcp'
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
+            id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
           }
           disableOutboundSnat: true
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+            id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
           }
           backendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+              id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
             }
           ]
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'probes', externalLoadBalanceProbeName)
+            id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'probes', externalLoadBalanceProbeName)
           }
 
         }
@@ -272,11 +272,11 @@ module elb 'modules/vnet/lb.bicep' = {
           idleTimeoutInMinutes: 4
           enableTcpReset: true
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+            id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
           }
           frontendIPConfigurations: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
+              id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
             }
           ]
           protocol: 'All'
@@ -339,19 +339,19 @@ module ilb 'modules/vnet/lb.bicep' = {
           backendPort: 0
           protocol: 'All'
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'frontendIPConfigurations', internalLoadBalanceFIPConfName)
+            id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'frontendIPConfigurations', internalLoadBalanceFIPConfName)
           }
           disableOutboundSnat: true
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
+            id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
           }
           backendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
+              id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
             }
           ]
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'probes', internalLoadBalanceProbeName)
+            id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'probes', internalLoadBalanceProbeName)
           }
 
         }
@@ -425,19 +425,19 @@ module ilb 'modules/vnet/lb.bicep' = {
 //           backendPort: 443
 //           protocol: 'Tcp'
 //           frontendIPConfiguration: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
 //           }
 //           disableOutboundSnat: true
 //           backendAddressPool: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
 //           }
 //           backendAddressPools: [
 //             {
-//               id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+//               id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
 //             }
 //           ]
 //           probe: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'probes', externalLoadBalanceProbeName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'probes', externalLoadBalanceProbeName)
 //           }
 
 //         }
@@ -462,11 +462,11 @@ module ilb 'modules/vnet/lb.bicep' = {
 //           idleTimeoutInMinutes: 4
 //           enableTcpReset: true
 //           backendAddressPool: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
 //           }
 //           frontendIPConfigurations: [
 //             {
-//               id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
+//               id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
 //             }
 //           ]
 //           protocol: 'All'
@@ -530,19 +530,19 @@ module ilb 'modules/vnet/lb.bicep' = {
 //           backendPort: 0
 //           protocol: 'All'
 //           frontendIPConfiguration: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'frontendIPConfigurations', internalLoadBalanceFIPConfName)
+//             id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'frontendIPConfigurations', internalLoadBalanceFIPConfName)
 //           }
 //           disableOutboundSnat: true
 //           backendAddressPool: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
+//             id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
 //           }
 //           backendAddressPools: [
 //             {
-//               id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
+//               id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'backendAddressPools', internalLoadBalanceBAPName)
 //             }
 //           ]
 //           probe: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', internalLoadBalanceName, 'probes', internalLoadBalanceProbeName)
+//             id: resourceId('Microsoft.Network/loadBalancers', internalLoadBalanceName, 'probes', internalLoadBalanceProbeName)
 //           }
 
 //         }
@@ -604,19 +604,19 @@ module ilb 'modules/vnet/lb.bicep' = {
 //           backendPort: 443
 //           protocol: 'Tcp'
 //           frontendIPConfiguration: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
 //           }
 //           disableOutboundSnat: true
 //           backendAddressPool: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
 //           }
 //           backendAddressPools: [
 //             {
-//               id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+//               id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
 //             }
 //           ]
 //           probe: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'probes', externalLoadBalanceProbeName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'probes', externalLoadBalanceProbeName)
 //           }
 
 //         }
@@ -641,11 +641,11 @@ module ilb 'modules/vnet/lb.bicep' = {
 //           idleTimeoutInMinutes: 4
 //           enableTcpReset: true
 //           backendAddressPool: {
-//             id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
+//             id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'backendAddressPools', externalLoadBalanceBAPName)
 //           }
 //           frontendIPConfigurations: [
 //             {
-//               id: resourceId('Microsoft.Network/loadBalancers/', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
+//               id: resourceId('Microsoft.Network/loadBalancers', externalLoadBalanceName, 'frontendIPConfigurations', externalLoadBalanceFIPConfName)
 //             }
 //           ]
 //           protocol: 'All'
