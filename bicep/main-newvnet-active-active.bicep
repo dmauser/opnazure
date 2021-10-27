@@ -373,6 +373,10 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
       }
     ]
   }
+  dependsOn:[
+    opnSense1
+    opnSense2
+  ]
 }
 
 module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
@@ -387,6 +391,10 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
       tier: 'Regional'
     }
   }
+  dependsOn:[
+    opnSense1
+    opnSense2
+  ]
 }
 
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
@@ -400,4 +408,8 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
     virtualMachineName: winvmName
     virtualMachineSize: 'Standard_B4ms'
   }
+  dependsOn:[
+    opnSense1
+    opnSense2
+  ]
 }
