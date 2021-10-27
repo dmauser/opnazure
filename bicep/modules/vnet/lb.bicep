@@ -7,6 +7,7 @@ param probe array
 
 resource elb 'Microsoft.Network/loadBalancers@2021-03-01' = {
   name: lbName
+  location: resourceGroup().location
   sku: {
     name: 'Standard'
     tier: 'Regional'
