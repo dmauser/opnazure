@@ -42,6 +42,9 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('OPNSense XML Config File')
 param OpnConfigFile string = 'config.xml'
 
+@sys.description('Deploy Windows VM Trusted Subnet')
+param DeployWindows bool = false
+
 // Variables
 var untrustedSubnetName = 'Untrusted-Subnet'
 var trustedSubnetName = 'Trusted-Subnet'
@@ -59,9 +62,14 @@ var internalLoadBalanceBAPName = 'OPNSense'
 var internalLoadBalanceProbeName = 'SSH'
 var internalLoadBalancingRuleName = 'Internal-HA-Port-Rule'
 
+var winvmName = 'VM-Win11Client'
+var winvmnetworkSecurityGroupName = '${winvmName}-NSG'
+var winvmpublicipName = '${winvmName}-PublicIP'
+
+
 // Resources
 // Create NSG
-module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
+module nsgopnsense 'modules/vnet/nsg.bicep' = {
   name: networkSecurityGroupName
   params: {
     nsgName: networkSecurityGroupName
@@ -298,13 +306,13 @@ module opnSense1 'modules/VM/opnsense-vm-active-active.bicep' = {
     untrustedSubnetId: untrustedSubnet.id
     virtualMachineName: '${virtualMachineName}-1'
     virtualMachineSize: virtualMachineSize
-    nsgId: nsgappgwsubnet.outputs.nsgID
+    nsgId: nsgopnsense.outputs.nsgID
     ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
     InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
   }
   dependsOn:[
     vnet
-    nsgappgwsubnet
+    nsgopnsense
   ]
 }
 
@@ -320,15 +328,76 @@ module opnSense2 'modules/VM/opnsense-vm-active-active.bicep' = {
     untrustedSubnetId: untrustedSubnet.id
     virtualMachineName: '${virtualMachineName}-2'
     virtualMachineSize: virtualMachineSize
-    nsgId: nsgappgwsubnet.outputs.nsgID
+    nsgId: nsgopnsense.outputs.nsgID
     ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
     InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
   }
   dependsOn:[
     vnet
-    nsgappgwsubnet
+    nsgopnsense
     opnSense1
   ]
 }
 
+// Windows11 Client Resources
+module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
+  name: winvmnetworkSecurityGroupName
+  params: {
+    nsgName: winvmnetworkSecurityGroupName
+    securityRules: [
+      {
+        name: 'RDP'
+        properties: {
+          priority: 4096
+          sourceAddressPrefix: '*'
+          protocol: 'Tcp'
+          destinationPortRange: '3389'
+          access: 'Allow'
+          direction: 'Inbound'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
+      {
+        name: 'Out-Any'
+        properties: {
+          priority: 4096
+          sourceAddressPrefix: '*'
+          protocol: '*'
+          destinationPortRange: '*'
+          access: 'Allow'
+          direction: 'Outbound'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
+    ]
+  }
+}
 
+module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
+  name: winvmpublicipName
+  params: {
+    publicipName: winvmpublicipName
+    publicipproperties: {
+      publicIPAllocationMethod: 'Static'
+    }
+    publicipsku: {
+      name: PublicIPAddressSku
+      tier: 'Regional'
+    }
+  }
+}
+
+module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
+  name: winvmName
+  params: {
+    nsgId: nsgwinvm.outputs.nsgID
+    publicIPId: winvmpublicip.outputs.publicipId
+    TempPassword: TempPassword
+    TempUsername: TempUsername
+    trustedSubnetId: trustedSubnet.id
+    virtualMachineName: winvmName
+    virtualMachineSize: 'Standard_B4ms'
+  }
+}

@@ -39,6 +39,10 @@
     },
     "OpnConfigFile": {
       "value": "config.xml"
+    },
+    "DeployWindows" :{
+      "value": true
     }
+
   }
 }

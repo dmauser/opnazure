@@ -5,7 +5,7 @@ param loadBalancingRules array
 param outboundRules array = []
 param probe array
 
-resource elb 'Microsoft.Network/loadBalancers@2021-03-01' = {
+resource lb 'Microsoft.Network/loadBalancers@2021-03-01' = {
   name: lbName
   location: resourceGroup().location
   sku: {
@@ -21,4 +21,4 @@ resource elb 'Microsoft.Network/loadBalancers@2021-03-01' = {
   }
 }
 
-output backendAddressPools array = elb.properties.backendAddressPools
+output backendAddressPools array = lb.properties.backendAddressPools
