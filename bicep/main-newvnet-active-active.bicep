@@ -53,13 +53,13 @@ var networkSecurityGroupName = '${virtualMachineName}-NSG'
 var externalLoadBalanceName = 'External-LoadBalance'
 var externalLoadBalanceFIPConfName = 'FW'
 var externalLoadBalanceBAPName = 'OPNSense'
-var externalLoadBalanceProbeName = 'DNS'
+var externalLoadBalanceProbeName = 'HTTPs'
 var externalLoadBalancingRuleName = 'WEB'
 var externalLoadBalanceOutRuleName = 'OutBound-OPNSense'
 var internalLoadBalanceName = 'Internal-LoadBalance'
 var internalLoadBalanceFIPConfName = 'FW'
 var internalLoadBalanceBAPName = 'OPNSense'
-var internalLoadBalanceProbeName = 'SSH'
+var internalLoadBalanceProbeName = 'HTTPs'
 var internalLoadBalancingRuleName = 'Internal-HA-Port-Rule'
 
 var winvmName = 'VM-Win11Client'
@@ -201,7 +201,7 @@ module elb 'modules/vnet/lb.bicep' = {
       {
         name: externalLoadBalanceProbeName
         properties: {
-          port: 53
+          port: 443
           protocol: 'Tcp'
           intervalInSeconds: 5
           numberOfProbes: 2
@@ -283,7 +283,7 @@ module ilb 'modules/vnet/lb.bicep' = {
       {
         name: internalLoadBalanceProbeName
         properties: {
-          port: 22
+          port: 443
           protocol: 'Tcp'
           intervalInSeconds: 5
           numberOfProbes: 2
