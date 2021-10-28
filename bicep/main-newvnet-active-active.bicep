@@ -291,6 +291,9 @@ module ilb 'modules/vnet/lb.bicep' = {
       }
     ]
   }
+  dependsOn:[
+    vnet
+  ]
 }
 
 // Create OPNsense
