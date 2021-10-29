@@ -32,17 +32,16 @@
       "value": "Standard"
     },
     "OpnScriptURI": {
-      "value": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/"
+      "value": "https://raw.githubusercontent.com/dmauser/opnazure/dev_active_active/scripts/"
     },
     "ShellScriptName": {
       "value": "configureopnsense.sh"
     },
     "OpnConfigFile": {
-      "value": "config.xml"
+      "value": "config-active-active.xml"
     },
     "DeployWindows" :{
       "value": true
     }
-
   }
 }
