@@ -327,7 +327,6 @@
       <interface>wan</interface>
       <ipprotocol>inet</ipprotocol>
       <statetype>keep state</statetype>
-      <disablereplyto>1</disablereplyto>
       <protocol>tcp</protocol>
       <source>
         <any>1</any>
