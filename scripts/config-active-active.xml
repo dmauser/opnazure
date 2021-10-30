@@ -595,37 +595,4 @@
       <mode>automatic</mode>
     </outbound>
   </nat>
-  <hasync>
-    <synchronizealiases>on</synchronizealiases>
-    <synchronizeauthservers>on</synchronizeauthservers>
-    <synchronizecerts>on</synchronizecerts>
-    <synchronizenat>on</synchronizenat>
-    <synchronizerules>on</synchronizerules>
-    <synchronizeschedules>on</synchronizeschedules>
-    <synchronizestaticroutes>on</synchronizestaticroutes>
-    <synchronizeusers>on</synchronizeusers>
-    <synchronizewidgets>on</synchronizewidgets>
-    <synchronizentpd>on</synchronizentpd>
-    <synchronizesyslog>on</synchronizesyslog>
-    <synchronizecron>on</synchronizecron>
-    <synchronizesysctl>on</synchronizesysctl>
-    <synchronizewebgui>on</synchronizewebgui>
-    <synchronizednsforwarder>on</synchronizednsforwarder>
-    <synchronizeshaper>on</synchronizeshaper>
-    <synchronizecaptiveportal>on</synchronizecaptiveportal>
-    <synchronizeipsec>on</synchronizeipsec>
-    <synchronizemonit>on</synchronizemonit>
-    <synchronizessh>on</synchronizessh>
-    <synchronizeopenvpn>on</synchronizeopenvpn>
-    <synchronizeifgroups>on</synchronizeifgroups>
-    <synchronizecategories>on</synchronizecategories>
-    <synchronizelvtemplate>on</synchronizelvtemplate>
-    <synchronizesquid>on</synchronizesquid>
-    <synchronizesuricata>on</synchronizesuricata>
-    <synchronizednsresolver>on</synchronizednsresolver>
-    <pfsyncinterface>lan</pfsyncinterface>
-    <synchronizetoip>10.0.1.6</synchronizetoip>
-    <username>root</username>
-    <password>opnsense</password>
-  </hasync>
 </opnsense>
