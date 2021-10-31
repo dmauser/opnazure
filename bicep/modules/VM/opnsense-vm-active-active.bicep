@@ -6,7 +6,7 @@ param TempPassword string
 param virtualMachineSize string
 param OPNScriptURI string
 param ShellScriptName string
-param OPNConfigFile string
+param ShellScriptParameters string
 param nsgId string = ''
 param ExternalLoadBalancerBackendAddressPoolId string
 param InternalLoadBalancerBackendAddressPoolId string
@@ -90,7 +90,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
       fileUris: [
         '${OPNScriptURI}${ShellScriptName}'
       ]
-      commandToExecute: 'sh ${ShellScriptName} ${OPNConfigFile}'
+      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptParameters}'
     }
   }
 }

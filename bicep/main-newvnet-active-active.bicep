@@ -39,15 +39,14 @@ param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/
 @sys.description('Shell Script to be executed')
 param ShellScriptName string = 'configureopnsense.sh'
 
-@sys.description('OPNSense XML Config File')
-param OpnConfigFile string = 'config.xml'
-
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
 // Variables
 var untrustedSubnetName = 'Untrusted-Subnet'
 var trustedSubnetName = 'Trusted-Subnet'
+var VMOPNsensePrimaryName = '${virtualMachineName}-Primary'
+var VMOPNsenseSecondaryName = '${virtualMachineName}-Secondary'
 var publicIPAddressName = '${virtualMachineName}-PublicIP'
 var networkSecurityGroupName = '${virtualMachineName}-NSG'
 var externalLoadBalanceName = 'External-LoadBalance'
@@ -297,17 +296,17 @@ module ilb 'modules/vnet/lb.bicep' = {
 }
 
 // Create OPNsense
-module opnSense1 'modules/VM/opnsense-vm-active-active.bicep' = {
-  name: '${virtualMachineName}-1'
+module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
+  name: VMOPNsenseSecondaryName
   params: {
-    OPNConfigFile: OpnConfigFile
+    ShellScriptParameters: '${OpnScriptURI} Secondary'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: trustedSubnet.id
     untrustedSubnetId: untrustedSubnet.id
-    virtualMachineName: '${virtualMachineName}-1'
+    virtualMachineName: VMOPNsenseSecondaryName
     virtualMachineSize: virtualMachineSize
     nsgId: nsgopnsense.outputs.nsgID
     ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
@@ -319,17 +318,17 @@ module opnSense1 'modules/VM/opnsense-vm-active-active.bicep' = {
   ]
 }
 
-module opnSense2 'modules/VM/opnsense-vm-active-active.bicep' = {
-  name: '${virtualMachineName}-2'
+module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
+  name: VMOPNsensePrimaryName
   params: {
-    OPNConfigFile: OpnConfigFile
+    ShellScriptParameters: '${OpnScriptURI} Primary ${opnSenseSecondary.outputs.trustedNicIP}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: trustedSubnet.id
     untrustedSubnetId: untrustedSubnet.id
-    virtualMachineName: '${virtualMachineName}-2'
+    virtualMachineName: VMOPNsensePrimaryName
     virtualMachineSize: virtualMachineSize
     nsgId: nsgopnsense.outputs.nsgID
     ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
@@ -338,7 +337,7 @@ module opnSense2 'modules/VM/opnsense-vm-active-active.bicep' = {
   dependsOn:[
     vnet
     nsgopnsense
-    opnSense1
+    opnSenseSecondary
   ]
 }
 
@@ -377,8 +376,8 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
     ]
   }
   dependsOn:[
-    opnSense1
-    opnSense2
+    opnSenseSecondary
+    opnSensePrimary
   ]
 }
 
@@ -395,8 +394,8 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
     }
   }
   dependsOn:[
-    opnSense1
-    opnSense2
+    opnSenseSecondary
+    opnSensePrimary
   ]
 }
 
@@ -412,7 +411,7 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
     virtualMachineSize: 'Standard_B4ms'
   }
   dependsOn:[
-    opnSense1
-    opnSense2
+    opnSenseSecondary
+    opnSensePrimary
   ]
 }

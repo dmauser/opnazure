@@ -37,9 +37,6 @@
     "ShellScriptName": {
       "value": "configureopnsense-active-active.sh"
     },
-    "OpnConfigFile": {
-      "value": "config-active-active.xml"
-    },
     "DeployWindows" :{
       "value": true
     }
