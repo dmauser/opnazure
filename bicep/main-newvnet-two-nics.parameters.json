@@ -37,8 +37,8 @@
     "ShellScriptName": {
       "value": "configureopnsense.sh"
     },
-    "OpnConfigFile": {
-      "value": "config.xml"
+    "DeployWindows" :{
+      "value": true
     }
   }
 }

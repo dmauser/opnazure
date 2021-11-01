@@ -7,7 +7,7 @@ param TempPassword string
 param virtualMachineSize string
 param OPNScriptURI string
 param ShellScriptName string
-param OPNConfigFile string
+param ShellScriptParameters string
 param nsgId string = ''
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
@@ -88,7 +88,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
       fileUris: [
         '${OPNScriptURI}${ShellScriptName}'
       ]
-      commandToExecute: 'sh ${ShellScriptName} ${OPNConfigFile}'
+      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptParameters}'
     }
   }
 }

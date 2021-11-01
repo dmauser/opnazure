@@ -35,7 +35,7 @@
       "value": "https://raw.githubusercontent.com/dmauser/opnazure/dev_active_active/scripts/"
     },
     "ShellScriptName": {
-      "value": "configureopnsense-active-active.sh"
+      "value": "configureopnsense.sh"
     },
     "DeployWindows" :{
       "value": true
