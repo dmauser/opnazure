@@ -19,7 +19,7 @@ elif [ "$2" = "SingNic" ]; then
     cp config-snic.xml /usr/local/etc/config.xml
 elif [ "$2" = "TwoNics" ]; then
     fetch $1config.xml
-    cp $1config.xml /usr/local/etc/config.xml
+    cp config.xml /usr/local/etc/config.xml
 fi
 
 #OPNSense default configuration template
