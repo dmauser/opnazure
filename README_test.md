@@ -1,5 +1,9 @@
 # OPNsense Firewall on FreeBSD VM
 
+CI Name | Actions Workflow | CI Status |
+|--------|--------|--------|
+| bicepBuild.yml | [bicepBuild.yml](./.github/workflows/bicepBuild.yml) | [![bicepBuildCI](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml) |
+
 **New VNET + OPNsense with two NICs (Untrusted/Trusted)**
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-newvnet-two-nics.json)
@@ -92,7 +96,7 @@ Here are few considerations to deploy this solution correctly:
 ## Roadmap
 
 The following improvements will be added soon:
-- Add option to create Jumpbox VM for management
+- Fix waagent service not starting after OPNsense deployment
 
 ## Feedbacks
 
