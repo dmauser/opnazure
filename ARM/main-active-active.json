@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "16546905691910595031"
+      "templateHash": "16110101047742779163"
     }
   },
   "parameters": {
@@ -25,13 +25,13 @@
     "TempUsername": {
       "type": "string",
       "metadata": {
-        "description": "Default Temporary Admin username (Only used to deploy FreeBSD VM)"
+        "description": "Default Temporary Admin username (Used for JumpBox and temporarily deploy FreeBSD VM)."
       }
     },
     "TempPassword": {
       "type": "secureString",
       "metadata": {
-        "description": "Default Temporary Admin password (Only used to deploy FreeBSD VM)"
+        "description": "Default Temporary Admin password (Used for JumpBox and temporarily deploy FreeBSD VM)."
       }
     },
     "existingVirtualNetworkName": {
