@@ -14,7 +14,7 @@ param InternalLoadBalancerBackendAddressPoolId string
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-module untrustedNic '../vnet/privateNicLb.bicep' = {
+module untrustedNic '../vnet/privateniclb.bicep' = {
   name: untrustedNicName
   params:{
     nicName: untrustedNicName
@@ -25,7 +25,7 @@ module untrustedNic '../vnet/privateNicLb.bicep' = {
   }
 }
 
-module trustedNic '../vnet/privateNicLb.bicep' = {
+module trustedNic '../vnet/privateniclb.bicep' = {
   name: trustedNicName
   params:{
     nicName: trustedNicName

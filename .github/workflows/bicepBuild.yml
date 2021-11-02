@@ -32,7 +32,7 @@ jobs:
         shell: pwsh
         run: |
           $buildPath = Join-Path -Path $pwd -ChildPath "ARM"
-          $biceps = Get-ChildItem .\bicep\*.bicep
+          $biceps = Get-ChildItem bicep/*.bicep
 
           write-output $buildPath
           If(!(test-path $buildPath))
@@ -45,10 +45,13 @@ jobs:
               /home/runner/.azure/bin/bicep build $bicep.FullName --outdir $buildPath
           }
 
+          Copy-Item bicep/*.parameters.* ARM
+
+
       - name: ContextCheck
         shell: pwsh
         run: |
-          cd ARM/compiled
+          cd ARM
           dir
 
       - name: GIT Push Json file
