@@ -2,7 +2,7 @@
 
 CI Name | Actions Workflow | CI Status |
 |--------|--------|--------|
-| bicepBuild.yml | [bicepBuild.yml](./.github/workflows/bicepBuild.yml) | [![bicepBuildCI](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml) |
+| BicepBuild | [bicepBuild.yml](./.github/workflows/bicepBuild.yml) | [![bicepBuildCI](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml) |
 
 **New VNET + OPNsense with two NICs (Untrusted/Trusted)**
 
