@@ -5,10 +5,10 @@ param virtualMachineSize string = 'Standard_B2s'
 @sys.description('OPN NVA Manchine Name')
 param virtualMachineName string
 
-@sys.description('Default Temporary Admin username (Only used to deploy FreeBSD VM)')
+@sys.description('Default Temporary Admin username (Used for JumpBox and temporarily deploy FreeBSD VM).')
 param TempUsername string
 
-@sys.description('Default Temporary Admin password (Only used to deploy FreeBSD VM)')
+@sys.description('Default Temporary Admin password (Used for JumpBox and temporarily deploy FreeBSD VM).')
 @secure()
 param TempPassword string
 
