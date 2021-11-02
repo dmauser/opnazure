@@ -71,14 +71,6 @@ Design of two Nic deployment | Design of Active-Active deployment |
 |--------|--------|
 |![opnsense design](./images/two-nics.png)|![opnsense design](./images/active-active.png)|
 
-Here is a visual representation of this design of the two NIC deployment:
-
-![opnsense design](./images/two-nics.png)
-
-Here is a visual representation of this design of Active-Active deployment:
-
-![opnsense design](./images/active-active.png)
-
 ## Deployment
 
 Here are few considerations to deploy this solution correctly:
