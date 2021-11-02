@@ -67,6 +67,10 @@ Here is what you will see when you deploy this Template:
 
 ## Design
 
+Design of two Nic deployment | Design of Active-Active deployment |
+|--------|--------|
+|![opnsense design](./images/two-nics.png)|![opnsense design](./images/active-active.png)|
+
 Here is a visual representation of this design of the two NIC deployment:
 
 ![opnsense design](./images/two-nics.png)
