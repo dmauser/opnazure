@@ -20,12 +20,12 @@
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-sing-nic.json)
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-sing-nic.json)
 
-**New VNET + OPNsense Active-Active**
+**New VNET + OPNsense Active-Active (Untrusted/Trusted)**
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-newvnet-active-active.json)
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-newvnet-active-active.json)
 
-**Existing VNET + OPNsense Active-Active**
+**Existing VNET + OPNsense Active-Active (Untrusted/Trusted)**
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-active-active.json)
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fdev_active_active%2FARM%2Fmain-active-active.json)
@@ -41,12 +41,10 @@ The login credentials are set during the installation process to:
 
 After deployment, you can go to <https://PublicIP>, then input the user and password, to configure the OPNsense firewall.
 
-## Updates (Apr-2021)
+## Updates (Nov-2021)
 
-- Added all templates on main page for new VNET and existing VNETs for both two NICs and single NIC.
-- Added options to specific your own deployment script and configuration file.
-- Added NSG to support Standard SKU Public and Internal Load Balancer.
-
+- Added Active-Active deployment option (using Azure Internal and External Loadbalancer and OPNsense HA settings).
+- Templates are now auto-generated under the folder ARM from a Bicep template using Github Actions.
 
 ## Overview
 
@@ -58,12 +56,20 @@ Here is what you will see when you deploy this Template:
 3) External NIC named Untrusted Linked to Untrusted-Subnet (10.0.0.0/24).
 4) Internal NIC named Trusted Linked to Trusted-Subnet (10.0.1.0/24).
 5) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS. Same NSG is associated to both Subnets.
+6) For Active-Active a Internal and External loadbalancer will be created.
+7) Two OPNsense firewalls will be created.
+8) OPNsense will be configured to allow loadbalancer probe connection.
+9) OPNsense HA settings will be configured to sync rules changed between both Firewalls.
 
 ## Design
 
 Here is a visual representation of this design of the two NIC deployment:
 
-![opnsense design](./images/OPN-SenseProject.png)
+![opnsense design](./images/two-nics.png)
+
+Here is a visual representation of this design of Active-Active deployment:
+
+![opnsense design](./images/active-active.png)
 
 ## Deployment
 

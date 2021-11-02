@@ -4,6 +4,8 @@ name: BicepBuild
 
 on:
   push:
+    #branches:
+    #  - 'master'
     paths:
       - 'bicep/*'
       - ".github/workflows/bicepBuild.yml"
@@ -45,7 +47,7 @@ jobs:
               /home/runner/.azure/bin/bicep build $bicep.FullName --outdir $buildPath
           }
 
-          Copy-Item bicep/*.parameters.* ARM
+          Copy-Item bicep/*.parameters.* ARM -Force
 
 
       - name: ContextCheck
