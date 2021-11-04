@@ -1,4 +1,4 @@
-name: Deployment Checker
+name: Deployment Checker - Single Nic
 # Prerequisites
 # 1. Set up your AZURE CREDENTIALS SECRET as per : https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret
 # 2. Make sure the Service Principal has IAM Owner on the Resource Group you're deploying into.
@@ -10,8 +10,9 @@ on:
   #Run when bicep code changes
   push:
     paths:
-      - "bicep/*"
-      - ".github/workflows/deploymentCheker.yml"
+      - "bicep/main-sing-nic.bicep"
+      - "bicep/main-sing-nic.parameters.json"
+      - ".github/workflows/deploymentCheker-sing-nic.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   # pull_request:
@@ -25,10 +26,15 @@ on:
     # At 11:00pm, every Tuesday week
   #  - cron: "0 23 * * 2"
 env:
-  RG: "Automation-Actions-OPNAZURE-Active-Active" #The resource group we're deploying to.
-  ParamFilePath: "bicep/main-newvnet-active-active.parameters.json" #Path to parameter file
-  TemplateFilePath: "bicep/main-newvnet-active-active.bicep"
-  DEPNAME: "Dep-OPNsense-${{ github.run_number }}" #Deployment Name
+  RG: "Automation-Actions-OPNAZURE-sing-nic" #The resource group we're deploying to.
+  ParamFilePath: "bicep/main-sing-nic.parameters.json" #Path to parameter file
+  TemplateFilePath: "bicep/main-sing-nic.bicep"
+  OPNsense-PIP: "OPNsense-PublicIP"
+  VNET: "OPN-VNET"
+  VNETAddress: "10.0.0.0/16"
+  OPNSenseSubnet: "OPNSenseSubnet"
+  OPNSenseSubnetAddress: "10.0.0.0/24"
+  DEPNAME: "Dep-OPNsense-sing-nic-${{ github.run_number }}" #Deployment Name
   AZCLIVERSION: 2.29.2 #Pinning to a specific AZ CLI version
 
 jobs:
@@ -75,7 +81,13 @@ jobs:
           inlineScript: |
             RG='${{ env.RG }}'
             DEPNAME='${{ env.DEPNAME }}'
+            VNET='${{ env.VNET }}'
+            VNETAddress='${{ env.VNETAddress }}'
+            OPNSenseSubnet='${{ env.OPNSenseSubnet }}'
+            OPNSenseSubnetAddress='${{ env.OPNSenseSubnetAddress }}'
             az group create -l eastus -g $RG
+            az network vnet create -g $RG -n $VNET --address-prefixes $VNETAddress
+            az network vnet subnet create -g $RG --vnet-name $VNET -n $OPNSenseSubnet --address-prefixes $OPNSenseSubnetAddress
             # sleep 5
             az deployment group validate -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }}
 
@@ -134,7 +146,8 @@ jobs:
         run: |
           AKSNAME='${{ needs.Deploy.outputs.AKSNAME}}'
           RG='${{ env.RG }}'
-          PIP=$(az network public-ip show -g $RG -n OPNsense-PublicIP --query "ipAddress" -o tsv)
+          PIP='${{ env.OPNsense-PIP }}'
+          PIP=$(az network public-ip show -g $RG -n $PIP --query "ipAddress" -o tsv)
           curl -k https://$PIP --verbose
 
   Cleanup:
