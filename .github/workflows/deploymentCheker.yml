@@ -44,9 +44,9 @@ jobs:
           echo "RG is: $RG"
 
           echo "Param file path is: ${{ env.ParamFilePath }}"
-          echo "Template file path is: ${{ env.TemplateFilePath }}
-          echo "Deployment name is ${{ env.DEPNAME }}
-          echo "AZ cli version is ${{ env.AZCLIVERSION }}
+          echo "Template file path is: ${{ env.TemplateFilePath }}"
+          echo "Deployment name is ${{ env.DEPNAME }}"
+          echo "AZ cli version is ${{ env.AZCLIVERSION }}"
 
       - name: Arm Parameter file check exists
         shell: pwsh
