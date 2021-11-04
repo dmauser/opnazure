@@ -1,4 +1,4 @@
-name: deployment Checker
+name: Deployment Checker
 # Prerequisites
 # 1. Set up your AZURE CREDENTIALS SECRET as per : https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret
 # 2. Make sure the Service Principal has IAM Owner on the Resource Group you're deploying into.
@@ -139,6 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Validation, Deploy, CheckOPNsenseAvailability]
     #if: github.event_name == 'schedule'
+    if: always()
     steps:
       - name: Azure Login
         uses: Azure/login@v1
