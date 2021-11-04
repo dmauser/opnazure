@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "3228891649732947441"
+      "templateHash": "924193613049350107"
     }
   },
   "parameters": {
@@ -1625,10 +1625,10 @@
         "mode": "Incremental",
         "parameters": {
           "nsgId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName')), '2020-06-01').outputs.nsgID.value]"
+            "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('winvmnetworkSecurityGroupName'))]"
           },
           "publicIPId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName')), '2020-06-01').outputs.publicipId.value]"
+            "value": "[resourceId('Microsoft.Network/publicIPAddresses', variables('winvmpublicipName'))]"
           },
           "TempPassword": {
             "value": "[parameters('TempPassword')]"
@@ -1834,10 +1834,8 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsensePrimaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName'))]"
+        "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]"
       ]
     }
   ]
