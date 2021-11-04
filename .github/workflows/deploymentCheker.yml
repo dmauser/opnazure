@@ -25,7 +25,7 @@ on:
     # At 11:00pm, every Tuesday week
   #  - cron: "0 23 * * 2"
 env:
-  RG: "Automation-Actions-OPNAZURE-twonics" #The resource group we're deploying to.
+  RG: "Automation-Actions-OPNAZURE-Active-Active" #The resource group we're deploying to.
   ParamFilePath: "bicep/main-newvnet-active-active.parameters.json" #Path to parameter file
   TemplateFilePath: "bicep/main-newvnet-active-active.bicep"
   DEPNAME: "Dep-OPNsense-${{ github.run_number }}" #Deployment Name
@@ -75,6 +75,8 @@ jobs:
           inlineScript: |
             RG='${{ env.RG }}'
             DEPNAME='${{ env.DEPNAME }}'
+            az group create -l eastus -g $RG
+            # sleep 5
             az deployment group validate -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }}
 
   Deploy:
@@ -105,8 +107,8 @@ jobs:
             DEPNAME='${{ env.DEPNAME }}'
             az deployment group create -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }} --name $DEPNAME --verbose
 
-            DEPSTATUS=$(az deployment operation group list --resource-group $RG --name $DEPNAME) #--query "[?properties.provisioningState=='Failed']"
-            echo $DEPSTATUS
+            # DEPSTATUS=$(az deployment operation group list --resource-group $RG --name $DEPNAME) #--query "[?properties.provisioningState=='Failed']"
+            # echo $DEPSTATUS
 
             # #outputs
             # AKSNAME=$(az deployment group show -n $DEPNAME -g $RG --query "properties.outputs.aksClusterName.value" -o tsv)
@@ -133,7 +135,7 @@ jobs:
           AKSNAME='${{ needs.Deploy.outputs.AKSNAME}}'
           RG='${{ env.RG }}'
           PIP=$(az network public-ip show -g $RG -n OPNsense-PublicIP --query "ipAddress" -o tsv)
-          curl -k https://$ip --verbose
+          curl -k https://$PIP --verbose
 
   Cleanup:
     runs-on: ubuntu-latest
@@ -149,31 +151,11 @@ jobs:
           environment: azurecloud
           allow-no-subscriptions: false
 
-      - name: Install Pwsh modules
-        shell: pwsh
-        run: |
-          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-          Install-Module -Name Az.Accounts
-          Install-Module -Name Az.Resources
-
       - name: Cleanup
-        shell: pwsh
-        run: |
-          $RG='${{ env.RG }}'
-
-          # Get all ARM resources from all resource groups
-          $rgToPurge = Get-AzResourceGroup -Name $RG
-          try {
-            #Remove all but public ip addresses
-            Get-AzResource -ResourceGroupName $rgToPurge.ResourceGroupName | ? {$_.ResourceType -ne "Microsoft.Network/publicIPAddresses"} | Remove-AzResource -Force
-
-            #Remove public ip addresses
-            Get-AzResource -ResourceGroupName $rgToPurge.ResourceGroupName | ? {$_.ResourceType -eq "Microsoft.Network/publicIPAddresses"} | Remove-AzResource -Force
-
-            #Final run to clean other dependant resources in parent-child graph
-            Get-AzResource -ResourceGroupName $rgToPurge.ResourceGroupName | Remove-AzResource -Force
-          }
-          Catch #we're wanting to suppress failures in this step. If it fails to clean, the nightly automation will catch it.
-          {
-            write-output error
-          }
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            RG='${{ env.RG }}'
+            DEPNAME='${{ env.DEPNAME }}'
+            az group delete -n $RG -y --verbose

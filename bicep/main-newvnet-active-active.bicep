@@ -174,7 +174,7 @@ module elb 'modules/vnet/lb.bicep' = {
       {
         name: externalLoadBalancingRuleName
         properties:{
-          frontendPort: 4443
+          frontendPort: 443
           backendPort: 443
           protocol: 'Tcp'
           frontendIPConfiguration: {
