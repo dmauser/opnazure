@@ -8,9 +8,10 @@ on:
   workflow_dispatch:
 
   #Run when bicep code changes
-  # push:
-  #   paths:
-  #     - "bicep/*"
+  push:
+    paths:
+      - "bicep/*"
+      - ".github/workflows/deploymentCheker.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   # pull_request:
