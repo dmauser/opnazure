@@ -38,7 +38,7 @@
       "value": "configureopnsense.sh"
     },
     "DeployWindows" :{
-      "value": true
+      "value": false
     }
   }
 }
