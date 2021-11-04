@@ -27,7 +27,6 @@ env:
   RG: "Automation-Actions-OPNAZURE-twonics" #The resource group we're deploying to.
   ParamFilePath: "bicep/main-newvnet-active-active.parameters.json" #Path to parameter file
   TemplateFilePath: "bicep/main-newvnet-active-active.bicep"
-  RESNAME: "AksStan" #Used in Azure Resource Naming, overrides the default in the parameter file
   DEPNAME: "Dep-OPNsense-${{ github.run_number }}" #Deployment Name
   AZCLIVERSION: 2.29.2 #Pinning to a specific AZ CLI version
 
