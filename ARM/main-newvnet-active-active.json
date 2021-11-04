@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "7173839590244108846"
+      "templateHash": "3228891649732947441"
     }
   },
   "parameters": {
@@ -402,7 +402,7 @@
               {
                 "name": "[variables('externalLoadBalancingRuleName')]",
                 "properties": {
-                  "frontendPort": 4443,
+                  "frontendPort": 443,
                   "backendPort": 443,
                   "protocol": "Tcp",
                   "frontendIPConfiguration": {
