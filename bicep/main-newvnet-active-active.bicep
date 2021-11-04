@@ -65,7 +65,6 @@ var winvmName = 'VM-Win11Client'
 var winvmnetworkSecurityGroupName = '${winvmName}-NSG'
 var winvmpublicipName = '${winvmName}-PublicIP'
 
-
 // Resources
 // Create NSG
 module nsgopnsense 'modules/vnet/nsg.bicep' = {
@@ -112,13 +111,13 @@ module vnet 'modules/vnet/vnet.bicep' = {
     subnets: [
       {
         name: untrustedSubnetName
-        properties:{
+        properties: {
           addressPrefix: UntrustedSubnetCIDR
         }
       }
       {
         name: trustedSubnetName
-        properties:{
+        properties: {
           addressPrefix: TrustedSubnetCIDR
         }
       }
@@ -173,7 +172,7 @@ module elb 'modules/vnet/lb.bicep' = {
     loadBalancingRules: [
       {
         name: externalLoadBalancingRuleName
-        properties:{
+        properties: {
           frontendPort: 443
           backendPort: 443
           protocol: 'Tcp'
@@ -192,11 +191,10 @@ module elb 'modules/vnet/lb.bicep' = {
           probe: {
             id: resourceId('Microsoft.Network/loadBalancers/probes', externalLoadBalanceName, externalLoadBalanceProbeName)
           }
-
         }
       }
     ]
-    probe:[
+    probe: [
       {
         name: externalLoadBalanceProbeName
         properties: {
@@ -210,7 +208,7 @@ module elb 'modules/vnet/lb.bicep' = {
     outboundRules: [
       {
         name: externalLoadBalanceOutRuleName
-        properties:{
+        properties: {
           allocatedOutboundPorts: 0
           idleTimeoutInMinutes: 4
           enableTcpReset: true
@@ -255,7 +253,7 @@ module ilb 'modules/vnet/lb.bicep' = {
     loadBalancingRules: [
       {
         name: internalLoadBalancingRuleName
-        properties:{
+        properties: {
           frontendPort: 0
           backendPort: 0
           protocol: 'All'
@@ -274,7 +272,6 @@ module ilb 'modules/vnet/lb.bicep' = {
           probe: {
             id: resourceId('Microsoft.Network/loadBalancers/probes', internalLoadBalanceName, internalLoadBalanceProbeName)
           }
-
         }
       }
     ]
@@ -290,7 +287,7 @@ module ilb 'modules/vnet/lb.bicep' = {
       }
     ]
   }
-  dependsOn:[
+  dependsOn: [
     vnet
   ]
 }
@@ -312,7 +309,7 @@ module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
     ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
     InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
   }
-  dependsOn:[
+  dependsOn: [
     vnet
     nsgopnsense
   ]
@@ -334,7 +331,7 @@ module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
     ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
     InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
   }
-  dependsOn:[
+  dependsOn: [
     vnet
     nsgopnsense
     opnSenseSecondary
@@ -375,7 +372,7 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
       }
     ]
   }
-  dependsOn:[
+  dependsOn: [
     opnSenseSecondary
     opnSensePrimary
   ]
@@ -393,24 +390,31 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
       tier: 'Regional'
     }
   }
-  dependsOn:[
+  dependsOn: [
     opnSenseSecondary
     opnSensePrimary
   ]
 }
 
+resource nsgwinvmexist 'Microsoft.Network/networkSecurityGroups@2021-03-01' existing = {
+  name: winvmnetworkSecurityGroupName
+}
+
+resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' existing = {
+  name: winvmpublicipName
+}
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
-    nsgId: nsgwinvm.outputs.nsgID
-    publicIPId: winvmpublicip.outputs.publicipId
+    nsgId: nsgwinvmexist.id
+    publicIPId: winvmpublicipexist.id
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: trustedSubnet.id
     virtualMachineName: winvmName
     virtualMachineSize: 'Standard_B4ms'
   }
-  dependsOn:[
+  dependsOn: [
     opnSenseSecondary
     opnSensePrimary
   ]

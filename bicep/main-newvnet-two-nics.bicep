@@ -98,13 +98,13 @@ module vnet 'modules/vnet/vnet.bicep' = {
     subnets: [
       {
         name: untrustedSubnetName
-        properties:{
+        properties: {
           addressPrefix: UntrustedSubnetCIDR
         }
       }
       {
         name: trustedSubnetName
-        properties:{
+        properties: {
           addressPrefix: TrustedSubnetCIDR
         }
       }
@@ -152,7 +152,7 @@ module opnSense 'modules/VM/opnsense-vm.bicep' = {
     publicIPId: publicip.outputs.publicipId
     nsgId: nsgappgwsubnet.outputs.nsgID
   }
-  dependsOn:[
+  dependsOn: [
     vnet
     nsgappgwsubnet
   ]
@@ -192,7 +192,7 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
       }
     ]
   }
-  dependsOn:[
+  dependsOn: [
     opnSense
   ]
 }
@@ -209,23 +209,31 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
       tier: 'Regional'
     }
   }
-  dependsOn:[
+  dependsOn: [
     opnSense
   ]
+}
+
+resource nsgwinvmexist 'Microsoft.Network/networkSecurityGroups@2021-03-01' existing = {
+  name: winvmnetworkSecurityGroupName
+}
+
+resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' existing = {
+  name: winvmpublicipName
 }
 
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
-    nsgId: nsgwinvm.outputs.nsgID
-    publicIPId: winvmpublicip.outputs.publicipId
+    nsgId: nsgwinvmexist.id
+    publicIPId: winvmpublicipexist.id
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: trustedSubnet.id
     virtualMachineName: winvmName
     virtualMachineSize: 'Standard_B4ms'
   }
-  dependsOn:[
+  dependsOn: [
     opnSense
   ]
 }
