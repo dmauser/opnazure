@@ -9,17 +9,22 @@ on:
 
   #Run when bicep code changes
   push:
+    branches:
+     - 'master'
+     - 'dev'
     paths:
       - "bicep/main-newvnet-active-active.parameters.json"
       - "bicep/main-newvnet-active-active.bicep"
       - ".github/workflows/deploymentCheker-newvnet-active-active.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
-  # pull_request:
-  #   branches: [main]
-  #   paths:
-  #     - "bicep/*"
-  #     - ".github/workflows/StandardCI.yml"
+  pull_request:
+    branches:
+     - 'master'
+    paths:
+      - "bicep/main-newvnet-active-active.parameters.json"
+      - "bicep/main-newvnet-active-active.bicep"
+      - ".github/workflows/deploymentCheker-newvnet-active-active.yml"
 
   #Run on a weekly schedule
   #schedule:

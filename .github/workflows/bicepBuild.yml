@@ -15,7 +15,6 @@ on:
   pull_request:
     branches:
      - 'master'
-     - 'dev'
     paths:
       - "bicep/*"
       - ".github/workflows/bicepBuild.yml"
