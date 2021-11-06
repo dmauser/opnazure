@@ -218,6 +218,7 @@
       <ssl-ciphers/>
       <compression/>
       <nohttpreferercheck>1</nohttpreferercheck>
+      <noantilockout>1</noantilockout>
     </webgui>
     <disablenatreflection>yes</disablenatreflection>
     <usevirtualterminal>1</usevirtualterminal>
@@ -343,6 +344,59 @@
       <created>
         <username>root@187.143.39.253</username>
         <time>1502150334.1255</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </created>
+    </rule>
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <statetype>keep state</statetype>
+      <descr>Allow Azure Loadbalancer Probe - with replyto LAN_GW</descr>
+      <direction>in</direction>
+      <reply-to>LAN_GW</reply-to>
+      <log>1</log>
+      <quick>1</quick>
+      <source>
+        <address>168.63.129.16</address>
+      </source>
+      <destination>
+        <network>lanip</network>
+      </destination>
+      <updated>
+        <username>root@10.0.1.7</username>
+        <time>1636126633.6864</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </updated>
+      <created>
+        <username>root@10.0.1.7</username>
+        <time>1636125745.8098</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </created>
+    </rule>
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <statetype>keep state</statetype>
+      <descr>anti-lockout - Dont delete or create rules before this one</descr>
+      <direction>in</direction>
+      <log>1</log>
+      <quick>1</quick>
+      <source>
+        <network>lan</network>
+      </source>
+      <destination>
+        <network>lanip</network>
+      </destination>
+      <updated>
+        <username>root@10.0.1.7</username>
+        <time>1636146222.3734</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </updated>
+      <created>
+        <username>root@10.0.1.7</username>
+        <time>1636126523.671</time>
         <description>/firewall_rules_edit.php made changes</description>
       </created>
     </rule>
@@ -628,4 +682,17 @@
     <username>root</username>
     <password>opnsense</password>
   </hasync>
+  <gateways>
+    <gateway_item>
+      <interface>lan</interface>
+      <gateway>yyy.yyy.yyy.yyy</gateway>
+      <name>LAN_GW</name>
+      <priority>255</priority>
+      <weight>1</weight>
+      <ipprotocol>inet</ipprotocol>
+      <interval/>
+      <descr/>
+      <monitor_disable>1</monitor_disable>
+    </gateway_item>
+  </gateways>
 </opnsense>

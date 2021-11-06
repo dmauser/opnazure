@@ -9,19 +9,25 @@
 # Note: Firewall Sync should only be setup in the Primary Server
 if [ "$2" = "Primary" ]; then
     fetch $1config-active-active-primary.xml
+    fetch $1get_nic_gw.py
+    gwip=$(python3 get_nic_gw.py hn1)
+    sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$3/" config-active-active-primary.xml
     cp config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$2" = "Secondary" ]; then
-    fetch $1config-active-active-secondary.xml
+    fetch $1config.xml
     fetch $1get_nic_gw.py
     gwip=$(python3 get_nic_gw.py hn1)
-    sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-secondary.xml
-    cp config-active-active-secondary.xml /usr/local/etc/config.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
+    cp config.xml /usr/local/etc/config.xml
 elif [ "$2" = "SingNic" ]; then
     fetch $1config-snic.xml
     cp config-snic.xml /usr/local/etc/config.xml
 elif [ "$2" = "TwoNics" ]; then
     fetch $1config.xml
+    fetch $1get_nic_gw.py
+    gwip=$(python3 get_nic_gw.py hn1)
+    sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
     cp config.xml /usr/local/etc/config.xml
 fi
 
