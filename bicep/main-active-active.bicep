@@ -263,7 +263,7 @@ module ilb 'modules/vnet/lb.bicep' = {
 module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: VMOPNsenseSecondaryName
   params: {
-    ShellScriptParameters: '${OpnScriptURI} Secondary'
+    ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -284,7 +284,7 @@ module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
 module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: VMOPNsensePrimaryName
   params: {
-    ShellScriptParameters: '${OpnScriptURI} Primary ${opnSenseSecondary.outputs.trustedNicIP}'
+    ShellScriptParameters: '${OpnScriptURI} Primary ${trustedSubnet.properties.addressPrefix} ${opnSenseSecondary.outputs.trustedNicIP}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -382,5 +382,7 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   dependsOn: [
     opnSenseSecondary
     opnSensePrimary
+    nsgwinvm
+    winvmpublicip
   ]
 }

@@ -221,5 +221,7 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   }
   dependsOn: [
     opnSense
+    nsgwinvm
+    winvmpublicip
   ]
 }
