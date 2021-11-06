@@ -29,6 +29,7 @@ elif [ "$2" = "TwoNics" ]; then
     gwip=$(python3 get_nic_gw.py hn1)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
     cp config.xml /usr/local/etc/config.xml
+    cp config.xml /config.xml
 fi
 
 #OPNSense default configuration template
