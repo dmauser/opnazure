@@ -140,7 +140,7 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
 module opnSense 'modules/VM/opnsense-vm.bicep' = {
   name: virtualMachineName
   params: {
-    ShellScriptParameters: '${OpnScriptURI} TwoNics'
+    ShellScriptParameters: '${OpnScriptURI} TwoNics ${trustedSubnet.properties.addressPrefix}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword

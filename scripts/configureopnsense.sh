@@ -3,21 +3,22 @@
 # Script Params
 # $1 = OPNScriptURI
 # $2 = Primary/Secondary/SingNic/TwoNics
-# $3 = Private IP Secondary Server
+# $3 = Trusted Nic subnet prefix - used to get the gw
+# $4 = Private IP Secondary Server
 
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
 if [ "$2" = "Primary" ]; then
     fetch $1config-active-active-primary.xml
     fetch $1get_nic_gw.py
-    gwip=$(python3 get_nic_gw.py hn1)
+    gwip=$(python3 get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-primary.xml
-    sed -i "" "s/xxx.xxx.xxx.xxx/$3/" config-active-active-primary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$4/" config-active-active-primary.xml
     cp config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$2" = "Secondary" ]; then
     fetch $1config.xml
     fetch $1get_nic_gw.py
-    gwip=$(python3 get_nic_gw.py hn1)
+    gwip=$(python3 get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
     cp config.xml /usr/local/etc/config.xml
 elif [ "$2" = "SingNic" ]; then
@@ -26,7 +27,7 @@ elif [ "$2" = "SingNic" ]; then
 elif [ "$2" = "TwoNics" ]; then
     fetch $1config.xml
     fetch $1get_nic_gw.py
-    gwip=$(python3 get_nic_gw.py hn1)
+    gwip=$(python3 get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
     cp config.xml /usr/local/etc/config.xml
     cp config.xml /config.xml
