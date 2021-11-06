@@ -1,29 +1,38 @@
-#!/usr/bin/python3
-import ipaddress
-import os
+import re
+import socket
+import struct
 import sys
 
-# def convertip(user_option):
-#   hex_data=user_option[2:]
-#   #Check length, should be 8 , leading 0 is matter
-#   if len(hex_data)< 8:
-#     hex_data = ''.join(('0',hex_data))
-#   def hex_to_ip_decimal(hex_data):
-#     ipaddr = "%i.%i.%i.%i" % (int(hex_data[0:2],16),int(hex_data[2:4],16),int(hex_data[4:6],16),int(hex_data[6:8],16))
-#     return ipaddr
-#   result=hex_to_ip_decimal(hex_data)
-#   return result
-#   #print (result)
+def inet_atoi(ipv4_str):
+    """Convert dotted ipv4 string to int"""
+    # note: use socket for packed binary then struct to unpack
+    return struct.unpack("!I", socket.inet_aton(ipv4_str))[0]
+
+def inet_itoa(ipv4_int):
+    """Convert int to dotted ipv4 string"""
+    # note: use struct to pack then socket to string
+    return socket.inet_ntoa(struct.pack("!I", ipv4_int))
+
+def ipv4_range(ipaddr):
+    """Return a list of IPv4 address contianed in a cidr address range"""
+    # split out for example 192.168.1.1:22/24
+    ipv4_str, port_str, cidr_str = re.match(
+        r'([\d\.]+)(:\d+)?(/\d+)?', ipaddr).groups()
+
+    # convert as needed
+    ipv4_int = inet_atoi(ipv4_str)
+    port_str = port_str or ''
+    cidr_str = cidr_str or ''
+    cidr_int = int(cidr_str[1:]) if cidr_str else 0
+
+    # mask ipv4
+    ipv4_base = ipv4_int & (0xffffffff << (32 - cidr_int))
+
+    # generate list
+    addrs = [inet_itoa(ipv4_base + val)
+        for val in range(1 << (32 - cidr_int) + 2)]
+    return addrs
 
 nic = sys.argv[1]
-#print(nic)
-
-#ipv4IP = os.popen('ifconfig '+nic+' | grep "\<inet\>" | awk \'{ print $2 }\' | awk -F "/" \'{ print $1 }\'').read().strip()
-#ipv4mask = os.popen('ifconfig '+nic+' | grep "\<inet\>" | awk \'{ print $4 }\' | awk -F "/" \'{ print $1 }\'').read().strip()
-#print(ipv4IP)
-#print(ipv4mask)
-n = ipaddress.IPv4Network(nic, strict=False)
-#n = ipaddress.IPv4Network('10.10.128.253/255.255.255.224', strict=False)
-first, last = n[0+1], n[-1]
-print(first)
-#print(last)
+#print(ipv4_range('10.0.1.0/24')[1])
+print(ipv4_range(nic)[1])
