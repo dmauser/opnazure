@@ -27,7 +27,10 @@ elif [ "$2" = "SingNic" ]; then
 elif [ "$2" = "TwoNics" ]; then
     fetch $1config.xml
     fetch $1get_nic_gw.py
+    echo log >> /log.txt
+    echo $3 >> /log.txt
     gwip=$(python3 get_nic_gw.py $3)
+    echo $gwip >> /log.txt
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
     cp config.xml /usr/local/etc/config.xml
     cp config.xml /config.xml
