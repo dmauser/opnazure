@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "1585279104691434395"
+      "templateHash": "10049648963626907222"
     }
   },
   "parameters": {
@@ -993,7 +993,9 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))]"
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName'))]",
+        "[resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName'))]"
       ]
     }
   ]

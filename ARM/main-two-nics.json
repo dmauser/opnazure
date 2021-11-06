@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "8312400903720283816"
+      "templateHash": "5316297350353341129"
     }
   },
   "parameters": {
@@ -259,7 +259,7 @@
         "mode": "Incremental",
         "parameters": {
           "ShellScriptParameters": {
-            "value": "[format('{0} TwoNics', parameters('OpnScriptURI'))]"
+            "value": "[format('{0} TwoNics {1}', parameters('OpnScriptURI'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('existingVirtualNetworkName'), parameters('existingTrustedSubnet')), '/')[0], split(format('{0}/{1}', parameters('existingVirtualNetworkName'), parameters('existingTrustedSubnet')), '/')[1]), '2020-11-01').addressPrefix)]"
           },
           "OPNScriptURI": {
             "value": "[parameters('OpnScriptURI')]"
@@ -1005,7 +1005,9 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))]"
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName'))]",
+        "[resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName'))]"
       ]
     }
   ]

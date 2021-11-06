@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "924193613049350107"
+      "templateHash": "4300322761599349154"
     }
   },
   "parameters": {
@@ -671,7 +671,7 @@
         "mode": "Incremental",
         "parameters": {
           "ShellScriptParameters": {
-            "value": "[format('{0} Secondary', parameters('OpnScriptURI'))]"
+            "value": "[format('{0} Secondary {1}', parameters('OpnScriptURI'), parameters('TrustedSubnetCIDR'))]"
           },
           "OPNScriptURI": {
             "value": "[parameters('OpnScriptURI')]"
@@ -1065,7 +1065,7 @@
         "mode": "Incremental",
         "parameters": {
           "ShellScriptParameters": {
-            "value": "[format('{0} Primary {1}', parameters('OpnScriptURI'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2020-06-01').outputs.trustedNicIP.value)]"
+            "value": "[format('{0} Primary {1} {2}', parameters('OpnScriptURI'), parameters('TrustedSubnetCIDR'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2020-06-01').outputs.trustedNicIP.value)]"
           },
           "OPNScriptURI": {
             "value": "[parameters('OpnScriptURI')]"
@@ -1834,8 +1834,10 @@
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsensePrimaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]"
+        "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName'))]"
       ]
     }
   ]
