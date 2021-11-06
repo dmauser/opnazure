@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "17254890478736867879"
+      "templateHash": "1805191734523751308"
     }
   },
   "parameters": {
@@ -363,7 +363,7 @@
         "mode": "Incremental",
         "parameters": {
           "ShellScriptParameters": {
-            "value": "[format('{0} TwoNics', parameters('OpnScriptURI'))]"
+            "value": "[format('{0} TwoNics {1}', parameters('OpnScriptURI'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), variables('trustedSubnetName')), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), variables('trustedSubnetName')), '/')[1]), '2020-11-01').addressPrefix)]"
           },
           "OPNScriptURI": {
             "value": "[parameters('OpnScriptURI')]"
