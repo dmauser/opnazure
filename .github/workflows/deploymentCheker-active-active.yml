@@ -31,7 +31,7 @@ on:
     # At 11:00pm, every Tuesday week
   #  - cron: "0 23 * * 2"
 env:
-  RG: "Automation-Actions-OPNAZURE-Active-Active" #The resource group we're deploying to.
+  RG: "Automation-Actions-OPNAZURE-Active-Active-${{ github.run_number }}" #The resource group we're deploying to.
   ParamFilePath: "bicep/main-active-active.parameters.json" #Path to parameter file
   TemplateFilePath: "bicep/main-active-active.bicep"
   OPNsense-PIP: "OPNsense-PublicIP"

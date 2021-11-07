@@ -14,12 +14,15 @@ if [ "$2" = "Primary" ]; then
     gwip=$(python get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$4/" config-active-active-primary.xml
+    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" config-active-active-primary.xml
+    <hostname>OPNsense</hostname>
     cp config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$2" = "Secondary" ]; then
     fetch $1config.xml
     fetch $1get_nic_gw.py
     gwip=$(python get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
+    sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" config.xml
     cp config.xml /usr/local/etc/config.xml
 elif [ "$2" = "SingNic" ]; then
     fetch $1config-snic.xml
