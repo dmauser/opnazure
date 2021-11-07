@@ -15,7 +15,6 @@ if [ "$2" = "Primary" ]; then
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$4/" config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" config-active-active-primary.xml
-    <hostname>OPNsense</hostname>
     cp config-active-active-primary.xml /usr/local/etc/config.xml
 elif [ "$2" = "Secondary" ]; then
     fetch $1config.xml
