@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachineSize": {
+      "value": "Standard_B2s"
+    },
+    "virtualMachineName": {
+      "value": "OPNsense"
+    },
+    "TempUsername": {
+      "value": "azureuser"
+    },
+    "TempPassword": {
+      "value": "P@ssw0rd!1234&Azure"
+    },
+    "existingVirtualNetworkName": {
+      "value": "OPN-VNET"
+    },
+    "existingSubnetName": {
+      "value": "OPNSenseSubnet"
+    },
+    "PublicIPAddressSku": {
+      "value": "Standard"
+    },
+    "OpnScriptURI": {
+      "value": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/"
+    },
+    "ShellScriptName": {
+      "value": "configureopnsense.sh"
+    },
+    "DeployWindows" :{
+      "value": false
+    }
+  }
+}

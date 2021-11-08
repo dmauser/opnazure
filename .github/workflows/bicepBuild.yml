@@ -1,0 +1,71 @@
+# Builds a JSON file from the main.json bicep
+
+name: BicepBuild
+
+on:
+  push:
+    branches:
+     - 'master'
+     - 'dev'
+    paths:
+      - 'bicep/*'
+      - ".github/workflows/bicepBuild.yml"
+
+  #Run when PR's are made to master, where the changes are in the bicep directory or this workflow file itself
+  pull_request:
+    branches:
+     - 'master'
+    paths:
+      - "bicep/*"
+      - ".github/workflows/bicepBuild.yml"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: ContextCheck
+        shell: pwsh
+        run: |
+          echo 'ghen : ${{ github.event_name }}'
+          dir
+
+      - name: Install Bicep
+        shell: pwsh
+        run: |
+          az bicep install
+
+      - name: Bicep build
+        shell: pwsh
+        run: |
+          $buildPath = Join-Path -Path $pwd -ChildPath "ARM"
+          $biceps = Get-ChildItem bicep/*.bicep
+
+          write-output $buildPath
+          If(!(test-path $buildPath))
+          {
+                New-Item -ItemType Directory -Force -Path $buildPath
+          }
+
+          foreach ($bicep in $biceps) {
+              Write-Output "Building Bicep file: $bicep"
+              /home/runner/.azure/bin/bicep build $bicep.FullName --outdir $buildPath
+          }
+
+          Copy-Item bicep/*.parameters.* ARM -Force
+
+
+      - name: ContextCheck
+        shell: pwsh
+        run: |
+          cd ARM
+          dir
+
+      - name: GIT Push Json file
+        uses: actions-x/commit@v2
+        with:
+          message: Adding auto compiled bicep json

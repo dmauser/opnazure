@@ -218,6 +218,7 @@
       <ssl-ciphers/>
       <compression/>
       <nohttpreferercheck>1</nohttpreferercheck>
+      <noantilockout>1</noantilockout>
     </webgui>
     <disablenatreflection>yes</disablenatreflection>
     <usevirtualterminal>1</usevirtualterminal>
@@ -257,7 +258,7 @@
   </system>
   <interfaces>
     <wan>
-      <if>hn1</if>
+      <if>hn0</if>
       <descr/>
       <enable>1</enable>
       <spoofmac/>
@@ -283,7 +284,7 @@
       <adv_dhcp_config_file_override_path/>
     </wan>
     <lan>
-      <if>hn0</if>
+      <if>hn1</if>
       <descr>LAN</descr>
       <enable>1</enable>
       <spoofmac/>
@@ -327,7 +328,6 @@
       <interface>wan</interface>
       <ipprotocol>inet</ipprotocol>
       <statetype>keep state</statetype>
-      <disablereplyto>1</disablereplyto>
       <protocol>tcp</protocol>
       <source>
         <any>1</any>
@@ -344,6 +344,59 @@
       <created>
         <username>root@187.143.39.253</username>
         <time>1502150334.1255</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </created>
+    </rule>
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <statetype>keep state</statetype>
+      <descr>Allow Azure Loadbalancer Probe - with replyto LAN_GW</descr>
+      <direction>in</direction>
+      <reply-to>LAN_GW</reply-to>
+      <log>1</log>
+      <quick>1</quick>
+      <source>
+        <address>168.63.129.16</address>
+      </source>
+      <destination>
+        <network>lanip</network>
+      </destination>
+      <updated>
+        <username>root@10.0.1.7</username>
+        <time>1636126633.6864</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </updated>
+      <created>
+        <username>root@10.0.1.7</username>
+        <time>1636125745.8098</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </created>
+    </rule>
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <statetype>keep state</statetype>
+      <descr>anti-lockout - Dont delete or create rules before this one</descr>
+      <direction>in</direction>
+      <log>1</log>
+      <quick>1</quick>
+      <source>
+        <network>lan</network>
+      </source>
+      <destination>
+        <network>lanip</network>
+      </destination>
+      <updated>
+        <username>root@10.0.1.7</username>
+        <time>1636146222.3734</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </updated>
+      <created>
+        <username>root@10.0.1.7</username>
+        <time>1636126523.671</time>
         <description>/firewall_rules_edit.php made changes</description>
       </created>
     </rule>
@@ -596,4 +649,50 @@
       <mode>automatic</mode>
     </outbound>
   </nat>
+  <hasync>
+    <synchronizealiases>on</synchronizealiases>
+    <synchronizeauthservers>on</synchronizeauthservers>
+    <synchronizecerts>on</synchronizecerts>
+    <synchronizenat>on</synchronizenat>
+    <synchronizerules>on</synchronizerules>
+    <synchronizeschedules>on</synchronizeschedules>
+    <synchronizestaticroutes>on</synchronizestaticroutes>
+    <synchronizeusers>on</synchronizeusers>
+    <synchronizewidgets>on</synchronizewidgets>
+    <synchronizentpd>on</synchronizentpd>
+    <synchronizesyslog>on</synchronizesyslog>
+    <synchronizecron>on</synchronizecron>
+    <synchronizesysctl>on</synchronizesysctl>
+    <synchronizewebgui>on</synchronizewebgui>
+    <synchronizednsforwarder>on</synchronizednsforwarder>
+    <synchronizeshaper>on</synchronizeshaper>
+    <synchronizecaptiveportal>on</synchronizecaptiveportal>
+    <synchronizeipsec>on</synchronizeipsec>
+    <synchronizemonit>on</synchronizemonit>
+    <synchronizessh>on</synchronizessh>
+    <synchronizeopenvpn>on</synchronizeopenvpn>
+    <synchronizeifgroups>on</synchronizeifgroups>
+    <synchronizecategories>on</synchronizecategories>
+    <synchronizelvtemplate>on</synchronizelvtemplate>
+    <synchronizesquid>on</synchronizesquid>
+    <synchronizesuricata>on</synchronizesuricata>
+    <synchronizednsresolver>on</synchronizednsresolver>
+    <pfsyncinterface>lan</pfsyncinterface>
+    <synchronizetoip>xxx.xxx.xxx.xxx</synchronizetoip>
+    <username>root</username>
+    <password>opnsense</password>
+  </hasync>
+  <gateways>
+    <gateway_item>
+      <interface>lan</interface>
+      <gateway>yyy.yyy.yyy.yyy</gateway>
+      <name>LAN_GW</name>
+      <priority>255</priority>
+      <weight>1</weight>
+      <ipprotocol>inet</ipprotocol>
+      <interval/>
+      <descr/>
+      <monitor_disable>1</monitor_disable>
+    </gateway_item>
+  </gateways>
 </opnsense>

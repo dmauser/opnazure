@@ -1,25 +1,44 @@
 # OPNsense Firewall on FreeBSD VM
 
+CI Name | Actions Workflow | CI Status |
+|--------|--------|--------|
+| BicepBuild | [bicepBuild.yml](./.github/workflows/bicepBuild.yml) | [![bicepBuildCI](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml) |
+| Deployment Checker - Active Active | [deploymentCheker-active-active.yml](./.github/workflows/deploymentCheker-active-active.yml) | [![deploymentChekeractiveactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-active-active.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-active-active.yml) |
+| Deployment Checker - two nics | [deploymentCheker-two-nics.yml](./.github/workflows/deploymentCheker-two-nics.yml) | [![deploymentChekertwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-two-nics.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-two-nics.yml) |
+| Deployment Checker - single nic | [deploymentCheker-sing-nic.yml](./.github/workflows/deploymentCheker-sing-nic.yml) | [![deploymentChekersingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-sing-nic.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-sing-nic.yml) |
+| Deployment Checker - new vnet Active Active | [deploymentCheker-newvnet-active-active.yml](./.github/workflows/deploymentCheker-newvnet-active-active.yml) | [![deploymentChekeractivenewvnetactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-active-active.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-active-active.yml) |
+| Deployment Checker - new vnet two nics | [deploymentCheker-newvnet-two-nics.yml](./.github/workflows/deploymentCheker-two-nics.yml) | [![deploymentChekernewvnettwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-newvnet-two-nics.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-newvnet-two-nics.yml) |
+| Deployment Checker - new vnet single nic | [deploymentCheker-newvnet-sing-nic.yml](./.github/workflows/deploymentCheker-sing-nic.yml) | [![deploymentChekernewvnetsingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-newvnet-sing-nic.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/deploymentCheker-newvnet-sing-nic.yml) |
+
 **New VNET + OPNsense with two NICs (Untrusted/Trusted)**
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-newvnet-two-nics.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-newvnet-two-nics.json)
 
 **Existing VNET + OPNsense with two NICs (Untrusted/Trusted)**
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-TwoNICs.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-TwoNICs.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-two-nics.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-two-nics.json)
 
 **New VNET + OPNsense with single NIC**
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-newvnet-single-nic.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-newvnet-single-nic.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-newvnet-sing-nic.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-newvnet-sing-nic.json)
 
 **Existing VNET + OPNsense with single NIC**
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-SingleNIC.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fazuredeploy-SingleNIC.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-sing-nic.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-sing-nic.json)
 
+**New VNET + OPNsense Active-Active (Untrusted/Trusted)**
+
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-newvnet-active-active.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-newvnet-active-active.json)
+
+**Existing VNET + OPNsense Active-Active (Untrusted/Trusted)**
+
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-active-active.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain-active-active.json)
 
 Those template allows you to deploy an OPNsense Firewall VM using the opnsense-bootsrtap installation method. It creates an FreeBSD VM, does a silent install of OPNsense using a modified version of opnsense-bootstrap.sh with the settings provided.
 
@@ -32,16 +51,14 @@ The login credentials are set during the installation process to:
 
 After deployment, you can go to <https://PublicIP>, then input the user and password, to configure the OPNsense firewall.
 
-## Updates (Apr-2021)
+## Updates (Nov-2021)
 
-- Added all templates on main page for new VNET and existing VNETs for both two NICs and single NIC.
-- Added options to specific your own deployment script and configuration file.
-- Added NSG to support Standard SKU Public and Internal Load Balancer.
-
+- Added Active-Active deployment option (using Azure Internal and External Loadbalancer and OPNsense HA settings).
+- Templates are now auto-generated under the folder ARM from a Bicep template using Github Actions.
 
 ## Overview
 
-This OPNsense solution is installed in FreeBSD 11.2 (Azure Image). 
+This OPNsense solution is installed in FreeBSD 11.2 (Azure Image).
 Here is what you will see when you deploy this Template:
 
 1) VNET with Two Subnets and OPNsense VM with two NICs.
@@ -49,12 +66,16 @@ Here is what you will see when you deploy this Template:
 3) External NIC named Untrusted Linked to Untrusted-Subnet (10.0.0.0/24).
 4) Internal NIC named Trusted Linked to Trusted-Subnet (10.0.1.0/24).
 5) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS. Same NSG is associated to both Subnets.
+6) For Active-Active a Internal and External loadbalancer will be created.
+7) Two OPNsense firewalls will be created.
+8) OPNsense will be configured to allow loadbalancer probe connection.
+9) OPNsense HA settings will be configured to sync rules changed between both Firewalls.
 
 ## Design
 
-Here is a visual representation of this design of the two NIC deployment:
-
-![opnsense design](./images/OPN-SenseProject.png)
+Design of two Nic deployment | Design of Active-Active deployment |
+|--------|--------|
+|![opnsense design](./images/two-nics.png)|![opnsense design](./images/active-active.png)|
 
 ## Deployment
 
@@ -77,7 +98,7 @@ Here are few considerations to deploy this solution correctly:
 ## Roadmap
 
 The following improvements will be added soon:
-- Add option to create Jumpbox VM for management
+- Fix waagent service not starting after OPNsense deployment
 
 ## Feedbacks
 
@@ -85,4 +106,4 @@ Please use Github [issues tab](https://github.com/dmauser/opnazure/issues) to pr
 
 ## Credits
 
-Thanks for direct feedbacks and contributions from: Adam Torkar, Brian Wurzbacher, Victor Santana and Brady Sondreal.
+Thanks for direct feedbacks and contributions from: Adam Torkar, Brian Wurzbacher, [Victor Santana](https://github.com/welasco) and Brady Sondreal.
