@@ -112,7 +112,10 @@ jobs:
           inlineScript: |
             RG='${{ env.RG }}'
             DEPNAME='${{ env.DEPNAME }}'
-            az deployment group create -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }} --name $DEPNAME --verbose
+            branchName=${GITHUB_REF#refs/heads/}
+            OpnScriptURI="https://raw.githubusercontent.com/dmauser/opnazure/$branchName/scripts/"
+            az deployment group create -g $RG --name $DEPNAME -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p OpnScriptURI=$OpnScriptURI --verbose
+            #az deployment group create -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }} --name $DEPNAME --verbose
 
             # DEPSTATUS=$(az deployment operation group list --resource-group $RG --name $DEPNAME) #--query "[?properties.provisioningState=='Failed']"
             # echo $DEPSTATUS
