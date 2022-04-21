@@ -37,6 +37,8 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
+param Location string = resourceGroup().location
+
 // Variables
 var VMOPNsensePrimaryName = '${virtualMachineName}-Primary'
 var VMOPNsenseSecondaryName = '${virtualMachineName}-Secondary'
@@ -63,6 +65,7 @@ var winvmpublicipName = '${winvmName}-PublicIP'
 module nsgopnsense 'modules/vnet/nsg.bicep' = {
   name: networkSecurityGroupName
   params: {
+    Location: Location
     nsgName: networkSecurityGroupName
     securityRules: [
       {
@@ -99,6 +102,7 @@ module nsgopnsense 'modules/vnet/nsg.bicep' = {
 module publicip 'modules/vnet/publicip.bicep' = {
   name: publicIPAddressName
   params: {
+    location: Location
     publicipName: publicIPAddressName
     publicipproperties: {
       publicIPAllocationMethod: 'Static'
@@ -123,6 +127,7 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
 module elb 'modules/vnet/lb.bicep' = {
   name: externalLoadBalanceName
   params: {
+    Location: Location
     lbName: externalLoadBalanceName
     frontendIPConfigurations: [
       {
@@ -201,6 +206,7 @@ module elb 'modules/vnet/lb.bicep' = {
 module ilb 'modules/vnet/lb.bicep' = {
   name: internalLoadBalanceName
   params: {
+    Location: Location
     lbName: internalLoadBalanceName
     frontendIPConfigurations: [
       {
@@ -263,6 +269,7 @@ module ilb 'modules/vnet/lb.bicep' = {
 module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: VMOPNsenseSecondaryName
   params: {
+    Location: Location
     ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -284,6 +291,7 @@ module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
 module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: VMOPNsensePrimaryName
   params: {
+    Location: Location
     ShellScriptParameters: '${OpnScriptURI} Primary ${trustedSubnet.properties.addressPrefix} ${opnSenseSecondary.outputs.trustedNicIP}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -307,6 +315,7 @@ module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
 module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
   name: winvmnetworkSecurityGroupName
   params: {
+    Location: Location
     nsgName: winvmnetworkSecurityGroupName
     securityRules: [
       {
@@ -346,6 +355,7 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
 module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   name: winvmpublicipName
   params: {
+    location: Location
     publicipName: winvmpublicipName
     publicipproperties: {
       publicIPAllocationMethod: 'Static'
@@ -371,6 +381,7 @@ resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' exi
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
+    Location: Location
     nsgId: nsgwinvmexist.id
     publicIPId: winvmpublicipexist.id
     TempPassword: TempPassword

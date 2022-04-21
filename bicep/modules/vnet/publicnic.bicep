@@ -3,10 +3,11 @@ param publicIPId string
 param enableIPForwarding bool = false
 param nicName string
 param nsgId string
+param Location string = resourceGroup().location
 
 resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   name: nicName
-  location: resourceGroup().location
+  location: Location
   properties: {
     enableIPForwarding: enableIPForwarding
     networkSecurityGroup:{

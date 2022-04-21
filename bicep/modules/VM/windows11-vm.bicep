@@ -5,6 +5,7 @@ param TempUsername string
 param TempPassword string
 param virtualMachineSize string
 param nsgId string
+param Location string = resourceGroup().location
 
 var trustedNicName = '${virtualMachineName}-NIC'
 
@@ -21,7 +22,7 @@ module trustedNic '../vnet/publicnic.bicep' = {
 
 resource windows11 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   name: virtualMachineName
-  location: resourceGroup().location
+  location: Location
   properties: {
     osProfile: {
       computerName: virtualMachineName

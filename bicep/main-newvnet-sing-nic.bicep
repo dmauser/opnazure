@@ -42,6 +42,8 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
+param Location string = resourceGroup().location
+
 // Variables
 var publicIPAddressName = '${virtualMachineName}-PublicIP'
 var networkSecurityGroupName = '${virtualMachineName}-NSG'
@@ -55,6 +57,7 @@ var winvmpublicipName = '${winvmName}-PublicIP'
 module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
   name: networkSecurityGroupName
   params: {
+    Location: Location
     nsgName: networkSecurityGroupName
     securityRules: [
       {
@@ -91,6 +94,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
 module vnet 'modules/vnet/vnet.bicep' = {
   name: virtualNetworkName
   params: {
+    location: Location
     vnetAddressSpace: VNETAddress
     vnetName: virtualNetworkName
     subnets: [
@@ -108,6 +112,7 @@ module vnet 'modules/vnet/vnet.bicep' = {
 module publicip 'modules/vnet/publicip.bicep' = {
   name: publicIPAddressName
   params: {
+    location: Location
     publicipName: publicIPAddressName
     publicipproperties: {
       publicIPAllocationMethod: 'Static'
@@ -128,6 +133,7 @@ resource OpnsenseSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' e
 module opnSense 'modules/VM/opnsense-vm-sing-nic.bicep' = {
   name: virtualMachineName
   params: {
+    Location: Location
     ShellScriptParameters: '${OpnScriptURI} SingNic'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -149,6 +155,7 @@ module opnSense 'modules/VM/opnsense-vm-sing-nic.bicep' = {
 module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
   name: winvmnetworkSecurityGroupName
   params: {
+    Location: Location
     nsgName: winvmnetworkSecurityGroupName
     securityRules: [
       {
@@ -187,6 +194,7 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
 module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   name: winvmpublicipName
   params: {
+    location: Location
     publicipName: winvmpublicipName
     publicipproperties: {
       publicIPAllocationMethod: 'Static'
@@ -211,6 +219,7 @@ resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' exi
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
+    Location: Location
     nsgId: nsgwinvmexist.id
     publicIPId: winvmpublicipexist.id
     TempPassword: TempPassword

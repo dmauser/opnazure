@@ -42,6 +42,11 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
+@sys.description('In case of deploying Windows, this is the Windows VM Subnet Address Space')
+param DeployWindowsSubnet string = '10.0.2.0/24'
+
+param Location string = resourceGroup().location
+
 // Variables
 var untrustedSubnetName = 'Untrusted-Subnet'
 var trustedSubnetName = 'Trusted-Subnet'
@@ -60,6 +65,10 @@ var internalLoadBalanceFIPConfName = 'FW'
 var internalLoadBalanceBAPName = 'OPNSense'
 var internalLoadBalanceProbeName = 'HTTPs'
 var internalLoadBalancingRuleName = 'Internal-HA-Port-Rule'
+var windowsvmsubnetname = 'Windows-VM-Subnet'
+var winvmroutetablename = 'winvmroutetable'
+var externalLoadBalanceNatRuleName1 = 'primary-nva-mgmt'
+var externalLoadBalanceNatRuleName2 = 'scondary-nva-mgmt'
 
 var winvmName = 'VM-Win11Client'
 var winvmnetworkSecurityGroupName = '${winvmName}-NSG'
@@ -70,6 +79,7 @@ var winvmpublicipName = '${winvmName}-PublicIP'
 module nsgopnsense 'modules/vnet/nsg.bicep' = {
   name: networkSecurityGroupName
   params: {
+    Location: Location
     nsgName: networkSecurityGroupName
     securityRules: [
       {
@@ -106,9 +116,29 @@ module nsgopnsense 'modules/vnet/nsg.bicep' = {
 module vnet 'modules/vnet/vnet.bicep' = {
   name: virtualNetworkName
   params: {
+    location: Location
     vnetAddressSpace: VNETAddress
     vnetName: virtualNetworkName
-    subnets: [
+    subnets: DeployWindows == true ? [
+      {
+        name: untrustedSubnetName
+        properties: {
+          addressPrefix: UntrustedSubnetCIDR
+        }
+      }
+      {
+        name: trustedSubnetName
+        properties: {
+          addressPrefix: TrustedSubnetCIDR
+        }
+      }
+      {
+        name: windowsvmsubnetname
+        properties: {
+          addressPrefix: DeployWindowsSubnet
+        }
+      }
+    ]:[
       {
         name: untrustedSubnetName
         properties: {
@@ -129,6 +159,7 @@ module vnet 'modules/vnet/vnet.bicep' = {
 module publicip 'modules/vnet/publicip.bicep' = {
   name: publicIPAddressName
   params: {
+    location: Location
     publicipName: publicIPAddressName
     publicipproperties: {
       publicIPAllocationMethod: 'Static'
@@ -149,81 +180,114 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
   name: '${virtualNetworkName}/${trustedSubnetName}'
 }
 
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (DeployWindows) {
+  name: '${virtualNetworkName}/${windowsvmsubnetname}'
+}
+
+
 // External Load Balancer
 module elb 'modules/vnet/lb.bicep' = {
   name: externalLoadBalanceName
   params: {
+    Location: Location
     lbName: externalLoadBalanceName
-    frontendIPConfigurations: [
-      {
-        name: externalLoadBalanceFIPConfName
-        properties: {
-          publicIPAddress: {
-            id: publicip.outputs.publicipId
-          }
-        }
-      }
-    ]
-    backendAddressPools: [
-      {
-        name: externalLoadBalanceBAPName
-      }
-    ]
-    loadBalancingRules: [
-      {
-        name: externalLoadBalancingRuleName
-        properties: {
-          frontendPort: 443
-          backendPort: 443
-          protocol: 'Tcp'
-          frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', externalLoadBalanceName, externalLoadBalanceFIPConfName)
-          }
-          disableOutboundSnat: true
-          backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', externalLoadBalanceName, externalLoadBalanceBAPName)
-          }
-          backendAddressPools: [
-            {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', externalLoadBalanceName, externalLoadBalanceBAPName)
+    properties: {
+      frontendIPConfigurations: [
+        {
+          name: externalLoadBalanceFIPConfName
+          properties: {
+            publicIPAddress: {
+              id: publicip.outputs.publicipId
             }
-          ]
-          probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', externalLoadBalanceName, externalLoadBalanceProbeName)
           }
         }
-      }
-    ]
-    probe: [
-      {
-        name: externalLoadBalanceProbeName
-        properties: {
-          port: 443
-          protocol: 'Tcp'
-          intervalInSeconds: 5
-          numberOfProbes: 2
+      ]
+      backendAddressPools: [
+        {
+          name: externalLoadBalanceBAPName
         }
-      }
-    ]
-    outboundRules: [
-      {
-        name: externalLoadBalanceOutRuleName
-        properties: {
-          allocatedOutboundPorts: 0
-          idleTimeoutInMinutes: 4
-          enableTcpReset: true
-          backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', externalLoadBalanceName, externalLoadBalanceBAPName)
-          }
-          frontendIPConfigurations: [
-            {
+      ]
+      loadBalancingRules: [
+        {
+          name: externalLoadBalancingRuleName
+          properties: {
+            frontendPort: 3389
+            backendPort: 3389
+            enableFloatingIP: true
+            protocol: 'Tcp'
+            frontendIPConfiguration: {
               id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', externalLoadBalanceName, externalLoadBalanceFIPConfName)
             }
-          ]
-          protocol: 'All'
+            disableOutboundSnat: true
+            backendAddressPool: {
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', externalLoadBalanceName, externalLoadBalanceBAPName)
+            }
+            backendAddressPools: [
+              {
+                id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', externalLoadBalanceName, externalLoadBalanceBAPName)
+              }
+            ]
+            probe: {
+              id: resourceId('Microsoft.Network/loadBalancers/probes', externalLoadBalanceName, externalLoadBalanceProbeName)
+            }
+          }
         }
-      }
-    ]
+      ]
+      inboundNatRules: [
+        {
+          name: externalLoadBalanceNatRuleName1
+          properties: {
+            frontendPort: 50443
+            backendPort: 443
+            protocol: 'Tcp'
+            frontendIPConfiguration: {
+              id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', externalLoadBalanceName, externalLoadBalanceFIPConfName)
+            }
+          }
+        }
+        {
+          name: externalLoadBalanceNatRuleName2
+          properties: {
+            frontendPort: 50444
+            backendPort: 443
+            protocol: 'Tcp'
+            frontendIPConfiguration: {
+              id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', externalLoadBalanceName, externalLoadBalanceFIPConfName)
+            }
+          }
+        }
+      ]
+      probe: [
+        {
+          name: externalLoadBalanceProbeName
+          properties: {
+            port: 443
+            protocol: 'Tcp'
+            intervalInSeconds: 5
+            numberOfProbes: 2
+          }
+        }
+      ]
+      outboundRules: [
+        {
+          name: externalLoadBalanceOutRuleName
+          properties: {
+            allocatedOutboundPorts: 0
+            idleTimeoutInMinutes: 4
+            enableTcpReset: true
+            backendAddressPool: {
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', externalLoadBalanceName, externalLoadBalanceBAPName)
+            }
+            frontendIPConfigurations: [
+              {
+                id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', externalLoadBalanceName, externalLoadBalanceFIPConfName)
+              }
+            ]
+            protocol: 'All'
+          }
+        }
+      ]
+    }
   }
 }
 
@@ -231,61 +295,63 @@ module elb 'modules/vnet/lb.bicep' = {
 module ilb 'modules/vnet/lb.bicep' = {
   name: internalLoadBalanceName
   params: {
+    Location: Location
     lbName: internalLoadBalanceName
-    frontendIPConfigurations: [
-      {
-        name: internalLoadBalanceFIPConfName
-        properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          subnet: {
-            id: trustedSubnet.id
+    properties: {
+      frontendIPConfigurations: [
+        {
+          name: internalLoadBalanceFIPConfName
+          properties: {
+            privateIPAllocationMethod: 'Dynamic'
+            subnet: {
+              id: trustedSubnet.id
+            }
+            privateIPAddressVersion: 'IPv4'
           }
-          privateIPAddressVersion: 'IPv4'
         }
-      }
-    ]
-    backendAddressPools: [
-      {
-        name: internalLoadBalanceBAPName
-      }
-    ]
-
-    loadBalancingRules: [
-      {
-        name: internalLoadBalancingRuleName
-        properties: {
-          frontendPort: 0
-          backendPort: 0
-          protocol: 'All'
-          frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', internalLoadBalanceName, internalLoadBalanceFIPConfName)
-          }
-          disableOutboundSnat: true
-          backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', internalLoadBalanceName, internalLoadBalanceBAPName)
-          }
-          backendAddressPools: [
-            {
+      ]
+      backendAddressPools: [
+        {
+          name: internalLoadBalanceBAPName
+        }
+      ]
+      loadBalancingRules: [
+        {
+          name: internalLoadBalancingRuleName
+          properties: {
+            frontendPort: 0
+            backendPort: 0
+            protocol: 'All'
+            frontendIPConfiguration: {
+              id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', internalLoadBalanceName, internalLoadBalanceFIPConfName)
+            }
+            disableOutboundSnat: true
+            backendAddressPool: {
               id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', internalLoadBalanceName, internalLoadBalanceBAPName)
             }
-          ]
-          probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', internalLoadBalanceName, internalLoadBalanceProbeName)
+            backendAddressPools: [
+              {
+                id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', internalLoadBalanceName, internalLoadBalanceBAPName)
+              }
+            ]
+            probe: {
+              id: resourceId('Microsoft.Network/loadBalancers/probes', internalLoadBalanceName, internalLoadBalanceProbeName)
+            }
           }
         }
-      }
-    ]
-    probe: [
-      {
-        name: internalLoadBalanceProbeName
-        properties: {
-          port: 443
-          protocol: 'Tcp'
-          intervalInSeconds: 5
-          numberOfProbes: 2
+      ]
+      probe: [
+        {
+          name: internalLoadBalanceProbeName
+          properties: {
+            port: 443
+            protocol: 'Tcp'
+            intervalInSeconds: 5
+            numberOfProbes: 2
+          }
         }
-      }
-    ]
+      ]
+    }
   }
   dependsOn: [
     vnet
@@ -296,7 +362,8 @@ module ilb 'modules/vnet/lb.bicep' = {
 module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: VMOPNsenseSecondaryName
   params: {
-    ShellScriptParameters: '${OpnScriptURI} Secondary ${TrustedSubnetCIDR}'
+    Location: Location
+    ShellScriptParameters: '${OpnScriptURI} Secondary ${TrustedSubnetCIDR} ${DeployWindowsSubnet} ${publicip.outputs.publicipAddress}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -318,7 +385,8 @@ module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
 module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
   name: VMOPNsensePrimaryName
   params: {
-    ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${opnSenseSecondary.outputs.trustedNicIP}'
+    Location: Location
+    ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindowsSubnet} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -339,9 +407,12 @@ module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
 }
 
 // Windows11 Client Resources
+
+
 module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
   name: winvmnetworkSecurityGroupName
   params: {
+    Location: Location
     nsgName: winvmnetworkSecurityGroupName
     securityRules: [
       {
@@ -381,6 +452,7 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
 module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   name: winvmpublicipName
   params: {
+    location: Location
     publicipName: winvmpublicipName
     publicipproperties: {
       publicIPAllocationMethod: 'Static'
@@ -396,21 +468,45 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   ]
 }
 
-resource nsgwinvmexist 'Microsoft.Network/networkSecurityGroups@2021-03-01' existing = {
-  name: winvmnetworkSecurityGroupName
+module winvmroutetable 'modules/vnet/routetable.bicep' = if (DeployWindows) {
+  name: winvmroutetablename
+  params: {
+    location: Location
+    rtName: winvmroutetablename
+  }
+  dependsOn: [
+    opnSenseSecondary
+    opnSensePrimary
+  ]
 }
 
-resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' existing = {
-  name: winvmpublicipName
+module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployWindows) {
+  name: 'default'
+  params: {
+    routetableName: winvmroutetablename
+    routeName: 'default'
+    properties: {
+      nextHopType: 'VirtualAppliance'
+      nextHopIpAddress: ilb.outputs.frontendIP.privateIPAddress
+      addressPrefix: '0.0.0.0/0'
+    }
+  }
+  dependsOn: [
+    opnSenseSecondary
+    opnSensePrimary
+    winvmroutetable
+  ]
 }
+
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
-    nsgId: nsgwinvmexist.id
-    publicIPId: winvmpublicipexist.id
+    Location: Location
+    nsgId: nsgwinvm.outputs.nsgID
+    publicIPId: winvmpublicip.outputs.publicipId
     TempPassword: TempPassword
     TempUsername: TempUsername
-    trustedSubnetId: trustedSubnet.id
+    trustedSubnetId: windowsvmsubnet.id
     virtualMachineName: winvmName
     virtualMachineSize: 'Standard_B4ms'
   }

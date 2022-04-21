@@ -1,24 +1,18 @@
 param lbName string
-param frontendIPConfigurations array
-param backendAddressPools array
-param loadBalancingRules array
-param outboundRules array = []
-param probe array
+param properties object
+param Location string = resourceGroup().location
 
 resource lb 'Microsoft.Network/loadBalancers@2021-03-01' = {
   name: lbName
-  location: resourceGroup().location
+  location: Location
   sku: {
     name: 'Standard'
     tier: 'Regional'
   }
-  properties:{
-    frontendIPConfigurations: frontendIPConfigurations
-    backendAddressPools: backendAddressPools
-    loadBalancingRules: loadBalancingRules
-    probes: probe
-    outboundRules: outboundRules
-  }
+  properties: properties
 }
 
 output backendAddressPools array = lb.properties.backendAddressPools
+//output frontendIP string = contains(lb.properties.frontendIPConfigurations[0].properties.privateIPAddress,'.') ? '' :lb.properties.frontendIPConfigurations[0].properties.privateIPAddress
+//output test string = lb.properties.frontendIPConfigurations[0].privateIPAddress
+output frontendIP object = lb.properties.frontendIPConfigurations[0].properties
