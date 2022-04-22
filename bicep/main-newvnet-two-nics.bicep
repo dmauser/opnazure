@@ -42,6 +42,9 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
+@sys.description('In case of deploying Windows, this is the Windows VM Subnet Address Space')
+param DeployWindowsSubnet string = '10.0.2.0/24'
+
 param Location string = resourceGroup().location
 
 // Variables
@@ -50,6 +53,8 @@ var trustedSubnetName = 'Trusted-Subnet'
 var publicIPAddressName = '${virtualMachineName}-PublicIP'
 var networkSecurityGroupName = '${virtualMachineName}-NSG'
 
+var windowsvmsubnetname = 'Windows-VM-Subnet'
+var winvmroutetablename = 'winvmroutetable'
 var winvmName = 'VM-Win11Client'
 var winvmnetworkSecurityGroupName = '${winvmName}-NSG'
 var winvmpublicipName = '${winvmName}-PublicIP'
@@ -99,7 +104,26 @@ module vnet 'modules/vnet/vnet.bicep' = {
     location: Location
     vnetAddressSpace: VNETAddress
     vnetName: virtualNetworkName
-    subnets: [
+    subnets: DeployWindows == true ? [
+      {
+        name: untrustedSubnetName
+        properties: {
+          addressPrefix: UntrustedSubnetCIDR
+        }
+      }
+      {
+        name: trustedSubnetName
+        properties: {
+          addressPrefix: TrustedSubnetCIDR
+        }
+      }
+      {
+        name: windowsvmsubnetname
+        properties: {
+          addressPrefix: DeployWindowsSubnet
+        }
+      }
+    ]:[
       {
         name: untrustedSubnetName
         properties: {
@@ -141,12 +165,16 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
   name: '${virtualNetworkName}/${trustedSubnetName}'
 }
 
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (DeployWindows) {
+  name: '${virtualNetworkName}/${windowsvmsubnetname}'
+}
+
 // Create OPNsense
 module opnSense 'modules/VM/opnsense-vm.bicep' = {
   name: virtualMachineName
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} TwoNics ${TrustedSubnetCIDR}'
+    ShellScriptParameters: '${OpnScriptURI} TwoNics ${TrustedSubnetCIDR} ${DeployWindowsSubnet}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -223,20 +251,40 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   ]
 }
 
-resource nsgwinvmexist 'Microsoft.Network/networkSecurityGroups@2021-03-01' existing = {
-  name: winvmnetworkSecurityGroupName
+module winvmroutetable 'modules/vnet/routetable.bicep' = if (DeployWindows) {
+  name: winvmroutetablename
+  params: {
+    location: Location
+    rtName: winvmroutetablename
+  }
+  dependsOn: [
+    opnSense
+  ]
 }
 
-resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' existing = {
-  name: winvmpublicipName
+module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployWindows) {
+  name: 'default'
+  params: {
+    routetableName: winvmroutetablename
+    routeName: 'default'
+    properties: {
+      nextHopType: 'VirtualAppliance'
+      nextHopIpAddress: opnSense.outputs.trustedNicIP
+      addressPrefix: '0.0.0.0/0'
+    }
+  }
+  dependsOn: [
+    opnSense
+    winvmroutetable
+  ]
 }
 
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
     Location: Location
-    nsgId: nsgwinvmexist.id
-    publicIPId: winvmpublicipexist.id
+    nsgId: nsgwinvm.outputs.nsgID
+    publicIPId: winvmpublicip.outputs.publicipId
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: trustedSubnet.id

@@ -65,11 +65,11 @@ var internalLoadBalanceFIPConfName = 'FW'
 var internalLoadBalanceBAPName = 'OPNSense'
 var internalLoadBalanceProbeName = 'HTTPs'
 var internalLoadBalancingRuleName = 'Internal-HA-Port-Rule'
-var windowsvmsubnetname = 'Windows-VM-Subnet'
-var winvmroutetablename = 'winvmroutetable'
 var externalLoadBalanceNatRuleName1 = 'primary-nva-mgmt'
 var externalLoadBalanceNatRuleName2 = 'scondary-nva-mgmt'
 
+var windowsvmsubnetname = 'Windows-VM-Subnet'
+var winvmroutetablename = 'winvmroutetable'
 var winvmName = 'VM-Win11Client'
 var winvmnetworkSecurityGroupName = '${winvmName}-NSG'
 var winvmpublicipName = '${winvmName}-PublicIP'
@@ -183,7 +183,6 @@ resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' ex
 resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (DeployWindows) {
   name: '${virtualNetworkName}/${windowsvmsubnetname}'
 }
-
 
 // External Load Balancer
 module elb 'modules/vnet/lb.bicep' = {

@@ -209,19 +209,12 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   ]
 }
 
-resource nsgwinvmexist 'Microsoft.Network/networkSecurityGroups@2021-03-01' existing = {
-  name: winvmnetworkSecurityGroupName
-}
-
-resource winvmpublicipexist 'Microsoft.Network/publicIPAddresses@2021-03-01' existing = {
-  name: winvmpublicipName
-}
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
     Location: Location
-    nsgId: nsgwinvmexist.id
-    publicIPId: winvmpublicipexist.id
+    nsgId: nsgwinvm.outputs.nsgID
+    publicIPId: winvmpublicip.outputs.publicipId
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: OpnsenseSubnet.id

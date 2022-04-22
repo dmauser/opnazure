@@ -15,7 +15,7 @@ if [ "$2" = "Primary" ]; then
     fetch $1get_nic_gw.py
     gwip=$(python get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-primary.xml
-    sed -i "" "s/zzz.zzz.zzz.zzz/$4/" config-active-active-primary.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_$4_" config-active-active-primary.xml
     sed -i "" "s/www.www.www.www/$5/" config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/$6/" config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" config-active-active-primary.xml
@@ -25,7 +25,7 @@ elif [ "$2" = "Secondary" ]; then
     fetch $1get_nic_gw.py
     gwip=$(python get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-secondary.xml
-    sed -i "" "s/zzz.zzz.zzz.zzz/$4/" config-active-active-secondary.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_$4_" config-active-active-secondary.xml
     sed -i "" "s/www.www.www.www/$5/" config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" config-active-active-secondary.xml
     cp config-active-active-secondary.xml /usr/local/etc/config.xml
@@ -37,7 +37,7 @@ elif [ "$2" = "TwoNics" ]; then
     fetch $1get_nic_gw.py
     gwip=$(python get_nic_gw.py $3)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
-    sed -i "" "s/zzz.zzz.zzz.zzz/$4/" config.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_$4_" config.xml
     cp config.xml /usr/local/etc/config.xml
 fi
 
