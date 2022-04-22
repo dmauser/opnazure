@@ -1,2 +1,2 @@
 az group create -n opnsense2 --location westus
-az deployment group create -g opnsense -n opnsense -f .\main-newvnet-active-active.bicep -p .\main-newvnet-active-active.parameters.json -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+az deployment group create -g opnsense2 -n opnsense -f .\main-newvnet-active-active.bicep -p .\main-newvnet-active-active.parameters.json -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/

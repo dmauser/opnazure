@@ -10,25 +10,29 @@ param ShellScriptParameters string
 param nsgId string = ''
 param ExternalLoadBalancerBackendAddressPoolId string
 param InternalLoadBalancerBackendAddressPoolId string
+param ExternalloadBalancerInboundNatRulesId string
 param Location string = resourceGroup().location
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-module untrustedNic '../vnet/privateniclb.bicep' = {
+module untrustedNic '../vnet/publicniclb.bicep' = {
   name: untrustedNicName
   params:{
+    Location: Location
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
     enableIPForwarding: true
     nsgId: nsgId
     loadBalancerBackendAddressPoolId: ExternalLoadBalancerBackendAddressPoolId
+    loadBalancerInboundNatRules: ExternalloadBalancerInboundNatRulesId
   }
 }
 
 module trustedNic '../vnet/privateniclb.bicep' = {
   name: trustedNicName
   params:{
+    Location: Location
     nicName: trustedNicName
     subnetId: trustedSubnetId
     enableIPForwarding: true
@@ -98,3 +102,4 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
 
 output untrustedNicIP string = untrustedNic.outputs.nicIP
 output trustedNicIP string = trustedNic.outputs.nicIP
+output untrustedNicProfileId string = untrustedNic.outputs.nicIpConfigurationId

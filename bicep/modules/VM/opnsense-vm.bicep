@@ -17,6 +17,7 @@ var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 module untrustedNic '../vnet/publicnic.bicep' = {
   name: untrustedNicName
   params:{
+    Location: Location
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
     publicIPId: publicIPId
@@ -28,6 +29,7 @@ module untrustedNic '../vnet/publicnic.bicep' = {
 module trustedNic '../vnet/privatenic.bicep' = {
   name: trustedNicName
   params:{
+    Location: Location
     nicName: trustedNicName
     subnetId: trustedSubnetId
     enableIPForwarding: true

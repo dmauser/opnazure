@@ -15,6 +15,7 @@ var untrustedNicName = '${virtualMachineName}-NIC'
 module untrustedNic '../vnet/publicnic.bicep' = {
   name: untrustedNicName
   params:{
+    Location: Location
     nicName: untrustedNicName
     subnetId: subnetId
     publicIPId: publicIPId
