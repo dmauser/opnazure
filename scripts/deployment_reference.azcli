@@ -1,2 +1,74 @@
 az group create -n opnsense2 --location westus
 az deployment group create -g opnsense2 -n opnsense -f .\main-newvnet-active-active.bicep -p .\main-newvnet-active-active.parameters.json -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+
+####################
+
+# Active-Active
+$RG='opnsense-active-active-existing-vnet'
+$DEPNAME='opnsense-active-active-existing-vnet'
+$VNET='OPN-VNET'
+$VNETAddress='10.0.0.0/16'
+$UntrustedSubnet='Untrusted-Subnet'
+$UntrustedSubnetAddress='10.0.0.0/24'
+$TrustedSubnet='Trusted-Subnet'
+$TrustedSubnetAddress='10.0.1.0/24'
+$existingWindowsSubnet='Windows-VM-Subnet'
+$existingWindowsSubnetAddress='10.0.2.0/24'
+az group create -l centralus -g $RG
+az network vnet create -g $RG -n $VNET --address-prefixes $VNETAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $UntrustedSubnet --address-prefixes $UntrustedSubnetAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $TrustedSubnet --address-prefixes $TrustedSubnetAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $existingWindowsSubnet --address-prefixes $existingWindowsSubnetAddress
+
+# Deployment Active-Active with Windows
+az deployment group create -g $RG -n $DEPNAME -f .\main-active-active.bicep -p .\main-active-active.parameters.json -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+
+# Deployment Active-Active no Windows
+az deployment group create -g $RG -n $DEPNAME -f .\main-active-active.bicep -p .\main-active-active.parameters.json -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+
+####################
+
+# TwoNics
+$RG='opnsense-TwoNics-existing-vnet'
+$DEPNAME='opnsense-TowNics-existing-vnet'
+$VNET='OPN-VNET'
+$VNETAddress='10.0.0.0/16'
+$UntrustedSubnet='Untrusted-Subnet'
+$UntrustedSubnetAddress='10.0.0.0/24'
+$TrustedSubnet='Trusted-Subnet'
+$TrustedSubnetAddress='10.0.1.0/24'
+$existingWindowsSubnet='Windows-VM-Subnet'
+$existingWindowsSubnetAddress='10.0.2.0/24'
+az group create -l centralus -g $RG
+az network vnet create -g $RG -n $VNET --address-prefixes $VNETAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $UntrustedSubnet --address-prefixes $UntrustedSubnetAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $TrustedSubnet --address-prefixes $TrustedSubnetAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $existingWindowsSubnet --address-prefixes $existingWindowsSubnetAddress
+
+# Deployment TwoNics with Windows
+az deployment group create -g $RG -n $DEPNAME -f .\main-two-nics.bicep -p .\main-two-nics.parameters.json -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+
+# Deployment TwoNics no Windows
+az deployment group create -g $RG -n $DEPNAME -f .\main-two-nics.bicep -p .\main-two-nics.parameters.json -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+
+####################
+
+# SingleNic
+$RG='opnsense-SingleNic-existing-vnet'
+$DEPNAME='opnsense-SingleNic-existing-vnet'
+$VNET='OPN-VNET'
+$VNETAddress='10.0.0.0/16'
+$UntrustedSubnet='OPNSenseSubnet'
+$UntrustedSubnetAddress='10.0.0.0/24'
+$existingWindowsSubnet='Windows-VM-Subnet'
+$existingWindowsSubnetAddress='10.0.2.0/24'
+az group create -l centralus -g $RG
+az network vnet create -g $RG -n $VNET --address-prefixes $VNETAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $UntrustedSubnet --address-prefixes $UntrustedSubnetAddress
+az network vnet subnet create -g $RG --vnet-name $VNET -n $existingWindowsSubnet --address-prefixes $existingWindowsSubnetAddress
+
+# Deployment SiongleNic with Windows
+az deployment group create -g $RG -n $DEPNAME -f .\main-sing-nic.bicep -p .\main-sing-nic.parameters.json -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/
+
+# Deployment SiongleNic no Windows
+az deployment group create -g $RG -n $DEPNAME -f .\main-sing-nics.bicep -p .\main-sing-nics.parameters.json -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/19-float-ip-slb/scripts/

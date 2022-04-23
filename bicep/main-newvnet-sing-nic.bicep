@@ -42,19 +42,23 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
+@sys.description('In case of deploying Windows, this is the Windows VM Subnet Address Space')
+param DeployWindowsSubnet string = '10.0.2.0/24'
 param Location string = resourceGroup().location
 
 // Variables
 var publicIPAddressName = '${virtualMachineName}-PublicIP'
 var networkSecurityGroupName = '${virtualMachineName}-NSG'
 
+var windowsvmsubnetname = 'Windows-VM-Subnet'
+var winvmroutetablename = 'winvmroutetable'
 var winvmName = 'VM-Win11Client'
 var winvmnetworkSecurityGroupName = '${winvmName}-NSG'
 var winvmpublicipName = '${winvmName}-PublicIP'
 
 // Resources
 // Create NSG
-module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
+module nsgopnsense 'modules/vnet/nsg.bicep' = {
   name: networkSecurityGroupName
   params: {
     Location: Location
@@ -97,7 +101,20 @@ module vnet 'modules/vnet/vnet.bicep' = {
     location: Location
     vnetAddressSpace: VNETAddress
     vnetName: virtualNetworkName
-    subnets: [
+    subnets: DeployWindows == true ? [
+      {
+        name: OpnsenseSubnetName
+        properties: {
+          addressPrefix: OpnsenseSubnetCIDR
+        }
+      }
+      {
+        name: windowsvmsubnetname
+        properties: {
+          addressPrefix: DeployWindowsSubnet
+        }
+      }
+    ]:[
       {
         name: OpnsenseSubnetName
         properties: {
@@ -105,6 +122,7 @@ module vnet 'modules/vnet/vnet.bicep' = {
         }
       }
     ]
+
   }
 }
 
@@ -129,6 +147,10 @@ resource OpnsenseSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' e
   name: '${virtualNetworkName}/${OpnsenseSubnetName}'
 }
 
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (DeployWindows) {
+  name: '${virtualNetworkName}/${windowsvmsubnetname}'
+}
+
 // Create OPNsense
 module opnSense 'modules/VM/opnsense-vm-sing-nic.bicep' = {
   name: virtualMachineName
@@ -143,11 +165,11 @@ module opnSense 'modules/VM/opnsense-vm-sing-nic.bicep' = {
     virtualMachineName: virtualMachineName
     virtualMachineSize: virtualMachineSize
     publicIPId: publicip.outputs.publicipId
-    nsgId: nsgappgwsubnet.outputs.nsgID
+    nsgId: nsgopnsense.outputs.nsgID
   }
   dependsOn: [
     vnet
-    nsgappgwsubnet
+    nsgopnsense
   ]
 }
 
@@ -209,12 +231,39 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   ]
 }
 
+module winvmroutetable 'modules/vnet/routetable.bicep' = if (DeployWindows) {
+  name: winvmroutetablename
+  params: {
+    location: Location
+    rtName: winvmroutetablename
+  }
+  dependsOn: [
+    opnSense
+  ]
+}
+
+module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployWindows) {
+  name: 'default'
+  params: {
+    routetableName: winvmroutetablename
+    routeName: 'default'
+    properties: {
+      nextHopType: 'VirtualAppliance'
+      nextHopIpAddress: opnSense.outputs.untrustedNicIP
+      addressPrefix: '0.0.0.0/0'
+    }
+  }
+  dependsOn: [
+    opnSense
+    winvmroutetable
+  ]
+}
 module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
     Location: Location
-    nsgId: nsgwinvm.outputs.nsgID
-    publicIPId: winvmpublicip.outputs.publicipId
+    nsgId: DeployWindows ? nsgwinvm.outputs.nsgID : ''
+    publicIPId: DeployWindows ? winvmpublicip.outputs.publicipId : ''
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: OpnsenseSubnet.id

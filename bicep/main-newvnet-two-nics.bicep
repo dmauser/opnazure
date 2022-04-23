@@ -61,7 +61,7 @@ var winvmpublicipName = '${winvmName}-PublicIP'
 
 // Resources
 // Create NSG
-module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
+module nsgopnsense 'modules/vnet/nsg.bicep' = {
   name: networkSecurityGroupName
   params: {
     Location: Location
@@ -184,11 +184,11 @@ module opnSense 'modules/VM/opnsense-vm.bicep' = {
     virtualMachineName: virtualMachineName
     virtualMachineSize: virtualMachineSize
     publicIPId: publicip.outputs.publicipId
-    nsgId: nsgappgwsubnet.outputs.nsgID
+    nsgId: nsgopnsense.outputs.nsgID
   }
   dependsOn: [
     vnet
-    nsgappgwsubnet
+    nsgopnsense
     trustedSubnet
   ]
 }
@@ -283,8 +283,8 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
     Location: Location
-    nsgId: nsgwinvm.outputs.nsgID
-    publicIPId: winvmpublicip.outputs.publicipId
+    nsgId: DeployWindows ? nsgwinvm.outputs.nsgID : ''
+    publicIPId: DeployWindows ? winvmpublicip.outputs.publicipId : ''
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: trustedSubnet.id

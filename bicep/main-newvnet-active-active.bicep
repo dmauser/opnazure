@@ -58,7 +58,7 @@ var externalLoadBalanceName = 'External-LoadBalance'
 var externalLoadBalanceFIPConfName = 'FW'
 var externalLoadBalanceBAPName = 'OPNSense'
 var externalLoadBalanceProbeName = 'HTTPs'
-var externalLoadBalancingRuleName = 'WEB'
+var externalLoadBalancingRuleName = 'RDP'
 var externalLoadBalanceOutRuleName = 'OutBound-OPNSense'
 var internalLoadBalanceName = 'Internal-LoadBalance'
 var internalLoadBalanceFIPConfName = 'FW'
@@ -499,8 +499,8 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
     Location: Location
-    nsgId: nsgwinvm.outputs.nsgID
-    publicIPId: winvmpublicip.outputs.publicipId
+    nsgId: DeployWindows ? nsgwinvm.outputs.nsgID : ''
+    publicIPId: DeployWindows ? winvmpublicip.outputs.publicipId : ''
     TempPassword: TempPassword
     TempUsername: TempUsername
     trustedSubnetId: windowsvmsubnet.id
