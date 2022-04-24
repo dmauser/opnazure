@@ -34,6 +34,9 @@
     },
     "DeployWindows" :{
       "value": false
+    },
+    "existingWindowsSubnet": {
+      "value": "Windows-VM-Subnet"
     }
   }
 }
