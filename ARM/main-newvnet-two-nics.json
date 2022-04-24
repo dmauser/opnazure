@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.4.1008.15138",
-      "templateHash": "13027115211639862703"
+      "version": "0.5.6.12127",
+      "templateHash": "12674857684262566238"
     }
   },
   "parameters": {
@@ -95,14 +95,26 @@
       "metadata": {
         "description": "Deploy Windows VM Trusted Subnet"
       }
+    },
+    "DeployWindowsSubnet": {
+      "type": "string",
+      "defaultValue": "10.0.2.0/24",
+      "metadata": {
+        "description": "In case of deploying Windows, this is the Windows VM Subnet Address Space"
+      }
+    },
+    "Location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
     }
   },
-  "functions": [],
   "variables": {
     "untrustedSubnetName": "Untrusted-Subnet",
     "trustedSubnetName": "Trusted-Subnet",
     "publicIPAddressName": "[format('{0}-PublicIP', parameters('virtualMachineName'))]",
     "networkSecurityGroupName": "[format('{0}-NSG', parameters('virtualMachineName'))]",
+    "windowsvmsubnetname": "Windows-VM-Subnet",
+    "winvmroutetablename": "winvmroutetable",
     "winvmName": "VM-Win11Client",
     "winvmnetworkSecurityGroupName": "[format('{0}-NSG', variables('winvmName'))]",
     "winvmpublicipName": "[format('{0}-PublicIP', variables('winvmName'))]"
@@ -110,7 +122,7 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[variables('networkSecurityGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -118,6 +130,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "Location": {
+            "value": "[parameters('Location')]"
+          },
           "nsgName": {
             "value": "[variables('networkSecurityGroupName')]"
           },
@@ -158,8 +173,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "7684832347609502828"
+              "version": "0.5.6.12127",
+              "templateHash": "1994418114736242192"
             }
           },
           "parameters": {
@@ -169,15 +184,18 @@
             "securityRules": {
               "type": "array",
               "defaultValue": []
+            },
+            "Location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Network/networkSecurityGroups",
               "apiVersion": "2021-02-01",
               "name": "[parameters('nsgName')]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('Location')]",
               "properties": {
                 "securityRules": "[parameters('securityRules')]"
               }
@@ -194,7 +212,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[parameters('virtualNetworkName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -202,6 +220,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "location": {
+            "value": "[parameters('Location')]"
+          },
           "vnetAddressSpace": {
             "value": "[parameters('VNETAddress')]"
           },
@@ -209,20 +230,7 @@
             "value": "[parameters('virtualNetworkName')]"
           },
           "subnets": {
-            "value": [
-              {
-                "name": "[variables('untrustedSubnetName')]",
-                "properties": {
-                  "addressPrefix": "[parameters('UntrustedSubnetCIDR')]"
-                }
-              },
-              {
-                "name": "[variables('trustedSubnetName')]",
-                "properties": {
-                  "addressPrefix": "[parameters('TrustedSubnetCIDR')]"
-                }
-              }
-            ]
+            "value": "[if(equals(parameters('DeployWindows'), true()), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet')))), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR')))))]"
           }
         },
         "template": {
@@ -231,8 +239,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "15396572342711732136"
+              "version": "0.5.6.12127",
+              "templateHash": "14992550380438728410"
             }
           },
           "parameters": {
@@ -250,7 +258,6 @@
               "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Network/virtualNetworks",
@@ -284,7 +291,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[variables('publicIPAddressName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -292,6 +299,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "location": {
+            "value": "[parameters('Location')]"
+          },
           "publicipName": {
             "value": "[variables('publicIPAddressName')]"
           },
@@ -313,8 +323,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "13238041274703570549"
+              "version": "0.5.6.12127",
+              "templateHash": "726204509176070701"
             }
           },
           "parameters": {
@@ -332,7 +342,6 @@
               "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Network/publicIPAddresses",
@@ -347,6 +356,10 @@
             "publicipId": {
               "type": "string",
               "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicipName'))]"
+            },
+            "publicipAddress": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicipName'))).ipAddress]"
             }
           }
         }
@@ -354,7 +367,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[parameters('virtualMachineName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -362,8 +375,11 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "Location": {
+            "value": "[parameters('Location')]"
+          },
           "ShellScriptParameters": {
-            "value": "[format('{0} TwoNics {1}', parameters('OpnScriptURI'), parameters('TrustedSubnetCIDR'))]"
+            "value": "[format('{0} TwoNics {1} {2}', parameters('OpnScriptURI'), parameters('TrustedSubnetCIDR'), parameters('DeployWindowsSubnet'))]"
           },
           "OPNScriptURI": {
             "value": "[parameters('OpnScriptURI')]"
@@ -390,10 +406,10 @@
             "value": "[parameters('virtualMachineSize')]"
           },
           "publicIPId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2020-06-01').outputs.publicipId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName'))).outputs.publicipId.value]"
           },
           "nsgId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2020-06-01').outputs.nsgID.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName'))).outputs.nsgID.value]"
           }
         },
         "template": {
@@ -402,8 +418,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "12667569812746510160"
+              "version": "0.5.6.12127",
+              "templateHash": "10233242833298201841"
             }
           },
           "parameters": {
@@ -441,9 +457,12 @@
             "nsgId": {
               "type": "string",
               "defaultValue": ""
+            },
+            "Location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "variables": {
             "untrustedNicName": "[format('{0}-Untrusted-NIC', parameters('virtualMachineName'))]",
             "trustedNicName": "[format('{0}-Trusted-NIC', parameters('virtualMachineName'))]"
@@ -453,7 +472,7 @@
               "type": "Microsoft.Compute/virtualMachines",
               "apiVersion": "2021-03-01",
               "name": "[parameters('virtualMachineName')]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('Location')]",
               "properties": {
                 "osProfile": {
                   "computerName": "[parameters('virtualMachineName')]",
@@ -477,13 +496,13 @@
                 "networkProfile": {
                   "networkInterfaces": [
                     {
-                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-06-01').outputs.nicId.value]",
+                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName'))).outputs.nicId.value]",
                       "properties": {
                         "primary": true
                       }
                     },
                     {
-                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-06-01').outputs.nicId.value]",
+                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))).outputs.nicId.value]",
                       "properties": {
                         "primary": false
                       }
@@ -500,7 +519,7 @@
               "type": "Microsoft.Compute/virtualMachines/extensions",
               "apiVersion": "2015-06-15",
               "name": "[format('{0}/CustomScript', parameters('virtualMachineName'))]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('Location')]",
               "properties": {
                 "publisher": "Microsoft.OSTCExtensions",
                 "type": "CustomScriptForLinux",
@@ -519,7 +538,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2020-10-01",
               "name": "[variables('untrustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -527,6 +546,9 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "Location": {
+                    "value": "[parameters('Location')]"
+                  },
                   "nicName": {
                     "value": "[variables('untrustedNicName')]"
                   },
@@ -549,8 +571,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.4.1008.15138",
-                      "templateHash": "7075199963255044859"
+                      "version": "0.5.6.12127",
+                      "templateHash": "14358588114262787622"
                     }
                   },
                   "parameters": {
@@ -569,15 +591,18 @@
                     },
                     "nsgId": {
                       "type": "string"
+                    },
+                    "Location": {
+                      "type": "string",
+                      "defaultValue": "[resourceGroup().location]"
                     }
                   },
-                  "functions": [],
                   "resources": [
                     {
                       "type": "Microsoft.Network/networkInterfaces",
                       "apiVersion": "2021-02-01",
                       "name": "[parameters('nicName')]",
-                      "location": "[resourceGroup().location]",
+                      "location": "[parameters('Location')]",
                       "properties": {
                         "enableIPForwarding": "[parameters('enableIPForwarding')]",
                         "networkSecurityGroup": {
@@ -619,7 +644,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2020-10-01",
               "name": "[variables('trustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -627,6 +652,9 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "Location": {
+                    "value": "[parameters('Location')]"
+                  },
                   "nicName": {
                     "value": "[variables('trustedNicName')]"
                   },
@@ -646,8 +674,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.4.1008.15138",
-                      "templateHash": "6295238219018647676"
+                      "version": "0.5.6.12127",
+                      "templateHash": "825082475761954047"
                     }
                   },
                   "parameters": {
@@ -663,15 +691,18 @@
                     },
                     "nsgId": {
                       "type": "string"
+                    },
+                    "Location": {
+                      "type": "string",
+                      "defaultValue": "[resourceGroup().location]"
                     }
                   },
-                  "functions": [],
                   "resources": [
                     {
                       "type": "Microsoft.Network/networkInterfaces",
                       "apiVersion": "2021-02-01",
                       "name": "[parameters('nicName')]",
-                      "location": "[resourceGroup().location]",
+                      "location": "[parameters('Location')]",
                       "properties": {
                         "enableIPForwarding": "[parameters('enableIPForwarding')]",
                         "networkSecurityGroup": {
@@ -712,11 +743,11 @@
           "outputs": {
             "untrustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-06-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName'))).outputs.nicIP.value]"
             },
             "trustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-06-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))).outputs.nicIP.value]"
             }
           }
         }
@@ -730,7 +761,7 @@
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[variables('winvmnetworkSecurityGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -738,6 +769,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "Location": {
+            "value": "[parameters('Location')]"
+          },
           "nsgName": {
             "value": "[variables('winvmnetworkSecurityGroupName')]"
           },
@@ -778,8 +812,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "7684832347609502828"
+              "version": "0.5.6.12127",
+              "templateHash": "1994418114736242192"
             }
           },
           "parameters": {
@@ -789,15 +823,18 @@
             "securityRules": {
               "type": "array",
               "defaultValue": []
+            },
+            "Location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Network/networkSecurityGroups",
               "apiVersion": "2021-02-01",
               "name": "[parameters('nsgName')]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('Location')]",
               "properties": {
                 "securityRules": "[parameters('securityRules')]"
               }
@@ -818,7 +855,7 @@
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[variables('winvmpublicipName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -826,6 +863,9 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "location": {
+            "value": "[parameters('Location')]"
+          },
           "publicipName": {
             "value": "[variables('winvmpublicipName')]"
           },
@@ -847,8 +887,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "13238041274703570549"
+              "version": "0.5.6.12127",
+              "templateHash": "726204509176070701"
             }
           },
           "parameters": {
@@ -866,7 +906,6 @@
               "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Network/publicIPAddresses",
@@ -881,6 +920,10 @@
             "publicipId": {
               "type": "string",
               "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicipName'))]"
+            },
+            "publicipAddress": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicipName'))).ipAddress]"
             }
           }
         }
@@ -892,7 +935,125 @@
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
+      "name": "[variables('winvmroutetablename')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('Location')]"
+          },
+          "rtName": {
+            "value": "[variables('winvmroutetablename')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.5.6.12127",
+              "templateHash": "9118106253627390459"
+            }
+          },
+          "parameters": {
+            "rtName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/routeTables",
+              "apiVersion": "2021-02-01",
+              "name": "[parameters('rtName')]",
+              "location": "[parameters('location')]"
+            }
+          ],
+          "outputs": {
+            "routetableID": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/routeTables', parameters('rtName'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('DeployWindows')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "default",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "routetableName": {
+            "value": "[variables('winvmroutetablename')]"
+          },
+          "routeName": {
+            "value": "default"
+          },
+          "properties": {
+            "value": {
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[reference(resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))).outputs.trustedNicIP.value]",
+              "addressPrefix": "0.0.0.0/0"
+            }
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.5.6.12127",
+              "templateHash": "17115341605569542269"
+            }
+          },
+          "parameters": {
+            "routetableName": {
+              "type": "string"
+            },
+            "routeName": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/routeTables/routes",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/{1}', parameters('routetableName'), parameters('routeName'))]",
+              "properties": "[parameters('properties')]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', parameters('virtualMachineName'))]",
+        "[resourceId('Microsoft.Resources/deployments', variables('winvmroutetablename'))]"
+      ]
+    },
+    {
+      "condition": "[parameters('DeployWindows')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
       "name": "[variables('winvmName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -900,11 +1061,14 @@
         },
         "mode": "Incremental",
         "parameters": {
+          "Location": {
+            "value": "[parameters('Location')]"
+          },
           "nsgId": {
-            "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('winvmnetworkSecurityGroupName'))]"
+            "value": "[if(parameters('DeployWindows'), reference(resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName')), '2020-10-01').outputs.nsgID.value, '')]"
           },
           "publicIPId": {
-            "value": "[resourceId('Microsoft.Network/publicIPAddresses', variables('winvmpublicipName'))]"
+            "value": "[if(parameters('DeployWindows'), reference(resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName')), '2020-10-01').outputs.publicipId.value, '')]"
           },
           "TempPassword": {
             "value": "[parameters('TempPassword')]"
@@ -928,8 +1092,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "17045961086432052144"
+              "version": "0.5.6.12127",
+              "templateHash": "7360025531896887403"
             }
           },
           "parameters": {
@@ -953,9 +1117,12 @@
             },
             "nsgId": {
               "type": "string"
+            },
+            "Location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
             }
           },
-          "functions": [],
           "variables": {
             "trustedNicName": "[format('{0}-NIC', parameters('virtualMachineName'))]"
           },
@@ -964,7 +1131,7 @@
               "type": "Microsoft.Compute/virtualMachines",
               "apiVersion": "2021-03-01",
               "name": "[parameters('virtualMachineName')]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('Location')]",
               "properties": {
                 "osProfile": {
                   "computerName": "[parameters('virtualMachineName')]",
@@ -988,7 +1155,7 @@
                 "networkProfile": {
                   "networkInterfaces": [
                     {
-                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-06-01').outputs.nicId.value]",
+                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))).outputs.nicId.value]",
                       "properties": {
                         "primary": true
                       }
@@ -1002,7 +1169,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2020-10-01",
               "name": "[variables('trustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1010,6 +1177,9 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "Location": {
+                    "value": "[parameters('Location')]"
+                  },
                   "nicName": {
                     "value": "[variables('trustedNicName')]"
                   },
@@ -1032,8 +1202,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.4.1008.15138",
-                      "templateHash": "7075199963255044859"
+                      "version": "0.5.6.12127",
+                      "templateHash": "14358588114262787622"
                     }
                   },
                   "parameters": {
@@ -1052,15 +1222,18 @@
                     },
                     "nsgId": {
                       "type": "string"
+                    },
+                    "Location": {
+                      "type": "string",
+                      "defaultValue": "[resourceGroup().location]"
                     }
                   },
-                  "functions": [],
                   "resources": [
                     {
                       "type": "Microsoft.Network/networkInterfaces",
                       "apiVersion": "2021-02-01",
                       "name": "[parameters('nicName')]",
-                      "location": "[resourceGroup().location]",
+                      "location": "[parameters('Location')]",
                       "properties": {
                         "enableIPForwarding": "[parameters('enableIPForwarding')]",
                         "networkSecurityGroup": {
@@ -1104,7 +1277,7 @@
           "outputs": {
             "untrustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-06-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))).outputs.nicIP.value]"
             }
           }
         }

@@ -9,6 +9,7 @@ param OPNScriptURI string
 param ShellScriptName string
 param ShellScriptParameters string
 param nsgId string = ''
+param Location string = resourceGroup().location
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
@@ -16,6 +17,7 @@ var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 module untrustedNic '../vnet/publicnic.bicep' = {
   name: untrustedNicName
   params:{
+    Location: Location
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
     publicIPId: publicIPId
@@ -27,6 +29,7 @@ module untrustedNic '../vnet/publicnic.bicep' = {
 module trustedNic '../vnet/privatenic.bicep' = {
   name: trustedNicName
   params:{
+    Location: Location
     nicName: trustedNicName
     subnetId: trustedSubnetId
     enableIPForwarding: true
@@ -36,7 +39,7 @@ module trustedNic '../vnet/privatenic.bicep' = {
 
 resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   name: virtualMachineName
-  location: resourceGroup().location
+  location: Location
   properties: {
     osProfile: {
       computerName: virtualMachineName
@@ -78,7 +81,7 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
 
 resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
   name: '${OPNsense.name}/CustomScript'
-  location: resourceGroup().location
+  location: Location
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
     type: 'CustomScriptForLinux'

@@ -97,8 +97,7 @@ Here are few considerations to deploy this solution correctly:
 
 ## Roadmap
 
-The following improvements will be added soon:
-- Fix waagent service not starting after OPNsense deployment
+Build custom deployment form
 
 ## Feedbacks
 

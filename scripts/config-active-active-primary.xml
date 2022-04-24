@@ -402,6 +402,58 @@
     </rule>
     <rule>
       <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <statetype>keep state</statetype>
+      <descr>Allow Firewall Management Windows-VM-Subnet</descr>
+      <direction>in</direction>
+      <log>1</log>
+      <quick>1</quick>
+      <source>
+        <address>WindowsVMSubnet</address>
+      </source>
+      <destination>
+        <network>lanip</network>
+      </destination>
+      <updated>
+        <username>root@10.0.1.7</username>
+        <time>1650569687.4794</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </updated>
+      <created>
+        <username>root@10.0.1.7</username>
+        <time>1650569687.4794</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </created>
+    </rule>
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <statetype>keep state</statetype>
+      <descr>Allow Windows-VM-Subnet Internet Access</descr>
+      <direction>in</direction>
+      <log>1</log>
+      <quick>1</quick>
+      <source>
+        <address>WindowsVMSubnet</address>
+      </source>
+      <destination>
+        <any>1</any>
+      </destination>
+      <updated>
+        <username>root@10.0.1.7</username>
+        <time>1650570771.5832</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </updated>
+      <created>
+        <username>root@10.0.1.7</username>
+        <time>1650570771.5832</time>
+        <description>/firewall_rules_edit.php made changes</description>
+      </created>
+    </rule>
+    <rule>
+      <type>pass</type>
       <ipprotocol>inet</ipprotocol>
       <descr>Default allow LAN to any rule</descr>
       <interface>lan</interface>
@@ -599,6 +651,31 @@
       <queues/>
       <rules/>
     </TrafficShaper>
+    <Firewall>
+      <Lvtemplate version="0.0.1">
+        <templates/>
+      </Lvtemplate>
+      <Category version="1.0.0">
+        <categories/>
+      </Category>
+      <Alias version="1.0.0">
+        <geoip>
+          <url/>
+        </geoip>
+        <aliases>
+          <alias uuid="637063a6-909d-4544-b2ac-c883a9ea97e4">
+            <enabled>1</enabled>
+            <name>WindowsVMSubnet</name>
+            <type>network</type>
+            <proto/>
+            <counters>0</counters>
+            <updatefreq/>
+            <content>zzz.zzz.zzz.zzz</content>
+            <description/>
+          </alias>
+        </aliases>
+      </Alias>
+    </Firewall>
   </OPNsense>
   <cert>
     <refid>598102500f355</refid>
@@ -646,7 +723,35 @@
         </created>
         <dstport/>
       </rule>
-      <mode>automatic</mode>
+      <rule>
+        <source>
+          <network>WindowsVMSubnet</network>
+        </source>
+        <destination>
+          <any>1</any>
+        </destination>
+        <descr>NAT Windows-VM-Subnet</descr>
+        <category/>
+        <interface>wan</interface>
+        <tag/>
+        <tagged/>
+        <poolopts/>
+        <poolopts_sourcehashkey/>
+        <ipprotocol>inet</ipprotocol>
+        <created>
+          <username>root@10.0.1.7</username>
+          <time>1650569929.4325</time>
+          <description>/firewall_nat_out_edit.php made changes</description>
+        </created>
+        <target>wanip</target>
+        <sourceport/>
+        <updated>
+          <username>root@10.0.1.7</username>
+          <time>1650570006.9471</time>
+          <description>/firewall_nat_out_edit.php made changes</description>
+        </updated>
+      </rule>
+      <mode>hybrid</mode>
     </outbound>
   </nat>
   <hasync>
@@ -677,10 +782,13 @@
     <synchronizesquid>on</synchronizesquid>
     <synchronizesuricata>on</synchronizesuricata>
     <synchronizednsresolver>on</synchronizednsresolver>
+    <synchronizevirtualip>on</synchronizevirtualip>
     <pfsyncinterface>lan</pfsyncinterface>
     <synchronizetoip>xxx.xxx.xxx.xxx</synchronizetoip>
     <username>root</username>
     <password>opnsense</password>
+    <pfsyncenabled>on</pfsyncenabled>
+    <pfsyncpeerip>xxx.xxx.xxx.xxx</pfsyncpeerip>
   </hasync>
   <gateways>
     <gateway_item>
@@ -695,4 +803,14 @@
       <monitor_disable>1</monitor_disable>
     </gateway_item>
   </gateways>
+  <virtualip>
+    <vip>
+      <type>single</type>
+      <subnet_bits>32</subnet_bits>
+      <mode>ipalias</mode>
+      <interface>wan</interface>
+      <descr>ELB-IP</descr>
+      <subnet>www.www.www.www</subnet>
+    </vip>
+  </virtualip>
 </opnsense>

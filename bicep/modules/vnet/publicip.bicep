@@ -10,3 +10,4 @@ resource publicip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
   properties: publicipproperties
 }
 output publicipId string = publicip.id
+output publicipAddress string = publicip.properties.ipAddress

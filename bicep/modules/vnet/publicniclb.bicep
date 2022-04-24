@@ -3,6 +3,7 @@ param enableIPForwarding bool = false
 param nicName string
 param nsgId string
 param loadBalancerBackendAddressPoolId string
+param loadBalancerInboundNatRules string
 param Location string = resourceGroup().location
 
 resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
@@ -24,6 +25,11 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
           loadBalancerBackendAddressPools: [
             {
               id: loadBalancerBackendAddressPoolId
+            }
+          ]
+          loadBalancerInboundNatRules: [
+            {
+              id: loadBalancerInboundNatRules
             }
           ]
         }

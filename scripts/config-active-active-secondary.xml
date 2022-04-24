@@ -767,4 +767,14 @@
       <monitor_disable>1</monitor_disable>
     </gateway_item>
   </gateways>
+  <virtualip>
+    <vip>
+      <type>single</type>
+      <subnet_bits>32</subnet_bits>
+      <mode>ipalias</mode>
+      <interface>wan</interface>
+      <descr>ELB-IP</descr>
+      <subnet>www.www.www.www</subnet>
+    </vip>
+  </virtualip>
 </opnsense>
