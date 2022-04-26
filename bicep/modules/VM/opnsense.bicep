@@ -1,5 +1,6 @@
 param untrustedSubnetId string
-param trustedSubnetId string
+param trustedSubnetId string = ''
+param publicIPId string = ''
 param virtualMachineName string
 param TempUsername string
 param TempPassword string
@@ -8,20 +9,22 @@ param OPNScriptURI string
 param ShellScriptName string
 param ShellScriptParameters string
 param nsgId string = ''
-param ExternalLoadBalancerBackendAddressPoolId string
-param InternalLoadBalancerBackendAddressPoolId string
-param ExternalloadBalancerInboundNatRulesId string
+param ExternalLoadBalancerBackendAddressPoolId string = ''
+param InternalLoadBalancerBackendAddressPoolId string = ''
+param ExternalloadBalancerInboundNatRulesId string = ''
+param multiNicSupport bool
 param Location string = resourceGroup().location
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-module untrustedNic '../vnet/publicniclb.bicep' = {
+module untrustedNic '../vnet/nic.bicep' = {
   name: untrustedNicName
   params:{
     Location: Location
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
+    publicIPId: publicIPId
     enableIPForwarding: true
     nsgId: nsgId
     loadBalancerBackendAddressPoolId: ExternalLoadBalancerBackendAddressPoolId
@@ -29,7 +32,7 @@ module untrustedNic '../vnet/publicniclb.bicep' = {
   }
 }
 
-module trustedNic '../vnet/privateniclb.bicep' = {
+module trustedNic '../vnet/nic.bicep' = if(multiNicSupport){
   name: trustedNicName
   params:{
     Location: Location
@@ -65,7 +68,7 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
     }
     networkProfile: {
-      networkInterfaces: [
+      networkInterfaces: multiNicSupport == true ?[
         {
           id: untrustedNic.outputs.nicId
           properties:{
@@ -76,6 +79,13 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
           id: trustedNic.outputs.nicId
           properties:{
             primary: false
+          }
+        }
+      ]:[
+        {
+          id: untrustedNic.outputs.nicId
+          properties:{
+            primary: true
           }
         }
       ]
@@ -101,5 +111,5 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
 }
 
 output untrustedNicIP string = untrustedNic.outputs.nicIP
-output trustedNicIP string = trustedNic.outputs.nicIP
+output trustedNicIP string = multiNicSupport == true ? trustedNic.outputs.nicIP : ''
 output untrustedNicProfileId string = untrustedNic.outputs.nicIpConfigurationId

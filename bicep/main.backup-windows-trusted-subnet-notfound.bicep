@@ -1,30 +1,47 @@
 // Parameters
+@sys.description('Select a valid scenario. Active Active: Two OPNSenses deployed in HA mode using SLB and ILB. Two Nics: Single OPNSense deployed with two Nics. Single Nic: Single OPNSense deployed with one Nic.')
+@allowed([
+  'Active-Active'
+  'TwoNics'
+  'SingleNic'
+])
+param scenarioOption string = 'TwoNics'
+
 @sys.description('VM size, please choose a size which allow 2 NICs.')
 param virtualMachineSize string = 'Standard_B2s'
 
 @sys.description('OPN NVA Manchine Name')
 param virtualMachineName string
 
-@sys.description('Default Temporary Admin username (Used for JumpBox and temporarily deploy FreeBSD VM).')
-param TempUsername string
+// @sys.description('Default Temporary Admin username (Used for JumpBox and temporarily deploy FreeBSD VM).')
+// param TempUsername string
 
-@sys.description('Default Temporary Admin password (Used for JumpBox and temporarily deploy FreeBSD VM).')
-@secure()
-param TempPassword string
+// @sys.description('Default Temporary Admin password (Used for JumpBox and temporarily deploy FreeBSD VM).')
+// @secure()
+// param TempPassword string
 
-@sys.description('Virtual Nework Name')
+@sys.description('Virtual Nework Name. This is a required parameter to build a new VNet or find an existing one.')
 param virtualNetworkName string = 'OPN-VNET'
 
-@sys.description('Virtual Address Space')
+@sys.description('Use Existing Virtual Nework')
+param useexistingvirtualNetwork bool
+
+@sys.description('Virtual Network Address Space. Only required if you want to create a new VNet.')
 param VNETAddress array = [
   '10.0.0.0/16'
 ]
 
-@sys.description('Untrusted-Subnet Address Space')
+@sys.description('Untrusted-Subnet Address Space. Only required if you want to create a new VNet.')
 param UntrustedSubnetCIDR string = '10.0.0.0/24'
 
-@sys.description('Trusted-Subnet Address Space')
+@sys.description('Trusted-Subnet Address Space. Only required if you want to create a new VNet.')
 param TrustedSubnetCIDR string = '10.0.1.0/24'
+
+@sys.description('Untrusted-Subnet Name. Only required if you want to use an existing VNet and Subnet.')
+param existingUntrustedSubnetName string = ''
+
+@sys.description('Trusted-Subnet Name. Only required if you want to use an existing VNet and Subnet.')
+param existingTrustedSubnetName string = ''
 
 @sys.description('Specify Public IP SKU either Basic (lowest cost) or Standard (Required for HA LB)"')
 @allowed([
@@ -42,12 +59,24 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
-@sys.description('In case of deploying Windows, this is the Windows VM Subnet Address Space')
+@sys.description('Only required in case of Deploying Windows VM. Windows Admin username (Used to login in Windows VM).')
+param WinUsername string
+
+@sys.description('Only required in case of Deploying Windows VM. Windows Password (Used to login in Windows VM).')
+@secure()
+param WinPassword string
+
+@sys.description('Existing Windows Subnet Name. Only requried in case of deploying Windows in a exising subnet.')
+param existingWindowsSubnet string = ''
+
+@sys.description('In case of deploying Windows in a New VNet this will be the Windows VM Subnet Address Space')
 param DeployWindowsSubnet string = '10.0.2.0/24'
 
 param Location string = resourceGroup().location
 
 // Variables
+var TempUsername = 'azureuser'
+var TempPassword = guid(subscription().id,resourceGroup().id)
 var untrustedSubnetName = 'Untrusted-Subnet'
 var trustedSubnetName = 'Trusted-Subnet'
 var VMOPNsensePrimaryName = '${virtualMachineName}-Primary'
@@ -113,7 +142,7 @@ module nsgopnsense 'modules/vnet/nsg.bicep' = {
 }
 
 // Create VNET
-module vnet 'modules/vnet/vnet.bicep' = {
+module vnet 'modules/vnet/vnet.bicep' = if(useexistingvirtualNetwork == false) {
   name: virtualNetworkName
   params: {
     location: Location
@@ -173,19 +202,19 @@ module publicip 'modules/vnet/publicip.bicep' = {
 
 // Build reference of existing subnets
 resource untrustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
-  name: '${virtualNetworkName}/${untrustedSubnetName}'
+  name: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingUntrustedSubnetName : untrustedSubnetName}'
 }
 
 resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
-  name: '${virtualNetworkName}/${trustedSubnetName}'
+  name: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
 }
 
 resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (DeployWindows) {
-  name: '${virtualNetworkName}/${windowsvmsubnetname}'
+  name: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}'
 }
 
 // External Load Balancer
-module elb 'modules/vnet/lb.bicep' = {
+module elb 'modules/vnet/lb.bicep' = if(scenarioOption == 'Active-Active'){
   name: externalLoadBalanceName
   params: {
     Location: Location
@@ -289,7 +318,7 @@ module elb 'modules/vnet/lb.bicep' = {
 }
 
 // Internal Load Balancer
-module ilb 'modules/vnet/lb.bicep' = {
+module ilb 'modules/vnet/lb.bicep' = if(scenarioOption == 'Active-Active'){
   name: internalLoadBalanceName
   params: {
     Location: Location
@@ -350,19 +379,23 @@ module ilb 'modules/vnet/lb.bicep' = {
   }
   dependsOn: [
     vnet
+    nsgopnsense
+    publicip
   ]
 }
 
-// Create OPNsense
-module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
+// Create OPNSense Active-Active
+// Create OPNsense Secondary
+module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Active-Active'){
   name: VMOPNsenseSecondaryName
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} Secondary ${TrustedSubnetCIDR} ${DeployWindowsSubnet} ${publicip.outputs.publicipAddress}'
+    ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
     TempUsername: TempUsername
+    multiNicSupport: true
     trustedSubnetId: trustedSubnet.id
     untrustedSubnetId: untrustedSubnet.id
     virtualMachineName: VMOPNsenseSecondaryName
@@ -378,15 +411,17 @@ module opnSenseSecondary 'modules/VM/opnsense-vm-active-active.bicep' = {
   ]
 }
 
-module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
+// Create OPNsense Primary
+module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Active-Active'){
   name: VMOPNsensePrimaryName
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindowsSubnet} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
+    ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
     TempUsername: TempUsername
+    multiNicSupport: true
     trustedSubnetId: trustedSubnet.id
     untrustedSubnetId: untrustedSubnet.id
     virtualMachineName: VMOPNsensePrimaryName
@@ -403,9 +438,55 @@ module opnSensePrimary 'modules/VM/opnsense-vm-active-active.bicep' = {
   ]
 }
 
+// Create OPNsense TwoNics
+module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNics'){
+  name: '${virtualMachineName}-TwoNics'
+  params: {
+    Location: Location
+    ShellScriptParameters: '${OpnScriptURI} TwoNics ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix: '1.1.1.1/32'}'
+    OPNScriptURI: OpnScriptURI
+    ShellScriptName: ShellScriptName
+    TempPassword: TempPassword
+    TempUsername: TempUsername
+    multiNicSupport: true
+    trustedSubnetId: trustedSubnet.id
+    untrustedSubnetId: untrustedSubnet.id
+    virtualMachineName: virtualMachineName
+    virtualMachineSize: virtualMachineSize
+    publicIPId: publicip.outputs.publicipId
+    nsgId: nsgopnsense.outputs.nsgID
+  }
+  dependsOn: [
+    vnet
+    nsgopnsense
+    trustedSubnet
+  ]
+}
+
+// Create OPNSense SingleNic
+module opnSenseSingleNic 'modules/VM/opnsense.bicep' = if(scenarioOption == 'SingleNic'){
+  name: '${virtualMachineName}-SingleNic'
+  params: {
+    Location: Location
+    ShellScriptParameters: '${OpnScriptURI} SingNic'
+    OPNScriptURI: OpnScriptURI
+    ShellScriptName: ShellScriptName
+    TempPassword: TempPassword
+    TempUsername: TempUsername
+    multiNicSupport: false
+    untrustedSubnetId: untrustedSubnet.id
+    virtualMachineName: virtualMachineName
+    virtualMachineSize: virtualMachineSize
+    publicIPId: publicip.outputs.publicipId
+    nsgId: nsgopnsense.outputs.nsgID
+  }
+  dependsOn: [
+    vnet
+    nsgopnsense
+  ]
+}
+
 // Windows11 Client Resources
-
-
 module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
   name: winvmnetworkSecurityGroupName
   params: {
@@ -443,6 +524,8 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
   dependsOn: [
     opnSenseSecondary
     opnSensePrimary
+    opnSenseTwoNics
+    opnSenseSingleNic
   ]
 }
 
@@ -462,6 +545,8 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
   dependsOn: [
     opnSenseSecondary
     opnSensePrimary
+    opnSenseTwoNics
+    opnSenseSingleNic
   ]
 }
 
@@ -474,6 +559,8 @@ module winvmroutetable 'modules/vnet/routetable.bicep' = if (DeployWindows) {
   dependsOn: [
     opnSenseSecondary
     opnSensePrimary
+    opnSenseTwoNics
+    opnSenseSingleNic
   ]
 }
 
@@ -489,8 +576,6 @@ module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployW
     }
   }
   dependsOn: [
-    opnSenseSecondary
-    opnSensePrimary
     winvmroutetable
   ]
 }
@@ -501,16 +586,18 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
     Location: Location
     nsgId: DeployWindows ? nsgwinvm.outputs.nsgID : ''
     publicIPId: DeployWindows ? winvmpublicip.outputs.publicipId : ''
-    TempPassword: TempPassword
-    TempUsername: TempUsername
+    TempPassword: WinUsername
+    TempUsername: WinPassword
     trustedSubnetId: windowsvmsubnet.id
     virtualMachineName: winvmName
     virtualMachineSize: 'Standard_B4ms'
   }
   dependsOn: [
-    opnSenseSecondary
-    opnSensePrimary
     nsgwinvm
     winvmpublicip
+    opnSenseSecondary
+    opnSensePrimary
+    opnSenseTwoNics
+    opnSenseSingleNic
   ]
 }
