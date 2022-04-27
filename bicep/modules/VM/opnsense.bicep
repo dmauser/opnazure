@@ -7,16 +7,25 @@ param TempPassword string
 param virtualMachineSize string
 param OPNScriptURI string
 param ShellScriptName string
-param ShellScriptParameters string
+//param ShellScriptParameters string = ''
 param nsgId string = ''
 param ExternalLoadBalancerBackendAddressPoolId string = ''
 param InternalLoadBalancerBackendAddressPoolId string = ''
 param ExternalloadBalancerInboundNatRulesId string = ''
+param ShellScriptObj object = {}
 param multiNicSupport bool
 param Location string = resourceGroup().location
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
+
+resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
+  name: ShellScriptObj.TrustedSubnetName
+}
+
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
+  name: ShellScriptObj.WindowsSubnetName
+}
 
 module untrustedNic '../vnet/nic.bicep' = {
   name: untrustedNicName
@@ -105,7 +114,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
       fileUris: [
         '${OPNScriptURI}${ShellScriptName}'
       ]
-      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptParameters}'
+      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP}'
     }
   }
 }

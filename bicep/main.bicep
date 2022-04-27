@@ -390,7 +390,15 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
   name: VMOPNsenseSecondaryName
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress}'
+    //ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress}'
+    ShellScriptObj: {
+      'OpnScriptURI': OpnScriptURI
+      'OpnType': 'Secondary'
+      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
+      'publicIPAddress': publicip.outputs.publicipAddress
+      'opnSenseSecondarytrustedNicIP': ''
+    }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -401,9 +409,9 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
     virtualMachineName: VMOPNsenseSecondaryName
     virtualMachineSize: virtualMachineSize
     nsgId: nsgopnsense.outputs.nsgID
-    ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
-    InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
-    ExternalloadBalancerInboundNatRulesId: elb.outputs.inboundNatRules[1].id
+    ExternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? elb.outputs.backendAddressPools[0].id : ''
+    InternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? ilb.outputs.backendAddressPools[0].id : ''
+    ExternalloadBalancerInboundNatRulesId: scenarioOption == 'Active-Active' ? elb.outputs.inboundNatRules[1].id : ''
   }
   dependsOn: [
     vnet
@@ -419,7 +427,15 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
   name: VMOPNsensePrimaryName
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
+    //ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
+    ShellScriptObj: {
+      'OpnScriptURI': OpnScriptURI
+      'OpnType': 'Primary'
+      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
+      'publicIPAddress': publicip.outputs.publicipAddress
+      'opnSenseSecondarytrustedNicIP': scenarioOption == 'Active-Active' ? opnSenseSecondary.outputs.trustedNicIP : ''
+    }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -430,9 +446,9 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
     virtualMachineName: VMOPNsensePrimaryName
     virtualMachineSize: virtualMachineSize
     nsgId: nsgopnsense.outputs.nsgID
-    ExternalLoadBalancerBackendAddressPoolId: elb.outputs.backendAddressPools[0].id
-    InternalLoadBalancerBackendAddressPoolId: ilb.outputs.backendAddressPools[0].id
-    ExternalloadBalancerInboundNatRulesId: elb.outputs.inboundNatRules[0].id
+    ExternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? elb.outputs.backendAddressPools[0].id : ''
+    InternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? ilb.outputs.backendAddressPools[0].id : ''
+    ExternalloadBalancerInboundNatRulesId: scenarioOption == 'Active-Active' ? elb.outputs.inboundNatRules[0].id : ''
   }
   dependsOn: [
     vnet
@@ -446,7 +462,15 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
   name: '${virtualMachineName}-TwoNics'
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} TwoNics ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix: '1.1.1.1/32'}'
+    //ShellScriptParameters: '${OpnScriptURI} TwoNics ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix: '1.1.1.1/32'}'
+    ShellScriptObj: {
+      'OpnScriptURI': OpnScriptURI
+      'OpnType': 'TwoNics'
+      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
+      'publicIPAddress': ''
+      'opnSenseSecondarytrustedNicIP': ''
+    }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -471,7 +495,15 @@ module opnSenseSingleNic 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Sin
   name: '${virtualMachineName}-SingleNic'
   params: {
     Location: Location
-    ShellScriptParameters: '${OpnScriptURI} SingNic'
+    //ShellScriptParameters: '${OpnScriptURI} SingNic'
+    ShellScriptObj: {
+      'OpnScriptURI': OpnScriptURI
+      'OpnType': 'SingleNic'
+      'TrustedSubnetName': ''
+      'WindowsSubnetName': ''
+      'publicIPAddress': ''
+      'opnSenseSecondarytrustedNicIP': ''
+    }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
     TempPassword: TempPassword
@@ -568,13 +600,13 @@ module winvmroutetable 'modules/vnet/routetable.bicep' = if (DeployWindows) {
 }
 
 module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployWindows) {
-  name: 'default'
+  name: '${winvmroutetablename}-default'
   params: {
     routetableName: winvmroutetablename
     routeName: 'default'
     properties: {
       nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: ilb.outputs.frontendIP.privateIPAddress
+      nextHopIpAddress: scenarioOption == 'Active-Active' ? ilb.outputs.frontendIP.privateIPAddress : scenarioOption == 'TwoNics' ? opnSenseTwoNics.outputs.trustedNicIP : scenarioOption == 'SingleNic' ? opnSenseSingleNic.outputs.untrustedNicIP : ''
       addressPrefix: '0.0.0.0/0'
     }
   }
@@ -589,8 +621,8 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
     Location: Location
     nsgId: DeployWindows ? nsgwinvm.outputs.nsgID : ''
     publicIPId: DeployWindows ? winvmpublicip.outputs.publicipId : ''
-    TempPassword: WinUsername
-    TempUsername: WinPassword
+    TempUsername: WinUsername
+    TempPassword: WinPassword
     trustedSubnetId: windowsvmsubnet.id
     virtualMachineName: winvmName
     virtualMachineSize: 'Standard_B4ms'

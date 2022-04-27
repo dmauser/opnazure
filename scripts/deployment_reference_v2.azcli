@@ -86,8 +86,8 @@ az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.paramete
 ####################
 # SingleNic New VNet
 ####################
-$RG='opnsense-SingleNic-existing-vnet'
-$DEPNAME='opnsense-SingleNic-existing-vnet'
+$RG='opnsense-SingleNic-new-vnet'
+$DEPNAME='opnsense-SingleNic-new-vnet'
 az group create -l centralus -g $RG
 
 # Deployment SingleNic with Windows

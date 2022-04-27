@@ -25,17 +25,17 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: first(publicIPId) == '/' ? {
             id: publicIPId
-          }:{}
+          }:null
           loadBalancerBackendAddressPools: first(loadBalancerBackendAddressPoolId) == '/' ? [
             {
               id: loadBalancerBackendAddressPoolId
             }
-          ]:[]
+          ]:null
           loadBalancerInboundNatRules: first(loadBalancerInboundNatRules) == '/' ? [
             {
               id: loadBalancerInboundNatRules
             }
-          ]:[]
+          ]:null
         }
       }
     ]
