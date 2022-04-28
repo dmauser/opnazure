@@ -1,3 +1,8 @@
+# DeploymentURL
+# Example of Azure URL:
+
+# https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain.json%3F/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2Fbicep%2FuiFormDefinition.json
+
 ####################
 # Active-Active New VNET
 ####################

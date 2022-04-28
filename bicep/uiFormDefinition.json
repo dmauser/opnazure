@@ -1,0 +1,205 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json#",
+  "view": {
+    "kind": "Form",
+    "properties": {
+      "title": "OPNSense deployment",
+      "steps": [
+        {
+          "name": "OPNSenseScenarios",
+          "label": "OPNSense Deployment Scenarios",
+          "elements": [
+            {
+              "name": "opnsensescenario",
+              "type": "Microsoft.Common.ResourceScope",
+              "subscription": {
+                "constraints": {
+                  "validations": []
+                },
+                "resourceProviders": [
+                  "Microsoft.Compute"
+                ]
+              },
+              "location": {
+                "label": "Region",
+                "toolTip": "Azure region",
+                "resourceTypes": [
+                  "Microsoft.Compute/virtualMachines"
+                ],
+                "allowedValues": []
+              }
+            },
+            {
+              "name": "vmName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Virtual Machine name",
+              "toolTip": "The name of the Virtual Machine.",
+              "defaultValue": "gary-vm",
+              "constraints": {
+                "required": true,
+                "validations": [
+                  {
+                    "regex": "^[a-z0-9A-Z-]{4,15}$",
+                    "message": "The VM name must start with 'gary,' be between 4 and 15 characters long and contain letters, numbers and hyphens only."
+                  },
+                  {
+                    "isValid": "[startsWith(steps('basics').vmName,'gary')]",
+                    "message": "Must start with 'gary'."
+                  }
+                ]
+              }
+            },
+            {
+              "name": "adminUsername",
+              "type": "Microsoft.Compute.UserNameTextBox",
+              "label": "Username",
+              "toolTip": "Admin username for the machine",
+              "osPlatform": "Windows",
+              "constraints": {
+                "required": true
+              },
+              "visible": false
+            },
+            {
+              "name": "password",
+              "type": "Microsoft.Common.PasswordBox",
+              "label": {
+                "password": "Password",
+                "confirmPassword": "Confirm password"
+              },
+              "toolTip": "Admin password for the virtual machine",
+              "constraints": {
+                "required": true,
+                "regex": "^(?=.*[A-Z])(?=.*[.!@#$%^&*()-_=+])(?=.*[0-9])(?=.*[a-z]).{12,40}$",
+                "validationMessage": "Password must be at least 12 characters long, and contain upper case, lower case, number and symbol"
+              },
+              "options": {
+                "hideConfirmation": false
+              },
+              "visible": false
+            },
+            {
+              "name": "scriptParameter",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Directory to create",
+              "toolTip": "The directory that will be created at the root.",
+              "defaultValue": "C:\\DefaultDirName"
+            }
+          ]
+        },
+        {
+          "name": "VirtualMachineConfig",
+          "label": "Virtual Machine Settings",
+          "elements": [
+            {
+              "name": "vnet",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet",
+                "subnets": "Select an existing subnet"
+              },
+              "scope": {
+                "subscriptionId": "[steps('basics').resourceScope.subscription.subscriptionId]",
+                "resourceGroupName": "[steps('basics').resourceScope.resourceGroup.resourceGroupId]",
+                "location": "[steps('basics').resourceScope.location.name]"
+              },
+              "toolTip": {
+                "virtualNetwork": "Creating a new VNet is not allowed, attempts to do so will fail",
+                "subnets": "Must select an existing subnet"
+              },
+              "defaultValue": {
+                "name": "PleaseSelectAValidVNet",
+                "addressPrefixSize": "/24"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "subnet1": {
+                  "label": "Subnet",
+                  "constraints": {
+                    "minAddressPrefixSize": "/24"
+                  }
+                }
+              },
+              "visible": true
+            },
+            {
+              "name": "OSVersion",
+              "type": "Microsoft.Common.DropDown",
+              "label": "Windows OS Version",
+              "defaultValue": "2019-Datacenter",
+              "toolTip": "The OS Version for the VM Image",
+              "constraints": {
+                "allowedValues": [
+                  {
+                    "value": "2019-Datacenter",
+                    "label": "2019-Datacenter"
+                  },
+                  {
+                    "value": "2019-Datacenter-Core",
+                    "label": "2019-Datacenter-Core"
+                  },
+                  {
+                    "value": "2019-Datacenter-with-Containers",
+                    "label": "2019-Datacenter-with-Containers"
+                  }
+                ],
+                "required": true
+              },
+              "visible": true
+            },
+            {
+              "name": "vmSize",
+              "type": "Microsoft.Compute.SizeSelector",
+              "label": "Virtual machine size",
+              "toolTip": "The size of virtual machine to provision.",
+              "recommendedSizes": [
+                "Standard_D2_v2",
+                "Standard_A2_v2"
+              ],
+              "constraints": {
+                "allowedSizes": [
+                  "Standard_D2_v2",
+                  "Standard_A2_v2",
+                  "Standard_B1ls"
+                ],
+                "numAvailabilityZonesRequired": 3,
+                "zone": "3"
+              },
+              "osPlatform": "Windows",
+              "count": "1",
+              "scope": {
+                "subscriptionId": "[steps('basics').resourceScope.subscription.subscriptionId]",
+                "location": "[steps('basics').resourceScope.location.name]"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "outputs": {
+      "parameters": {
+        "location": "[steps('basics').resourceScope.location.name]",
+        "vmName": "[steps('basics').vmName]",
+        "adminUsername": "[steps('basics').adminUsername]",
+        "adminPassword": "[steps('basics').password]",
+        "scriptParameter": "[steps('basics').scriptParameter]",
+        "virtualNetworkName": "[steps('VirtualMachineConfig').vnet.name]",
+        "virtualNetworkNewOrExisting": "[steps('VirtualMachineConfig').vnet.newOrExisting]",
+        "virtualNetworkAddressPrefix": "[first(steps('VirtualMachineConfig').vnet.addressPrefixes)]",
+        "virtualNetworkResourceGroup": "[steps('VirtualMachineConfig').vnet.resourceGroup]",
+        "subnetName": "[steps('VirtualMachineConfig').vnet.subnets.subnet1.name]",
+        "subnetAddressPrefix": "[steps('VirtualMachineConfig').vnet.subnets.subnet1.addressPrefix]",
+        "vmSize": "[steps('VirtualMachineConfig').vmSize]",
+        "OSVersion": "[steps('VirtualMachineConfig').OSVersion]"
+      },
+      "kind": "ResourceGroup",
+      "location": "[steps('basics').resourceScope.location.name]",
+      "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]"
+    }
+  }
+}
