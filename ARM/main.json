@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.5.6.12127",
-      "templateHash": "1141252142808696571"
+      "templateHash": "12197750902954854875"
     }
   },
   "parameters": {
@@ -41,10 +41,11 @@
         "description": "Virtual Nework Name. This is a required parameter to build a new VNet or find an existing one."
       }
     },
-    "useexistingvirtualNetwork": {
-      "type": "bool",
+    "existingvirtualNetwork": {
+      "type": "string",
+      "defaultValue": "new",
       "metadata": {
-        "description": "Use Existing Virtual Nework"
+        "description": "Use Existing Virtual Nework. The value must be new or existing."
       }
     },
     "VNETAddress": {
@@ -169,6 +170,7 @@
     "internalLoadBalancingRuleName": "Internal-HA-Port-Rule",
     "externalLoadBalanceNatRuleName1": "primary-nva-mgmt",
     "externalLoadBalanceNatRuleName2": "scondary-nva-mgmt",
+    "useexistingvirtualNetwork": "[if(equals(parameters('existingvirtualNetwork'), 'new'), false(), true())]",
     "windowsvmsubnetname": "Windows-VM-Subnet",
     "winvmroutetablename": "winvmroutetable",
     "winvmName": "VM-Win11Client",
@@ -267,7 +269,7 @@
       }
     },
     {
-      "condition": "[equals(parameters('useexistingvirtualNetwork'), false())]",
+      "condition": "[equals(variables('useexistingvirtualNetwork'), false())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[parameters('virtualNetworkName')]",
@@ -654,7 +656,7 @@
                 "properties": {
                   "privateIPAllocationMethod": "Dynamic",
                   "subnet": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
                   },
                   "privateIPAddressVersion": "IPv4"
                 }
@@ -812,8 +814,8 @@
             "value": {
               "OpnScriptURI": "[parameters('OpnScriptURI')]",
               "OpnType": "Secondary",
-              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
-              "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
+              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
+              "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName'))).outputs.publicipAddress.value]",
               "opnSenseSecondarytrustedNicIP": ""
             }
@@ -834,10 +836,10 @@
             "value": true
           },
           "trustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
           },
           "untrustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
           },
           "virtualMachineName": {
             "value": "[variables('VMOPNsenseSecondaryName')]"
@@ -1276,8 +1278,8 @@
             "value": {
               "OpnScriptURI": "[parameters('OpnScriptURI')]",
               "OpnType": "Primary",
-              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
-              "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
+              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
+              "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName'))).outputs.publicipAddress.value]",
               "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2020-10-01').outputs.trustedNicIP.value, '')]"
             }
@@ -1298,10 +1300,10 @@
             "value": true
           },
           "trustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
           },
           "untrustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
           },
           "virtualMachineName": {
             "value": "[variables('VMOPNsensePrimaryName')]"
@@ -1741,8 +1743,8 @@
             "value": {
               "OpnScriptURI": "[parameters('OpnScriptURI')]",
               "OpnType": "TwoNics",
-              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
-              "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
+              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
+              "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "",
               "opnSenseSecondarytrustedNicIP": ""
             }
@@ -1763,10 +1765,10 @@
             "value": true
           },
           "trustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '/')[1])]"
           },
           "untrustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
           },
           "virtualMachineName": {
             "value": "[parameters('virtualMachineName')]"
@@ -2219,7 +2221,7 @@
             "value": false
           },
           "untrustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
           },
           "virtualMachineName": {
             "value": "[parameters('virtualMachineName')]"
@@ -2962,7 +2964,7 @@
             "value": "[parameters('WinPassword')]"
           },
           "trustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(parameters('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '/')[1])]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '/')[1])]"
           },
           "virtualMachineName": {
             "value": "[variables('winvmName')]"

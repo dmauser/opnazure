@@ -23,8 +23,8 @@ param virtualMachineName string
 @sys.description('Virtual Nework Name. This is a required parameter to build a new VNet or find an existing one.')
 param virtualNetworkName string = 'OPN-VNET'
 
-@sys.description('Use Existing Virtual Nework')
-param useexistingvirtualNetwork bool
+@sys.description('Use Existing Virtual Nework. The value must be new or existing.')
+param existingvirtualNetwork string = 'new'
 
 @sys.description('Virtual Network Address Space. Only required if you want to create a new VNet.')
 param VNETAddress array = [
@@ -96,6 +96,7 @@ var internalLoadBalanceProbeName = 'HTTPs'
 var internalLoadBalancingRuleName = 'Internal-HA-Port-Rule'
 var externalLoadBalanceNatRuleName1 = 'primary-nva-mgmt'
 var externalLoadBalanceNatRuleName2 = 'scondary-nva-mgmt'
+var useexistingvirtualNetwork = existingvirtualNetwork == 'new' ? false : true
 
 var windowsvmsubnetname = 'Windows-VM-Subnet'
 var winvmroutetablename = 'winvmroutetable'

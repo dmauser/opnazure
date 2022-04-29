@@ -1,3 +1,4 @@
+$ProgressPreference = 'SilentlyContinue'
 $ResourceGroup = 'webapprafa'
 $StorageAccountName = 'storageaccountwebapba76'
 $Location = 'CentralUS'
