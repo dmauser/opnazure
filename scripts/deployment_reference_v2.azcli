@@ -1,7 +1,8 @@
 # DeploymentURL
 # Example of Azure URL:
-# GitHub:         https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2FARM%2Fmain.json%3F/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2Fbicep%2FuiFormDefinition.json
-# StorageAccount: https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2FARM%2Fmain.json%3F/uiFormDefinitionUri/https%3A%2F%2Fstorageaccountwebapba76.blob.core.windows.net%2Ftest%2FuiFormDefinition.json
+# GitHub (Branch master): https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2FARM%2Fmain.json%3F/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fmaster%2Fbicep%2FuiFormDefinition.json
+# GitHub (Branch v2):     https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2FARM%2Fmain.json%3F/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2Fbicep%2FuiFormDefinition.json
+# StorageAccount:         https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fopnazure%2Fv2%2FARM%2Fmain.json%3F/uiFormDefinitionUri/https%3A%2F%2Fstorageaccountwebapba76.blob.core.windows.net%2Ftest%2FuiFormDefinition.json
 
 
 ####################
