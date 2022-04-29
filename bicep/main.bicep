@@ -60,11 +60,11 @@ param ShellScriptName string = 'configureopnsense.sh'
 param DeployWindows bool = false
 
 @sys.description('Only required in case of Deploying Windows VM. Windows Admin username (Used to login in Windows VM).')
-param WinUsername string
+param WinUsername string = ''
 
 @sys.description('Only required in case of Deploying Windows VM. Windows Password (Used to login in Windows VM).')
 @secure()
-param WinPassword string
+param WinPassword string = ''
 
 @sys.description('Existing Windows Subnet Name. Only requried in case of deploying Windows in a exising subnet.')
 param existingWindowsSubnet string = ''

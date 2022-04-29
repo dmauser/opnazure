@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.5.6.12127",
-      "templateHash": "12197750902954854875"
+      "templateHash": "10237500865582656943"
     }
   },
   "parameters": {
@@ -119,12 +119,14 @@
     },
     "WinUsername": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Only required in case of Deploying Windows VM. Windows Admin username (Used to login in Windows VM)."
       }
     },
     "WinPassword": {
       "type": "secureString",
+      "defaultValue": "",
       "metadata": {
         "description": "Only required in case of Deploying Windows VM. Windows Password (Used to login in Windows VM)."
       }
