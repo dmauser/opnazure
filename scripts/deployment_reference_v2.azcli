@@ -12,10 +12,10 @@ $DEPNAME='opnsense-active-active-new-vnet'
 az group create -l centralus -g $RG
 
 # Deployment Active-Active with Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p useexistingvirtualNetwork=false -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p existingvirtualNetwork=new -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 # Deployment Active-Active no Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p useexistingvirtualNetwork=false -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p existingvirtualNetwork=new -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 #Clean
 az group delete -g $RG -y
@@ -43,10 +43,10 @@ az network vnet subnet create -g $RG --vnet-name $VNET -n $TrustedSubnet --addre
 az network vnet subnet create -g $RG --vnet-name $VNET -n $existingWindowsSubnet --address-prefixes $existingWindowsSubnetAddress
 
 # Deployment Active-Active with Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p useexistingvirtualNetwork=true -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p existingWindowsSubnet=$existingWindowsSubnet -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p existingvirtualNetwork=existing -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p existingWindowsSubnet=$existingWindowsSubnet -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 # Deployment Active-Active no Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p useexistingvirtualNetwork=true -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=Active-Active -p existingvirtualNetwork=existing -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 ####################
 
 ####################
@@ -57,10 +57,10 @@ $DEPNAME='opnsense-twonics-new-vnet'
 az group create -l centralus -g $RG
 
 # Deployment TwoNics with Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p useexistingvirtualNetwork=false -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p existingvirtualNetwork=new -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 # Deployment TwoNics no Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p useexistingvirtualNetwork=false -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p existingvirtualNetwork=new -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 ####################
 
 ####################
@@ -83,10 +83,10 @@ az network vnet subnet create -g $RG --vnet-name $VNET -n $TrustedSubnet --addre
 az network vnet subnet create -g $RG --vnet-name $VNET -n $existingWindowsSubnet --address-prefixes $existingWindowsSubnetAddress
 
 # Deployment TwoNics with Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p useexistingvirtualNetwork=true -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p existingWindowsSubnet=$existingWindowsSubnet -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p existingvirtualNetwork=existing -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p existingWindowsSubnet=$existingWindowsSubnet -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 # Deployment TwoNics no Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p useexistingvirtualNetwork=true -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=TwoNics -p existingvirtualNetwork=existing -p existingUntrustedSubnetName=$UntrustedSubnet -p existingTrustedSubnetName=$TrustedSubnet -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 ####################
 
 ####################
@@ -97,10 +97,10 @@ $DEPNAME='opnsense-SingleNic-new-vnet'
 az group create -l centralus -g $RG
 
 # Deployment SingleNic with Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p useexistingvirtualNetwork=false -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p existingvirtualNetwork=new -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 # Deployment SingleNic no Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p useexistingvirtualNetwork=false -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p existingvirtualNetwork=new -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 ####################
 
 
@@ -121,9 +121,9 @@ az network vnet subnet create -g $RG --vnet-name $VNET -n $UntrustedSubnet --add
 az network vnet subnet create -g $RG --vnet-name $VNET -n $existingWindowsSubnet --address-prefixes $existingWindowsSubnetAddress
 
 # Deployment SingleNic with Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p useexistingvirtualNetwork=true -p existingUntrustedSubnetName=$UntrustedSubnet -p existingWindowsSubnet=$existingWindowsSubnet -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p existingvirtualNetwork=existing -p existingUntrustedSubnetName=$UntrustedSubnet -p existingWindowsSubnet=$existingWindowsSubnet -p DeployWindows=true -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 
 # Deployment SingleNic no Windows
-az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p useexistingvirtualNetwork=true -p existingUntrustedSubnetName=$UntrustedSubnet -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
+az deployment group create -g $RG -n $DEPNAME -f .\main.bicep -p .\main.parameters.json -p scenarioOption=SingleNic -p existingvirtualNetwork=existing -p existingUntrustedSubnetName=$UntrustedSubnet -p DeployWindows=false -p OpnScriptURI=https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/
 ####################
 
