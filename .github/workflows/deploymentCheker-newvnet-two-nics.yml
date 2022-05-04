@@ -8,22 +8,22 @@ on:
   workflow_dispatch:
 
   #Run when bicep code changes
-  push:
-    branches:
-     - 'master'
-     - 'dev'
-    paths:
-      - "bicep/main-newvnet-two-nics.bicep"
-      - "bicep/main-newvnet-two-nics.parameters.json"
-      - ".github/workflows/deploymentCheker-newvnet-two-nics.yml"
+  # push:
+  #   branches:
+  #    - 'master'
+  #    - 'dev'
+  #   paths:
+  #     - "bicep/main-newvnet-two-nics.bicep"
+  #     - "bicep/main-newvnet-two-nics.parameters.json"
+  #     - ".github/workflows/deploymentCheker-newvnet-two-nics.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   pull_request:
     branches:
      - 'master'
     paths:
-      - "bicep/main-newvnet-two-nics.bicep"
-      - "bicep/main-newvnet-two-nics.parameters.json"
+      #- "bicep/main-active-active.parameters.json"
+      - "bicep/main.bicep"
       - ".github/workflows/deploymentCheker-newvnet-two-nics.yml"
 
   #Run on a weekly schedule
@@ -32,11 +32,22 @@ on:
   #  - cron: "0 23 * * 2"
 env:
   RG: "Automation-Actions-OPNAZURE-newvnet-two-nics-${{ github.run_number }}" #The resource group we're deploying to.
-  ParamFilePath: "bicep/main-newvnet-two-nics.parameters.json" #Path to parameter file
-  TemplateFilePath: "bicep/main-newvnet-two-nics.bicep"
+  Location: "eastus"
+  ParamFilePath: "bicep/main.parameters.json" #Path to parameter file
+  TemplateFilePath: "bicep/main.bicep"
   OPNsense-PIP: "OPNsense-PublicIP"
-  DEPNAME: "Dep-OPNsense-two-nics-${{ github.run_number }}" #Deployment Name
-  AZCLIVERSION: 2.29.2 #Pinning to a specific AZ CLI version
+  VNET: "OPN-VNET"
+  VNETAddress: "10.0.0.0/16"
+  UntrustedSubnet: "Untrusted-Subnet"
+  UntrustedSubnetAddress: "10.0.0.0/24"
+  TrustedSubnet: "Trusted-Subnet"
+  TrustedSubnetAddress: "10.0.1.0/24"
+  scenarioOption: "TwoNics"
+  existingvirtualNetwork: "new"
+  DeployWindows: false
+  OpnScriptURI: "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/"
+  DEPNAME: "Dep-OPNsense-newvnet-two-nics-${{ github.run_number }}" #Deployment Name
+  AZCLIVERSION: 2.36.0 #Pinning to a specific AZ CLI version
 
 jobs:
   Validation:
@@ -76,23 +87,15 @@ jobs:
           allow-no-subscriptions: false
 
       - name: Validate Infrastructure deployment
-        uses: Azure/cli@1.0.4
+        uses: Azure/cli@1.0.6
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            RG='${{ env.RG }}'
-            DEPNAME='${{ env.DEPNAME }}'
-            az group create -l eastus -g $RG
-            # sleep 5
-            az deployment group validate -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }}
+            az deployment group validate -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
 
   Deploy:
     runs-on: ubuntu-latest
     needs: [Validation]
-    #if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/develop'
-    #environment: azurecirgs
-    # outputs:
-    #   AKSNAME: ${{ steps.deployAks.outputs.AKSNAME}}
     steps:
       - uses: actions/checkout@v2
 
@@ -110,25 +113,11 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            RG='${{ env.RG }}'
-            DEPNAME='${{ env.DEPNAME }}'
-            branchName=${GITHUB_REF#refs/heads/}
-            OpnScriptURI="https://raw.githubusercontent.com/dmauser/opnazure/$branchName/scripts/"
-            az deployment group create -g $RG --name $DEPNAME -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p OpnScriptURI=$OpnScriptURI --verbose
-            #az deployment group create -f ${{ env.TemplateFilePath }} -g $RG -p ${{ env.ParamFilePath }} --name $DEPNAME --verbose
-
-            # DEPSTATUS=$(az deployment operation group list --resource-group $RG --name $DEPNAME) #--query "[?properties.provisioningState=='Failed']"
-            # echo $DEPSTATUS
-
-            # #outputs
-            # AKSNAME=$(az deployment group show -n $DEPNAME -g $RG --query "properties.outputs.aksClusterName.value" -o tsv)
-            # echo "AKSName returned from az deployment = $AKSNAME"
-            # echo "::set-output name=AKSNAME::$AKSNAME" #outputting for conditon
+            az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
 
   CheckOPNsenseAvailability:
     runs-on: ubuntu-latest
     needs: [Deploy]
-    #environment: azurecirgs
     steps:
       - uses: actions/checkout@v2
 
@@ -142,16 +131,12 @@ jobs:
 
       - name: Test OPNsense Access
         run: |
-          AKSNAME='${{ needs.Deploy.outputs.AKSNAME}}'
-          RG='${{ env.RG }}'
-          PIP='${{ env.OPNsense-PIP }}'
-          PIP=$(az network public-ip show -g $RG -n $PIP --query "ipAddress" -o tsv)
+          PIP=$(az network public-ip show -g '${{ env.RG }}' -n '${{ env.OPNsense-PIP }}' --query "ipAddress" -o tsv)
           curl -k https://$PIP --verbose
 
   Cleanup:
     runs-on: ubuntu-latest
     needs: [Validation, Deploy, CheckOPNsenseAvailability]
-    #if: github.event_name == 'schedule'
     if: always()
     steps:
       - name: Azure Login
@@ -167,6 +152,4 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            RG='${{ env.RG }}'
-            DEPNAME='${{ env.DEPNAME }}'
-            az group delete -n $RG -y --verbose
+            az group delete -n '${{ env.RG }}' -y --verbose
