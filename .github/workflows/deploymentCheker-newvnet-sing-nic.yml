@@ -91,8 +91,8 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az group create -l '${{ env.Location }}' -g '${{ env.RG }}'
-            az deployment group validate -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
+            az group create -l ${{ env.Location }} -g ${{ env.RG }}
+            az deployment group validate -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
 
 
   Deploy:
@@ -115,6 +115,7 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
+            echo Executing: az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
             az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
 
   CheckOPNsenseAvailability:
@@ -134,7 +135,7 @@ jobs:
       - name: Test OPNsense Access
         run: |
           PIP=$(az network public-ip show -g '${{ env.RG }}' -n '${{ env.OPNsense-PIP }}' --query "ipAddress" -o tsv)
-          curl -k https://$PIP --verbose
+          #curl -k https://$PIP --verbose
 
   Cleanup:
     runs-on: ubuntu-latest

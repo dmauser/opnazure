@@ -96,7 +96,7 @@ jobs:
             az network vnet subnet create -g '${{ env.RG }}' --vnet-name '${{ env.VNET }}' -n '${{ env.UntrustedSubnet }}' --address-prefixes '${{ env.UntrustedSubnetAddress }}'
             az network vnet subnet create -g '${{ env.RG }}' --vnet-name '${{ env.VNET }}' -n '${{ env.TrustedSubnet }}' --address-prefixes '${{ env.TrustedSubnetAddress }}'
 
-            az deployment group validate -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.existingUntrustedSubnetName }} -p existingTrustedSubnetName=${{ env.existingTrustedSubnetName }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
+            az deployment group validate -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.UntrustedSubnet }} -p existingTrustedSubnetName=${{ env.TrustedSubnet }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
 
   Deploy:
     runs-on: ubuntu-latest
@@ -118,7 +118,8 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.existingUntrustedSubnetName }} -p existingTrustedSubnetName=${{ env.existingTrustedSubnetName }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
+            echo Executing: az deployment group create -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.UntrustedSubnet }} -p existingTrustedSubnetName=${{ env.TrustedSubnet }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
+            az deployment group create -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.UntrustedSubnet }} -p existingTrustedSubnetName=${{ env.TrustedSubnet }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
 
   CheckOPNsenseAvailability:
     runs-on: ubuntu-latest

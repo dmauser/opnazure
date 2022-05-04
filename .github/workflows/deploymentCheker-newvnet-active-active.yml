@@ -91,8 +91,8 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az group create -l '${{ env.Location }}' -g '${{ env.RG }}'
-            az deployment group validate -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
+            az group create -l ${{ env.Location }} -g ${{ env.RG }}
+            az deployment group validate -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
 
   Deploy:
     runs-on: ubuntu-latest
@@ -115,7 +115,8 @@ jobs:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
             #branchName=${GITHUB_REF#refs/heads/}
-            az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }}
+            echo Executing: az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
+            az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=${{ env.OpnScriptURI }} --verbose
 
 
   CheckOPNsenseAvailability:
