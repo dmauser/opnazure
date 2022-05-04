@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       #Get the code files from the repo
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Job parameter check
         run: |
@@ -87,7 +87,7 @@ jobs:
           allow-no-subscriptions: false
 
       - name: Validate Infrastructure deployment
-        uses: Azure/cli@1.0.6
+        uses: Azure/cli@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Validation]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Azure Login
         uses: Azure/login@v1
@@ -109,7 +109,7 @@ jobs:
 
       - name: Deploy Infrastructure
         id: deployAks
-        uses: Azure/cli@1.0.4
+        uses: Azure/cli@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
@@ -121,7 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Deploy]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Azure Login
         uses: Azure/login@v1
@@ -150,7 +150,7 @@ jobs:
           allow-no-subscriptions: false
 
       - name: Cleanup
-        uses: Azure/cli@1.0.4
+        uses: Azure/cli@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |

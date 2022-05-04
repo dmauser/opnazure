@@ -4,20 +4,20 @@ name: BicepBuild
 
 on:
   push:
-    #branches:
-     #- 'master'
-     #- 'dev'
-    #paths:
-    #- 'bicep/*'
-    #- ".github/workflows/bicepBuild.yml"
-
-  #Run when PR's are made to master, where the changes are in the bicep directory or this workflow file itself
-  pull_request:
     branches:
      - 'master'
+     #- 'dev'
     paths:
-      - "bicep/*"
-      - ".github/workflows/bicepBuild.yml"
+    - 'bicep/*'
+    - ".github/workflows/bicepBuild.yml"
+
+  #Run when PR's are made to master, where the changes are in the bicep directory or this workflow file itself
+  # pull_request:
+  #   branches:
+  #    - 'master'
+  #   paths:
+  #     - "bicep/*"
+  #     - ".github/workflows/bicepBuild.yml"
 
   workflow_dispatch:
 
@@ -26,13 +26,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: ContextCheck
+      - name: CheckGitHubEvent
         shell: pwsh
         run: |
           echo 'ghen : ${{ github.event_name }}'
-          dir
+          ls -la
 
       - name: Install Bicep
         shell: pwsh
@@ -63,9 +63,9 @@ jobs:
         shell: pwsh
         run: |
           cd ARM
-          dir
+          ls -la
 
       - name: GIT Push Json file
-        uses: actions-x/commit@v2
+        uses: actions-x/commit@v6
         with:
           message: Adding auto compiled bicep json
