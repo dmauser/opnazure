@@ -9,7 +9,7 @@ param Location string = resourceGroup().location
 
 var trustedNicName = '${virtualMachineName}-NIC'
 
-module trustedNic '../vnet/publicnic.bicep' = {
+module trustedNic '../vnet/nic.bicep' = {
   name: trustedNicName
   params:{
     Location: Location

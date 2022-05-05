@@ -1,0 +1,120 @@
+#########################################################################
+# Active-Active Windows Visibility
+"[and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows)]"
+
+# Active-Active no Windows Visibility
+"[and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows))]"
+
+# TwoNics Windows Visibility
+"[and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows)]"
+
+# TwoNics no Windows Visibility
+"[and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows))]"
+
+# SingleNic Windows Visibility
+"[and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows)]"
+
+# SingleNic no Windows Visibility
+"[and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),not(steps('VirtualMachineConfig').DeployWindows))]"
+
+#########################################################################
+
+# virtualNetworkName
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.name,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.name)))))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.name,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.name)))))]"
+
+
+# VNETAddress
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.addressPrefixes,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.addressPrefixes,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.addressPrefixes,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.addressPrefixes,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.addressPrefixes,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.addressPrefixes)))))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.addressPrefixes,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.addressPrefixes)))))]"
+
+
+# UntrustedSubnetCIDR
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.addressPrefix]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Untrusted-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Untrusted-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Untrusted-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Untrusted-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.subnets.Untrusted-Subnet.addressPrefix)))))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Untrusted-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.subnets.Untrusted-Subnet.addressPrefix)))))]"
+
+# Trusted-Subnet
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.addressPrefix]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Trusted-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Trusted-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Trusted-Subnet.addressPrefix)))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Trusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Trusted-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Trusted-Subnet.addressPrefix)))]"
+
+# existingUntrustedSubnetName
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.name]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Untrusted-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Untrusted-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Untrusted-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Untrusted-Subnet.name,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.subnets.Untrusted-Subnet.name)))))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Untrusted-Subnet.name,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.subnets.Untrusted-Subnet.name)))))]"
+
+
+# existingTrustedSubnetName
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.name]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Trusted-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Trusted-Subnet.name,steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Trusted-Subnet.name)))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Trusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Trusted-Subnet.name,steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Trusted-Subnet.name)))]"
+
+
+# existingWindowsSubnet
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.name]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.name,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Windows-Subnet.name,steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Windows-Subnet.name))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Windows-Subnet.name,steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Windows-Subnet.name))]"
+
+
+# DeployWindowsSubnet
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.addressPrefix]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.addressPrefix,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Windows-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Windows-Subnet.addressPrefix))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Windows-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Windows-Subnet.addressPrefix))]"
+
+# virtualNetworkNewOrExisting
+"[steps('VirtualNetworkConfig').vnetActiveActiveWindows.newOrExisting]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.newOrExisting,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.newOrExisting,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.newOrExisting,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.newOrExisting,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.newOrExisting,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.newOrExisting)))))]"
+
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.newOrExisting,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.newOrExisting)))))]"
+
+
+# WinUsername
+"[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.newOrExisting,
+if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.newOrExisting,steps('VirtualMachineConfig').DeployWindows))]"
+
+
+
+
+

@@ -1,0 +1,490 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json#",
+  "view": {
+    "kind": "Form",
+    "properties": {
+      "title": "OPNSense deployment",
+      "steps": [
+        {
+          "name": "OPNSenseScenario",
+          "label": "Deployment Scenarios",
+          "elements": [
+            {
+              "name": "resourceScope",
+              "type": "Microsoft.Common.ResourceScope",
+              "subscription": {
+                "constraints": {
+                  "validations": []
+                },
+                "resourceProviders": [
+                  "Microsoft.Compute"
+                ]
+              },
+              "location": {
+                "label": "Region",
+                "toolTip": "Azure region",
+                "resourceTypes": [
+                  "Microsoft.Compute/virtualMachines"
+                ],
+                "allowedValues": []
+              }
+            },
+            {
+              "name": "scenarioOption",
+              "type": "Microsoft.Common.DropDown",
+              "label": "OPNSense Scenario",
+              "placeholder": "",
+              "defaultValue": "TwoNics",
+              "toolTip": "Select the OPNSense scenario. Active-Active, TwoNics, SingleNic",
+              "multiselect": false,
+              "selectAll": false,
+              "filter": false,
+              "filterPlaceholder": "",
+              "multiLine": true,
+              "defaultDescription": "Select the OPNSense scenario. Active-Active, TwoNics, SingleNic",
+              "constraints": {
+                "allowedValues": [
+                  {
+                    "label": "Active-Active",
+                    "description": "Active-Active OPNSense HA deployment. Two OPNSense nodes are deployed using External and Internal(HA) load balancers.",
+                    "value": "Active-Active"
+                  },
+                  {
+                    "label": "TwoNics",
+                    "description": "Single OPNSense Deployment with 2 Nics in a Trusted and Untrusted Subnets.",
+                    "value": "TwoNics"
+                  },
+                  {
+                    "label": "SingleNic",
+                    "description": "Single OPNSense with a Single Nic in a Untrusted Subnet.",
+                    "value": "SingleNic"
+                  }
+                ],
+                "required": true
+              },
+              "visible": true
+            }
+          ]
+        },
+        {
+          "name": "VirtualMachineConfig",
+          "label": "Virtual Machine Settings",
+          "elements": [
+            {
+              "name": "vmName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Virtual Machine name",
+              "toolTip": "The name of the OPNSense Virtual Machine. In case of Active-Active scenario -Primary or -Secondary will be appended to the name",
+              "defaultValue": "OPNsense",
+              "constraints": {
+                "required": true,
+                "validations": []
+              }
+            },
+            {
+              "name": "vmSize",
+              "type": "Microsoft.Compute.SizeSelector",
+              "label": "Virtual machine size",
+              "toolTip": "The size of virtual machine to provision.",
+              "recommendedSizes": [
+                "Standard_B2s"
+              ],
+              "constraints": {
+                "allowedSizes": []
+              },
+              "osPlatform": "Linux",
+              "count": "1",
+              "scope": {
+                "subscriptionId": "[steps('OPNSenseScenario').resourceScope.subscription.subscriptionId]",
+                "location": "[steps('OPNSenseScenario').resourceScope.location.name]"
+              }
+            },
+            {
+              "name": "OpnScriptURI",
+              "type": "Microsoft.Common.TextBox",
+              "label": "URL for OPNSense scritps. All required scripts will be downloaded from this URL and must end with /.",
+              "toolTip": "All scripts must be under this URL path, check the expected content under scripts folder in https://github.com/dmauser/opnazure/tree/master/scripts.",
+              "defaultValue": "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/"
+            },
+            {
+              "name": "ShellScriptName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Bootstrap script name to deploy OPNSense",
+              "toolTip": "The script must be under the previous URL path. Reference: https://github.com/dmauser/opnazure/blob/master/scripts/configureopnsense.sh",
+              "defaultValue": "configureopnsense.sh"
+            },
+            {
+              "name": "DeployWindows",
+              "type": "Microsoft.Common.CheckBox",
+              "label": "Deploy Windows Management VM in a Management Subnet.",
+              "constraints": {}
+            },
+            {
+              "name": "WinUsername",
+              "type": "Microsoft.Compute.UserNameTextBox",
+              "label": "Username",
+              "toolTip": "Admin username for the machine",
+              "osPlatform": "Windows",
+              "constraints": {
+                "required": true
+              },
+              "visible": "[if(steps('VirtualMachineConfig').DeployWindows,true,false)]"
+            },
+            {
+              "name": "WinPassword",
+              "type": "Microsoft.Common.PasswordBox",
+              "label": {
+                "password": "Password",
+                "confirmPassword": "Confirm password"
+              },
+              "toolTip": "Admin password for the virtual machine",
+              "constraints": {
+                "required": true,
+                "regex": "^(?=.*[A-Z])(?=.*[.!@#$%^&*()-_=+])(?=.*[0-9])(?=.*[a-z]).{12,40}$",
+                "validationMessage": "Password must be at least 12 characters long, and contain upper case, lower case, number and symbol"
+              },
+              "options": {
+                "hideConfirmation": false
+              },
+              "visible": "[if(steps('VirtualMachineConfig').DeployWindows,true,false)]"
+            }
+          ]
+        },
+        {
+          "name": "VirtualNetworkConfig",
+          "label": "Virtual Network Settings",
+          "elements": [
+            {
+              "name": "vnetActiveActiveWindows",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet.",
+                "subnets": "Select an existing subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Create a new VNet or select an existing one.",
+                "subnets": "Select subnet"
+              },
+              "defaultValue": {
+                "name": "OPN-VNET",
+                "addressPrefixSize": "/16"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "Untrusted-Subnet": {
+                  "label": "Untrusted-Subnet",
+                  "defaultValue": {
+                    "name": "Untrusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Trusted-Subnet": {
+                  "label": "Trusted-Subnet",
+                  "defaultValue": {
+                    "name": "Trusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Windows-Subnet": {
+                  "label": "Windows-Subnet",
+                  "defaultValue": {
+                    "name": "Windows-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                }
+              },
+              "visible": "[and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows)]"
+            },
+            {
+              "name": "vnetActiveActivenoWindows",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet.",
+                "subnets": "Select an existing subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Creating a new VNet is not allowed, attempts to do so will fail",
+                "subnets": "Must select an existing subnet"
+              },
+              "defaultValue": {
+                "name": "OPN-VNET",
+                "addressPrefixSize": "/16"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "Untrusted-Subnet": {
+                  "label": "Untrusted-Subnet",
+                  "defaultValue": {
+                    "name": "Untrusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Trusted-Subnet": {
+                  "label": "Trusted-Subnet",
+                  "defaultValue": {
+                    "name": "Trusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                }
+              },
+              "visible": "[and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows))]"
+            },
+            {
+              "name": "vnetTwoNicsWindows",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet.",
+                "subnets": "Select an existing subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Creating a new VNet is not allowed, attempts to do so will fail",
+                "subnets": "Must select an existing subnet"
+              },
+              "defaultValue": {
+                "name": "OPN-VNET",
+                "addressPrefixSize": "/16"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "Untrusted-Subnet": {
+                  "label": "Untrusted-Subnet",
+                  "defaultValue": {
+                    "name": "Untrusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Trusted-Subnet": {
+                  "label": "Trusted-Subnet",
+                  "defaultValue": {
+                    "name": "Trusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Windows-Subnet": {
+                  "label": "Windows-Subnet",
+                  "defaultValue": {
+                    "name": "Windows-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                }
+              },
+              "visible": "[and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows)]"
+            },
+            {
+              "name": "vnetTwoNicsnoWindows",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet.",
+                "subnets": "Select an existing subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Creating a new VNet is not allowed, attempts to do so will fail",
+                "subnets": "Must select an existing subnet"
+              },
+              "defaultValue": {
+                "name": "OPN-VNET",
+                "addressPrefixSize": "/16"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "Untrusted-Subnet": {
+                  "label": "Untrusted-Subnet",
+                  "defaultValue": {
+                    "name": "Untrusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Trusted-Subnet": {
+                  "label": "Trusted-Subnet",
+                  "defaultValue": {
+                    "name": "Trusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                }
+              },
+              "visible": "[and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows))]"
+            },
+            {
+              "name": "vnetSingleNicWindows",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet.",
+                "subnets": "Select an existing subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Creating a new VNet is not allowed, attempts to do so will fail",
+                "subnets": "Must select an existing subnet"
+              },
+              "defaultValue": {
+                "name": "OPN-VNET",
+                "addressPrefixSize": "/16"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "Untrusted-Subnet": {
+                  "label": "Untrusted-Subnet",
+                  "defaultValue": {
+                    "name": "Untrusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                },
+                "Windows-Subnet": {
+                  "label": "Windows-Subnet",
+                  "defaultValue": {
+                    "name": "Windows-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                }
+              },
+              "visible": "[and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows)]"
+            },
+            {
+              "name": "vnetSingleNicnoWindows",
+              "type": "Microsoft.Network.VirtualNetworkCombo",
+              "label": {
+                "virtualNetwork": "Select an Existing VNet.",
+                "subnets": "Select an existing subnet"
+              },
+              "toolTip": {
+                "virtualNetwork": "Creating a new VNet is not allowed, attempts to do so will fail",
+                "subnets": "Must select an existing subnet"
+              },
+              "defaultValue": {
+                "name": "OPN-VNET",
+                "addressPrefixSize": "/16"
+              },
+              "constraints": {
+                "minAddressPrefixSize": "/24"
+              },
+              "options": {
+                "hideExisting": false
+              },
+              "subnets": {
+                "Untrusted-Subnet": {
+                  "label": "Untrusted-Subnet",
+                  "defaultValue": {
+                    "name": "Untrusted-Subnet",
+                    "addressPrefixSize": "/24"
+                  },
+                  "constraints": {
+                    "minAddressPrefixSize": "/28"
+                  }
+                }
+              },
+              "visible": "[and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),not(steps('VirtualMachineConfig').DeployWindows))]"
+            },
+            {
+              "name": "PublicIPAddressSku",
+              "type": "Microsoft.Common.OptionsGroup",
+              "label": "Public IP Address SKU",
+              "defaultValue": "Standard",
+              "toolTip": "",
+              "constraints": {
+                "allowedValues": [
+                  {
+                    "label": "Basic",
+                    "value": "Basic"
+                  },
+                  {
+                    "label": "Standard",
+                    "value": "Standard"
+                  }
+                ],
+                "required": true
+              },
+              "visible": true
+            }
+          ]
+        }
+      ]
+    },
+    "outputs": {
+      "parameters": {
+        "location": "[steps('OPNSenseScenario').resourceScope.location.name]",
+        "scenarioOption": "[steps('OPNSenseScenario').scenarioOption]",
+        "virtualMachineSize": "[steps('VirtualMachineConfig').vmSize]",
+        "virtualMachineName": "[steps('VirtualMachineConfig').vmName]",
+        "existingvirtualNetwork": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.newOrExisting,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.newOrExisting,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.newOrExisting)))))]",
+        "VNETAddress": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.addressPrefixes,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.addressPrefixes,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.addressPrefixes)))))]",
+        "UntrustedSubnetCIDR": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Untrusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Untrusted-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.subnets.Untrusted-Subnet.addressPrefix)))))]",
+        "TrustedSubnetCIDR": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Trusted-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Trusted-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Trusted-Subnet.addressPrefix)))]",
+        "existingUntrustedSubnetName": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Untrusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Untrusted-Subnet.name,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.subnets.Untrusted-Subnet.name)))))]",
+        "existingTrustedSubnetName": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Trusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.subnets.Trusted-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Trusted-Subnet.name,steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.subnets.Trusted-Subnet.name)))]",
+        "PublicIPAddressSku": "[steps('VirtualNetworkConfig').PublicIPAddressSku]",
+        "OpnScriptURI": "[steps('VirtualMachineConfig').OpnScriptURI]",
+        "ShellScriptName": "[steps('VirtualMachineConfig').ShellScriptName]",
+        "DeployWindows": "[steps('VirtualMachineConfig').DeployWindows]",
+        "WinUsername": "[steps('VirtualMachineConfig').WinUsername]",
+        "WinPassword": "[steps('VirtualMachineConfig').WinPassword]",
+        "existingWindowsSubnet": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Windows-Subnet.name,steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Windows-Subnet.name))]",
+        "DeployWindowsSubnet": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.subnets.Windows-Subnet.addressPrefix,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.subnets.Windows-Subnet.addressPrefix,steps('VirtualNetworkConfig').vnetSingleNicWindows.subnets.Windows-Subnet.addressPrefix))]",
+        "Location": "[steps('OPNSenseScenario').resourceScope.location.name]",
+        "virtualNetworkName": "[if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetActiveActiveWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'Active-Active'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetActiveActivenoWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetTwoNicsWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'TwoNics'),not(steps('VirtualMachineConfig').DeployWindows)),steps('VirtualNetworkConfig').vnetTwoNicsnoWindows.name,if(and(equals(steps('OPNSenseScenario').scenarioOption,'SingleNic'),steps('VirtualMachineConfig').DeployWindows),steps('VirtualNetworkConfig').vnetSingleNicWindows.name,steps('VirtualNetworkConfig').vnetSingleNicnoWindows.name)))))]"
+      },
+      "kind": "ResourceGroup",
+      "location": "[steps('OPNSenseScenario').resourceScope.location.name]",
+      "resourceGroupId": "[steps('OPNSenseScenario').resourceScope.resourceGroup.id]"
+    }
+  }
+}
