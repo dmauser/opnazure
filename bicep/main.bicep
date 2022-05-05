@@ -13,13 +13,6 @@ param virtualMachineSize string = 'Standard_B2s'
 @sys.description('OPN NVA Manchine Name')
 param virtualMachineName string
 
-// @sys.description('Default Temporary Admin username (Used for JumpBox and temporarily deploy FreeBSD VM).')
-// param TempUsername string
-
-// @sys.description('Default Temporary Admin password (Used for JumpBox and temporarily deploy FreeBSD VM).')
-// @secure()
-// param TempPassword string
-
 @sys.description('Virtual Nework Name. This is a required parameter to build a new VNet or find an existing one.')
 param virtualNetworkName string = 'OPN-VNET'
 
