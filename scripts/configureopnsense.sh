@@ -77,6 +77,9 @@ sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.
 fetch $1actions_waagent.conf
 cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
 
+# Installing bash - This is a requirement for Azure custom Script extension to run
+pkg install -y bash
+
 # Remove wrong route at initialization
 cat > /usr/local/etc/rc.syshook.d/start/22-remoteroute <<EOL
 #!/bin/sh
