@@ -70,9 +70,9 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
         createOption: 'FromImage'
       }
       imageReference: {
-        publisher: 'MicrosoftOSTC'
-        offer: 'FreeBSD'
-        sku: '12.0'
+        publisher: 'thefreebsdfoundation'
+        offer: 'freebsd-13_0'
+        sku: '13.0'
         version: 'latest'
       }
     }
