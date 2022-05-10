@@ -72,7 +72,7 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       imageReference: {
         publisher: 'thefreebsdfoundation'
         offer: 'freebsd-13_0'
-        sku: '13.0'
+        sku: '13_0-release'
         version: 'latest'
       }
     }
@@ -100,6 +100,11 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       ]
     }
   }
+  plan: {
+    name: '13_0-release'
+    publisher: 'thefreebsdfoundation'
+    product: 'freebsd-13_0'
+  }
 }
 
 resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -108,7 +113,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
     type: 'CustomScriptForLinux'
-    typeHandlerVersion: '1.4'
+    typeHandlerVersion: '1.5'
     autoUpgradeMinorVersion: false
     settings:{
       fileUris: [

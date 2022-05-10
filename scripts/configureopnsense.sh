@@ -63,17 +63,17 @@ sed -i "" "s/reboot/shutdown -r +1/g" opnsense-bootstrap.sh.in
 sh ./opnsense-bootstrap.sh.in -y -r "22.1"
 
 # Add Azure waagent
-# fetch https://github.com/Azure/WALinuxAgent/archive/refs/tags/v2.4.0.2.tar.gz
-# tar -xvzf v2.4.0.2.tar.gz
-# cd WALinuxAgent-2.4.0.2/
-# python3 setup.py install --register-service --lnx-distro=freebsd --force
-# cd ..
+fetch https://github.com/Azure/WALinuxAgent/archive/refs/tags/v2.7.0.6.tar.gz
+tar -xvzf v2.7.0.6.tar.gz
+cd WALinuxAgent-2.7.0.6/
+python3 setup.py install --register-service --lnx-distro=freebsd --force
+cd ..
 
 # Fix waagent by replacing configuration settings
-# ln -s /usr/local/bin/python3.8 /usr/local/bin/python
-#sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
-#sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
-# sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
+ln -s /usr/local/bin/python3.8 /usr/local/bin/python
+##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
+##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
+sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
 fetch $1actions_waagent.conf
 cp actions_waagent.conf /usr/local/opnsense/service/conf/actions.d
 
