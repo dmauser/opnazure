@@ -23,7 +23,7 @@ on:
      - 'master'
     paths:
       #- "bicep/main.parameters.json"
-      - "bicep/main.bicep"
+      - "bicep/*"
       - ".github/workflows/deploymentCheker-newvnet-active-active.yml"
 
   #Run on a weekly schedule

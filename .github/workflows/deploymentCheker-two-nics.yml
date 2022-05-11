@@ -23,7 +23,7 @@ on:
       - 'master'
     paths:
       #- "bicep/main-active-active.parameters.json"
-      - "bicep/main.bicep"
+      - "bicep/*"
       - ".github/workflows/deploymentCheker-two-nics.yml"
 
   #Run on a weekly schedule
