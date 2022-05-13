@@ -29,6 +29,7 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 ## Updates
 
 ## April-2022
+- Updated FreeBSD 13 and OPNSense 22.1
 - Added support for Floating IPs in External Load Balance Rules to allow Port Forwarding without causing assymetric issues.
 - Enabled session Sync between Firewalls.
 - Add Virtual IP of the External Load Balancer to support Floating Rules.
