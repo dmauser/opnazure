@@ -15,7 +15,7 @@ on:
   #   paths:
   #     - "bicep/main-newvnet-active-active.parameters.json"
   #     - "bicep/main-newvnet-active-active.bicep"
-  #     - ".github/workflows/deploymentCheker-newvnet-active-active.yml"
+  #     - ".github/workflows/deploymentChecker-newvnet-active-active.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   pull_request:
@@ -24,7 +24,7 @@ on:
     paths:
       #- "bicep/main.parameters.json"
       - "bicep/*"
-      - ".github/workflows/deploymentCheker-newvnet-active-active.yml"
+      - ".github/workflows/deploymentChecker-newvnet-active-active.yml"
 
   #Run on a weekly schedule
   #schedule:

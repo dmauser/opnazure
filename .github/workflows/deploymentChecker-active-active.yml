@@ -15,7 +15,7 @@ on:
   #   paths:
   #     - "bicep/main-active-active.parameters.json"
   #     - "bicep/main-active-active.bicep"
-  #     - ".github/workflows/deploymentCheker-active-active.yml"
+  #     - ".github/workflows/deploymentChecker-active-active.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   pull_request:
@@ -24,7 +24,7 @@ on:
     paths:
       #- "bicep/main-active-active.parameters.json"
       - "bicep/*"
-      - ".github/workflows/deploymentCheker-active-active.yml"
+      - ".github/workflows/deploymentChecker-active-active.yml"
 
   #Run on a weekly schedule
   #schedule:
