@@ -1,4 +1,4 @@
-name: Deployment Checker - two-nics
+name: Deployment Checker - new vnet Single Nic
 # Prerequisites
 # 1. Set up your AZURE CREDENTIALS SECRET as per : https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret
 # 2. Make sure the Service Principal has IAM Owner on the Resource Group you're deploying into.
@@ -13,25 +13,25 @@ on:
   #    - 'master'
   #    - 'dev'
   #   paths:
-  #     - "bicep/main-two-nics.bicep"
-  #     - "bicep/main-two-nics.parameters.json"
-  #     - ".github/workflows/deploymentCheker-two-nics.yml"
+  #     - "bicep/main-newvnet-sing-nic.bicep"
+  #     - "bicep/main-newvnet-sing-nic.parameters.json"
+  #     - ".github/workflows/deploymentChecker-newvnet-sing-nic.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   pull_request:
     branches:
-      - 'master'
+     - 'master'
     paths:
       #- "bicep/main-active-active.parameters.json"
       - "bicep/*"
-      - ".github/workflows/deploymentCheker-two-nics.yml"
+      - ".github/workflows/deploymentChecker-newvnet-sing-nic.yml"
 
   #Run on a weekly schedule
   #schedule:
     # At 11:00pm, every Tuesday week
   #  - cron: "0 23 * * 2"
 env:
-  RG: "Automation-Actions-OPNAZURE-two-nics-${{ github.run_number }}" #The resource group we're deploying to.
+  RG: "Automation-Actions-OPNAZURE-newvnet-sing-nic-${{ github.run_number }}" #The resource group we're deploying to.
   Location: "eastus"
   ParamFilePath: "bicep/main.parameters.json" #Path to parameter file
   TemplateFilePath: "bicep/main.bicep"
@@ -42,11 +42,11 @@ env:
   UntrustedSubnetAddress: "10.0.0.0/24"
   TrustedSubnet: "Trusted-Subnet"
   TrustedSubnetAddress: "10.0.1.0/24"
-  scenarioOption: "TwoNics"
-  existingvirtualNetwork: "existing"
+  scenarioOption: "SingleNic"
+  existingvirtualNetwork: "new"
   DeployWindows: false
   OpnScriptURI: "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/"
-  DEPNAME: "Dep-OPNsense-two-nics-${{ github.run_number }}" #Deployment Name
+  DEPNAME: "Dep-OPNsense-newvnet-sing-nic-${{ github.run_number }}" #Deployment Name
   AZCLIVERSION: 2.36.0 #Pinning to a specific AZ CLI version
 
 jobs:
@@ -91,13 +91,10 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az group create -l '${{ env.Location }}' -g '${{ env.RG }}'
-            az network vnet create -g '${{ env.RG }}' -n '${{ env.VNET }}' --address-prefixes '${{ env.VNETAddress }}'
-            az network vnet subnet create -g '${{ env.RG }}' --vnet-name '${{ env.VNET }}' -n '${{ env.UntrustedSubnet }}' --address-prefixes '${{ env.UntrustedSubnetAddress }}'
-            az network vnet subnet create -g '${{ env.RG }}' --vnet-name '${{ env.VNET }}' -n '${{ env.TrustedSubnet }}' --address-prefixes '${{ env.TrustedSubnetAddress }}'
-
+            az group create -l ${{ env.Location }} -g ${{ env.RG }}
             OpnScriptURI=$(echo ${{ env.OpnScriptURI }} | sed -e "s_master_${GITHUB_HEAD_REF}_")
-            az deployment group validate -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.UntrustedSubnet }} -p existingTrustedSubnetName=${{ env.TrustedSubnet }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=$OpnScriptURI
+            az deployment group validate -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=$OpnScriptURI
+
 
   Deploy:
     runs-on: ubuntu-latest
@@ -120,8 +117,8 @@ jobs:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
             OpnScriptURI=$(echo ${{ env.OpnScriptURI }} | sed -e "s_master_${GITHUB_HEAD_REF}_")
-            echo Executing: az deployment group create -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.UntrustedSubnet }} -p existingTrustedSubnetName=${{ env.TrustedSubnet }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=$OpnScriptURI --verbose
-            az deployment group create -g ${{ env.RG }} -n ${{ env.DEPNAME }} -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p existingUntrustedSubnetName=${{ env.UntrustedSubnet }} -p existingTrustedSubnetName=${{ env.TrustedSubnet }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=$OpnScriptURI --verbose
+            echo Executing: az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=$OpnScriptURI --verbose
+            az deployment group create -g '${{ env.RG }}' -n '${{ env.DEPNAME }}' -f ${{ env.TemplateFilePath }} -p ${{ env.ParamFilePath }} -p scenarioOption=${{ env.scenarioOption }} -p existingvirtualNetwork=${{ env.existingvirtualNetwork }} -p DeployWindows=${{ env.DeployWindows }} -p OpnScriptURI=$OpnScriptURI --verbose
 
   CheckOPNsenseAvailability:
     runs-on: ubuntu-latest
@@ -140,7 +137,7 @@ jobs:
       - name: Test OPNsense Access
         run: |
           PIP=$(az network public-ip show -g '${{ env.RG }}' -n '${{ env.OPNsense-PIP }}' --query "ipAddress" -o tsv)
-          curl -k https://$PIP --verbose
+          #curl -k https://$PIP --verbose
 
   Cleanup:
     runs-on: ubuntu-latest

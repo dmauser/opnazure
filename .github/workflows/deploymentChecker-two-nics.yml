@@ -1,4 +1,4 @@
-name: Deployment Checker - Active-Active
+name: Deployment Checker - two-nics
 # Prerequisites
 # 1. Set up your AZURE CREDENTIALS SECRET as per : https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret
 # 2. Make sure the Service Principal has IAM Owner on the Resource Group you're deploying into.
@@ -13,9 +13,9 @@ on:
   #    - 'master'
   #    - 'dev'
   #   paths:
-  #     - "bicep/main-active-active.parameters.json"
-  #     - "bicep/main-active-active.bicep"
-  #     - ".github/workflows/deploymentCheker-active-active.yml"
+  #     - "bicep/main-two-nics.bicep"
+  #     - "bicep/main-two-nics.parameters.json"
+  #     - ".github/workflows/deploymentChecker-two-nics.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   pull_request:
@@ -24,14 +24,14 @@ on:
     paths:
       #- "bicep/main-active-active.parameters.json"
       - "bicep/*"
-      - ".github/workflows/deploymentCheker-active-active.yml"
+      - ".github/workflows/deploymentChecker-two-nics.yml"
 
   #Run on a weekly schedule
   #schedule:
     # At 11:00pm, every Tuesday week
   #  - cron: "0 23 * * 2"
 env:
-  RG: "Automation-Actions-OPNAZURE-Active-Active-${{ github.run_number }}" #The resource group we're deploying to.
+  RG: "Automation-Actions-OPNAZURE-two-nics-${{ github.run_number }}" #The resource group we're deploying to.
   Location: "eastus"
   ParamFilePath: "bicep/main.parameters.json" #Path to parameter file
   TemplateFilePath: "bicep/main.bicep"
@@ -42,11 +42,11 @@ env:
   UntrustedSubnetAddress: "10.0.0.0/24"
   TrustedSubnet: "Trusted-Subnet"
   TrustedSubnetAddress: "10.0.1.0/24"
-  scenarioOption: "Active-Active"
+  scenarioOption: "TwoNics"
   existingvirtualNetwork: "existing"
   DeployWindows: false
   OpnScriptURI: "https://raw.githubusercontent.com/dmauser/opnazure/master/scripts/"
-  DEPNAME: "Dep-OPNsense-Active-Active-${{ github.run_number }}" #Deployment Name
+  DEPNAME: "Dep-OPNsense-two-nics-${{ github.run_number }}" #Deployment Name
   AZCLIVERSION: 2.36.0 #Pinning to a specific AZ CLI version
 
 jobs:
@@ -140,7 +140,7 @@ jobs:
       - name: Test OPNsense Access
         run: |
           PIP=$(az network public-ip show -g '${{ env.RG }}' -n '${{ env.OPNsense-PIP }}' --query "ipAddress" -o tsv)
-          curl -k https://$PIP:50443 --verbose
+          curl -k https://$PIP --verbose
 
   Cleanup:
     runs-on: ubuntu-latest
