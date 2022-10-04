@@ -142,7 +142,27 @@ module vnet 'modules/vnet/vnet.bicep' = if(useexistingvirtualNetwork == false) {
     location: Location
     vnetAddressSpace: VNETAddress
     vnetName: virtualNetworkName
-    subnets: DeployWindows == true ? [
+    subnets: DeployWindows == true && scenarioOption == 'SingleNic' ? [
+      {
+        name: untrustedSubnetName
+        properties: {
+          addressPrefix: UntrustedSubnetCIDR
+        }
+      }
+      {
+        name: windowsvmsubnetname
+        properties: {
+          addressPrefix: DeployWindowsSubnet
+        }
+      }
+    ]: DeployWindows == false && scenarioOption == 'SingleNic' ? [
+      {
+        name: untrustedSubnetName
+        properties: {
+          addressPrefix: UntrustedSubnetCIDR
+        }
+      }
+    ]: DeployWindows == true ? [
       {
         name: untrustedSubnetName
         properties: {
