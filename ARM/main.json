@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.10.61.36676",
-      "templateHash": "5337052658533396876"
+      "templateHash": "4200564309869354983"
     }
   },
   "parameters": {
@@ -291,7 +291,7 @@
             "value": "[parameters('virtualNetworkName')]"
           },
           "subnets": {
-            "value": "[if(equals(parameters('DeployWindows'), true()), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet')))), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR')))))]"
+            "value": "[if(and(equals(parameters('DeployWindows'), true()), equals(parameters('scenarioOption'), 'SingleNic')), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet')))), if(and(equals(parameters('DeployWindows'), false()), equals(parameters('scenarioOption'), 'SingleNic')), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR')))), if(equals(parameters('DeployWindows'), true()), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet')))), createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR')))))))]"
           }
         },
         "template": {
