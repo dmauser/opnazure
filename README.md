@@ -28,16 +28,6 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 
 ## Updates
 
-## Feb-2023
-- Added support to OPNsense 23.1
-- Added support to select versions (22.7, 23.1)
-
-## October-2022
-- Updated FreeBSD to 13.1
-- Updated OPNSense to 22.7
-- Updated Azure Linux Agent to 2.8.0
-- Updated Python symbolic link to 3.9
-
 ## April-2022
 - Updated FreeBSD 13 and OPNSense 22.1
 - Added support for Floating IPs in External Load Balance Rules to allow Port Forwarding without causing assymetric issues.
