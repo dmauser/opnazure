@@ -3,12 +3,12 @@
 CI Name | Actions Workflow | CI Status |
 |--------|--------|--------|
 | BicepBuild | [bicepBuild.yml](./.github/workflows/bicepBuild.yml) | [![bicepBuildCI](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml/badge.svg)](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml) |
-| Deployment Checker - Active Active | [deploymentChecker-active-active.yml](./.github/workflows/deploymentChecker-active-active.yml) | [![deploymentCheckeractiveactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml) |
-| Deployment Checker - two nics | [deploymentChecker-two-nics.yml](./.github/workflows/deploymentChecker-two-nics.yml) | [![deploymentCheckertwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-two-nics.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-two-nics.yml) |
-| Deployment Checker - single nic | [deploymentChecker-sing-nic.yml](./.github/workflows/deploymentChecker-sing-nic.yml) | [![deploymentCheckersingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-sing-nic.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-sing-nic.yml) |
-| Deployment Checker - new vnet Active Active | [deploymentChecker-newvnet-active-active.yml](./.github/workflows/deploymentChecker-newvnet-active-active.yml) | [![deploymentCheckeractivenewvnetactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml) |
-| Deployment Checker - new vnet two nics | [deploymentChecker-newvnet-two-nics.yml](./.github/workflows/deploymentChecker-two-nics.yml) | [![deploymentCheckernewvnettwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-two-nics.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-two-nics.yml) |
-| Deployment Checker - new vnet single nic | [deploymentChecker-newvnet-sing-nic.yml](./.github/workflows/deploymentChecker-sing-nic.yml) | [![deploymentCheckernewvnetsingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-sing-nic.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-sing-nic.yml) |
+| Deployment Checker - Active Active | [deploymentChecker-active-active.yml](./.github/workflows/deploymentChecker-active-active.yml) | [![deploymentCheckeractiveactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml) |
+| Deployment Checker - two nics | [deploymentChecker-two-nics.yml](./.github/workflows/deploymentChecker-two-nics.yml) | [![deploymentCheckertwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-two-nics.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-two-nics.yml) |
+| Deployment Checker - single nic | [deploymentChecker-sing-nic.yml](./.github/workflows/deploymentChecker-sing-nic.yml) | [![deploymentCheckersingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-sing-nic.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-sing-nic.yml) |
+| Deployment Checker - new vnet Active Active | [deploymentChecker-newvnet-active-active.yml](./.github/workflows/deploymentChecker-newvnet-active-active.yml) | [![deploymentCheckeractivenewvnetactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml) |
+| Deployment Checker - new vnet two nics | [deploymentChecker-newvnet-two-nics.yml](./.github/workflows/deploymentChecker-two-nics.yml) | [![deploymentCheckernewvnettwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-two-nics.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-two-nics.yml) |
+| Deployment Checker - new vnet single nic | [deploymentChecker-newvnet-sing-nic.yml](./.github/workflows/deploymentChecker-sing-nic.yml) | [![deploymentCheckernewvnetsingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-sing-nic.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-sing-nic.yml) |
 
 **Deployment Wizard**
 
@@ -28,6 +28,12 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 
 ## Updates
 
+## October-2022
+- Updated FreeBSD to 13.1
+- Updated OPNSense to 22.7
+- Updated Azure Linux Agent to 2.8.0
+- Updated Python symbolic link to 3.9
+
 ## April-2022
 - Updated FreeBSD 13 and OPNSense 22.1
 - Added support for Floating IPs in External Load Balance Rules to allow Port Forwarding without causing assymetric issues.
@@ -36,7 +42,6 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 - Add support for a Windows Management VM in a management network.
 - Create a new simplified deployment wizard.
 - Bicep template refactory to support the new UI deployment wizard.
-
 
 ### Nov-2021
 - Added Active-Active deployment option (using Azure Internal and External Loadbalancer and OPNsense HA settings).
