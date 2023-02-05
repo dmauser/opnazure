@@ -119,7 +119,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
       fileUris: [
         '${OPNScriptURI}${ShellScriptName}'
       ]
-      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP}'
+      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnVersion} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP}'
     }
   }
 }

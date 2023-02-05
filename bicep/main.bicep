@@ -49,6 +49,9 @@ param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/
 @sys.description('Shell Script to be executed')
 param ShellScriptName string = 'configureopnsense.sh'
 
+@sys.description('OPN Version')
+param OpnVersion string = '22.7'
+
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
@@ -387,6 +390,7 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
     //ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress}'
     ShellScriptObj: {
       'OpnScriptURI': OpnScriptURI
+      'OpnVersion': OpnVersion
       'OpnType': 'Secondary'
       'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
       'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
@@ -424,6 +428,7 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
     //ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
     ShellScriptObj: {
       'OpnScriptURI': OpnScriptURI
+      'OpnVersion': OpnVersion
       'OpnType': 'Primary'
       'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
       'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
@@ -459,6 +464,7 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
     //ShellScriptParameters: '${OpnScriptURI} TwoNics ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix: '1.1.1.1/32'}'
     ShellScriptObj: {
       'OpnScriptURI': OpnScriptURI
+      'OpnVersion': OpnVersion
       'OpnType': 'TwoNics'
       'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
       'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
@@ -492,6 +498,7 @@ module opnSenseSingleNic 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Sin
     //ShellScriptParameters: '${OpnScriptURI} SingNic'
     ShellScriptObj: {
       'OpnScriptURI': OpnScriptURI
+      'OpnVersion': OpnVersion
       'OpnType': 'SingleNic'
       'TrustedSubnetName': ''
       'WindowsSubnetName': ''
