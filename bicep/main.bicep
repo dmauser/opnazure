@@ -50,7 +50,7 @@ param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/
 param ShellScriptName string = 'configureopnsense.sh'
 
 @sys.description('OPN Version')
-param OpnVersion string = '22.7'
+param OpnVersion string = '23.1'
 
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false

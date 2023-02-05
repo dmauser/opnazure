@@ -118,7 +118,7 @@
               "type": "Microsoft.Common.TextBox",
               "label": "OPNSense Version to deploy",
               "toolTip": "OPNsense Releases. Latest: 22.7, 23.1 Reference: https://docs.opnsense.org/releases.html",
-              "defaultValue": "22.7"
+              "defaultValue": "23.1"
             },
             {
               "name": "DeployWindows",
