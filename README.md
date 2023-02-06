@@ -31,7 +31,7 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 ## Feb-2023
 - Added support to OPNsense 23.1
 - Added support to select versions (22.7, 23.1)
--
+
 ## October-2022
 - Updated FreeBSD to 13.1
 - Updated OPNSense to 22.7
