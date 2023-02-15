@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.14.6.61914",
-      "templateHash": "17967592226721623784"
+      "version": "0.14.46.61228",
+      "templateHash": "7295111324258119511"
     }
   },
   "parameters": {
@@ -240,8 +240,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "7193913760848010386"
+              "version": "0.14.46.61228",
+              "templateHash": "4339049196143606838"
             }
           },
           "parameters": {
@@ -305,8 +305,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "3631523406825695930"
+              "version": "0.14.46.61228",
+              "templateHash": "5826149815538783172"
             }
           },
           "parameters": {
@@ -389,8 +389,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "14733384292854623922"
+              "version": "0.14.46.61228",
+              "templateHash": "12158991959892248295"
             }
           },
           "parameters": {
@@ -562,8 +562,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "10720630752729782348"
+              "version": "0.14.46.61228",
+              "templateHash": "17622630853420594741"
             }
           },
           "parameters": {
@@ -724,8 +724,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "10720630752729782348"
+              "version": "0.14.46.61228",
+              "templateHash": "17622630853420594741"
             }
           },
           "parameters": {
@@ -868,8 +868,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "2676127053941580811"
+              "version": "0.14.46.61228",
+              "templateHash": "7046354713802615858"
             }
           },
           "parameters": {
@@ -955,8 +955,8 @@
                   },
                   "imageReference": {
                     "publisher": "thefreebsdfoundation",
-                    "offer": "freebsd-13_0",
-                    "sku": "13_0-release",
+                    "offer": "freebsd-13_1",
+                    "sku": "13_1-release",
                     "version": "latest"
                   }
                 },
@@ -965,9 +965,9 @@
                 }
               },
               "plan": {
-                "name": "13_0-release",
+                "name": "13_1-release",
                 "publisher": "thefreebsdfoundation",
-                "product": "freebsd-13_0"
+                "product": "freebsd-13_1"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))]",
@@ -1036,8 +1036,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -1157,8 +1157,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -1332,8 +1332,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "2676127053941580811"
+              "version": "0.14.46.61228",
+              "templateHash": "7046354713802615858"
             }
           },
           "parameters": {
@@ -1419,8 +1419,8 @@
                   },
                   "imageReference": {
                     "publisher": "thefreebsdfoundation",
-                    "offer": "freebsd-13_0",
-                    "sku": "13_0-release",
+                    "offer": "freebsd-13_1",
+                    "sku": "13_1-release",
                     "version": "latest"
                   }
                 },
@@ -1429,9 +1429,9 @@
                 }
               },
               "plan": {
-                "name": "13_0-release",
+                "name": "13_1-release",
                 "publisher": "thefreebsdfoundation",
-                "product": "freebsd-13_0"
+                "product": "freebsd-13_1"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))]",
@@ -1500,8 +1500,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -1621,8 +1621,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -1797,8 +1797,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "2676127053941580811"
+              "version": "0.14.46.61228",
+              "templateHash": "7046354713802615858"
             }
           },
           "parameters": {
@@ -1884,8 +1884,8 @@
                   },
                   "imageReference": {
                     "publisher": "thefreebsdfoundation",
-                    "offer": "freebsd-13_0",
-                    "sku": "13_0-release",
+                    "offer": "freebsd-13_1",
+                    "sku": "13_1-release",
                     "version": "latest"
                   }
                 },
@@ -1894,9 +1894,9 @@
                 }
               },
               "plan": {
-                "name": "13_0-release",
+                "name": "13_1-release",
                 "publisher": "thefreebsdfoundation",
-                "product": "freebsd-13_0"
+                "product": "freebsd-13_1"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))]",
@@ -1965,8 +1965,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -2086,8 +2086,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -2256,8 +2256,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "2676127053941580811"
+              "version": "0.14.46.61228",
+              "templateHash": "7046354713802615858"
             }
           },
           "parameters": {
@@ -2343,8 +2343,8 @@
                   },
                   "imageReference": {
                     "publisher": "thefreebsdfoundation",
-                    "offer": "freebsd-13_0",
-                    "sku": "13_0-release",
+                    "offer": "freebsd-13_1",
+                    "sku": "13_1-release",
                     "version": "latest"
                   }
                 },
@@ -2353,9 +2353,9 @@
                 }
               },
               "plan": {
-                "name": "13_0-release",
+                "name": "13_1-release",
                 "publisher": "thefreebsdfoundation",
-                "product": "freebsd-13_0"
+                "product": "freebsd-13_1"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))]",
@@ -2424,8 +2424,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -2545,8 +2545,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
@@ -2707,8 +2707,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "7193913760848010386"
+              "version": "0.14.46.61228",
+              "templateHash": "4339049196143606838"
             }
           },
           "parameters": {
@@ -2785,8 +2785,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "14733384292854623922"
+              "version": "0.14.46.61228",
+              "templateHash": "12158991959892248295"
             }
           },
           "parameters": {
@@ -2857,8 +2857,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "16354553325067067463"
+              "version": "0.14.46.61228",
+              "templateHash": "6073875005810106773"
             }
           },
           "parameters": {
@@ -2924,8 +2924,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "17591208526382711497"
+              "version": "0.14.46.61228",
+              "templateHash": "9420253618679410714"
             }
           },
           "parameters": {
@@ -2994,8 +2994,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.6.61914",
-              "templateHash": "9455668480042718872"
+              "version": "0.14.46.61228",
+              "templateHash": "4862099486813406346"
             }
           },
           "parameters": {
@@ -3104,8 +3104,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.6.61914",
-                      "templateHash": "7508067146712296656"
+                      "version": "0.14.46.61228",
+                      "templateHash": "5253299932454719832"
                     }
                   },
                   "parameters": {
