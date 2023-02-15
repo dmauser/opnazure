@@ -71,8 +71,8 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
       imageReference: {
         publisher: 'thefreebsdfoundation'
-        offer: 'freebsd-13_0'
-        sku: '13_0-release'
+        offer: 'freebsd-13_1'
+        sku: '13_1-release'
         version: 'latest'
       }
     }
@@ -101,9 +101,9 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     }
   }
   plan: {
-    name: '13_0-release'
+    name: '13_1-release'
     publisher: 'thefreebsdfoundation'
-    product: 'freebsd-13_0'
+    product: 'freebsd-13_1'
   }
 }
 
