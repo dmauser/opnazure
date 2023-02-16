@@ -3,13 +3,13 @@
 name: BicepBuild
 
 on:
-  # push:
-  #   branches:
-  #    - 'master'
-  #    #- 'dev'
-  #   paths:
-  #   - 'bicep/*'
-  #   - ".github/workflows/bicepBuild.yml"
+  push:
+    branches:
+     #- 'master'
+     - 'dev'
+    paths:
+    - 'bicep/*'
+    - ".github/workflows/bicepBuild.yml"
 
   #Run when PR's are made to master, where the changes are in the bicep directory or this workflow file itself
   # pull_request:

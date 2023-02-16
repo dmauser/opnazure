@@ -114,6 +114,13 @@
               "defaultValue": "configureopnsense.sh"
             },
             {
+              "name": "OpnVersion",
+              "type": "Microsoft.Common.TextBox",
+              "label": "OPNSense Version to deploy",
+              "toolTip": "OPNsense Releases. Latest: 22.7, 23.1 Reference: https://docs.opnsense.org/releases.html",
+              "defaultValue": "23.1"
+            },
+            {
               "name": "DeployWindows",
               "type": "Microsoft.Common.CheckBox",
               "label": "Deploy Windows Management VM in a Management Subnet.",
@@ -474,6 +481,7 @@
         "PublicIPAddressSku": "[steps('VirtualNetworkConfig').PublicIPAddressSku]",
         "OpnScriptURI": "[steps('VirtualMachineConfig').OpnScriptURI]",
         "ShellScriptName": "[steps('VirtualMachineConfig').ShellScriptName]",
+        "OpnVersion": "[steps('VirtualMachineConfig').OpnVersion]",
         "DeployWindows": "[steps('VirtualMachineConfig').DeployWindows]",
         "WinUsername": "[steps('VirtualMachineConfig').WinUsername]",
         "WinPassword": "[steps('VirtualMachineConfig').WinPassword]",
