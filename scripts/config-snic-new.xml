@@ -217,7 +217,6 @@
       <port/>
       <ssl-ciphers/>
       <compression/>
-      <nohttpreferercheck>1</nohttpreferercheck>
       <noantilockout>1</noantilockout>
     </webgui>
     <disablenatreflection>yes</disablenatreflection>
