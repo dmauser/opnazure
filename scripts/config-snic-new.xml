@@ -218,6 +218,7 @@
       <ssl-ciphers/>
       <compression/>
       <noantilockout>1</noantilockout>
+      <nohttpreferercheck>1</nohttpreferercheck>
     </webgui>
     <disablenatreflection>yes</disablenatreflection>
     <usevirtualterminal>1</usevirtualterminal>
@@ -241,7 +242,10 @@
     <sudo_allow_wheel>1</sudo_allow_wheel>
     <serialspeed>115200</serialspeed>
     <primaryconsole>video</primaryconsole>
+    <secondaryconsole>serial</secondaryconsole>
     <ssh>
+      <group>admins</group>
+      <noauto>1</noauto>
       <enabled>enabled</enabled>
       <passwordauth>1</passwordauth>
       <permitrootlogin>1</permitrootlogin>
