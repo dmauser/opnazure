@@ -208,9 +208,9 @@
     </user>
     <nextuid>2000</nextuid>
     <nextgid>2000</nextgid>
-    <timezone>America/Mexico_City</timezone>
+    <timezone>Europe/London</timezone>
     <time-update-interval>300</time-update-interval>
-    <timeservers>0.nl.pool.ntp.org</timeservers>
+    <timeservers>0.uk.pool.ntp.org</timeservers>
     <webgui>
       <protocol>https</protocol>
       <ssl-certref>598102500f355</ssl-certref>
@@ -237,8 +237,6 @@
     <backupcount>60</backupcount>
     <crypto_hardware>aesni</crypto_hardware>
     <language>en_US</language>
-    <dnsserver>8.8.8.8</dnsserver>
-    <dnsserver>8.8.4.4</dnsserver>
     <sudo_allow_wheel>1</sudo_allow_wheel>
     <serialspeed>115200</serialspeed>
     <primaryconsole>video</primaryconsole>
@@ -310,9 +308,7 @@
     </lan>
   </interfaces>
   <unbound>
-    <enable>1</enable>
-    <dnssec>1</dnssec>
-    <dnssecstripped>1</dnssecstripped>
+    <enable>0</enable>
   </unbound>
   <snmpd>
     <syslocation/>
@@ -323,30 +319,6 @@
     <reverse/>
   </syslog>
   <filter>
-    <rule>
-      <type>pass</type>
-      <interface>wan</interface>
-      <ipprotocol>inet</ipprotocol>
-      <statetype>keep state</statetype>
-      <protocol>tcp</protocol>
-      <source>
-        <any>1</any>
-      </source>
-      <destination>
-        <network>wanip</network>
-        <port>443</port>
-      </destination>
-      <updated>
-        <username>root@187.143.37.51</username>
-        <time>1503706250.2226</time>
-        <description>/firewall_rules_edit.php made changes</description>
-      </updated>
-      <created>
-        <username>root@187.143.39.253</username>
-        <time>1502150334.1255</time>
-        <description>/firewall_rules_edit.php made changes</description>
-      </created>
-    </rule>
     <rule>
       <type>pass</type>
       <interface>lan</interface>
@@ -397,58 +369,6 @@
       <created>
         <username>root@10.0.1.7</username>
         <time>1636126523.671</time>
-        <description>/firewall_rules_edit.php made changes</description>
-      </created>
-    </rule>
-    <rule>
-      <type>pass</type>
-      <interface>lan</interface>
-      <ipprotocol>inet</ipprotocol>
-      <statetype>keep state</statetype>
-      <descr>Allow Firewall Management Windows-VM-Subnet</descr>
-      <direction>in</direction>
-      <log>1</log>
-      <quick>1</quick>
-      <source>
-        <address>WindowsVMSubnet</address>
-      </source>
-      <destination>
-        <network>lanip</network>
-      </destination>
-      <updated>
-        <username>root@10.0.1.7</username>
-        <time>1650569687.4794</time>
-        <description>/firewall_rules_edit.php made changes</description>
-      </updated>
-      <created>
-        <username>root@10.0.1.7</username>
-        <time>1650569687.4794</time>
-        <description>/firewall_rules_edit.php made changes</description>
-      </created>
-    </rule>
-    <rule>
-      <type>pass</type>
-      <interface>lan</interface>
-      <ipprotocol>inet</ipprotocol>
-      <statetype>keep state</statetype>
-      <descr>Allow Windows-VM-Subnet Internet Access</descr>
-      <direction>in</direction>
-      <log>1</log>
-      <quick>1</quick>
-      <source>
-        <address>WindowsVMSubnet</address>
-      </source>
-      <destination>
-        <any>1</any>
-      </destination>
-      <updated>
-        <username>root@10.0.1.7</username>
-        <time>1650570771.5832</time>
-        <description>/firewall_rules_edit.php made changes</description>
-      </updated>
-      <created>
-        <username>root@10.0.1.7</username>
-        <time>1650570771.5832</time>
         <description>/firewall_rules_edit.php made changes</description>
       </created>
     </rule>
@@ -663,16 +583,6 @@
           <url/>
         </geoip>
         <aliases>
-          <alias uuid="637063a6-909d-4544-b2ac-c883a9ea97e4">
-            <enabled>1</enabled>
-            <name>WindowsVMSubnet</name>
-            <type>network</type>
-            <proto/>
-            <counters>0</counters>
-            <updatefreq/>
-            <content>zzz.zzz.zzz.zzz</content>
-            <description/>
-          </alias>
         </aliases>
       </Alias>
     </Firewall>
@@ -722,34 +632,6 @@
           <description>/firewall_nat_out.php made changes</description>
         </created>
         <dstport/>
-      </rule>
-      <rule>
-        <source>
-          <network>WindowsVMSubnet</network>
-        </source>
-        <destination>
-          <any>1</any>
-        </destination>
-        <descr>NAT Windows-VM-Subnet</descr>
-        <category/>
-        <interface>wan</interface>
-        <tag/>
-        <tagged/>
-        <poolopts/>
-        <poolopts_sourcehashkey/>
-        <ipprotocol>inet</ipprotocol>
-        <created>
-          <username>root@10.0.1.7</username>
-          <time>1650569929.4325</time>
-          <description>/firewall_nat_out_edit.php made changes</description>
-        </created>
-        <target>wanip</target>
-        <sourceport/>
-        <updated>
-          <username>root@10.0.1.7</username>
-          <time>1650570006.9471</time>
-          <description>/firewall_nat_out_edit.php made changes</description>
-        </updated>
       </rule>
       <mode>hybrid</mode>
     </outbound>
