@@ -33,7 +33,7 @@ module untrustedNic '../vnet/nic.bicep' = {
     Location: Location
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
-//    publicIPId: publicIPId
+    publicIPId: publicIPId
     enableIPForwarding: true
     nsgId: nsgId
     loadBalancerBackendAddressPoolId: ExternalLoadBalancerBackendAddressPoolId
