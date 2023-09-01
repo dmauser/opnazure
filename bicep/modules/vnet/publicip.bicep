@@ -3,7 +3,7 @@ param publicipsku object
 param publicipproperties object
 param location string = resourceGroup().location
 
-resource publicip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
+resource publicip 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: publicipName
   location: location
   sku: publicipsku

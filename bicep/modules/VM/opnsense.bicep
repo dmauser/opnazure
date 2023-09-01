@@ -33,7 +33,7 @@ module untrustedNic '../vnet/nic.bicep' = {
     Location: Location
     nicName: untrustedNicName
     subnetId: untrustedSubnetId
-    publicIPId: publicIPId
+//    publicIPId: publicIPId
     enableIPForwarding: true
     nsgId: nsgId
     loadBalancerBackendAddressPoolId: ExternalLoadBalancerBackendAddressPoolId
@@ -53,7 +53,7 @@ module trustedNic '../vnet/nic.bicep' = if(multiNicSupport){
   }
 }
 
-resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+resource OPNsense 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   name: virtualMachineName
   location: Location
   properties: {
@@ -107,7 +107,7 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   }
 }
 
-resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
+resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-03-01' = {
   name: '${OPNsense.name}/CustomScript'
   location: Location
   properties: {

@@ -7,7 +7,7 @@ param loadBalancerBackendAddressPoolId string = ''
 param loadBalancerInboundNatRules string = ''
 param Location string = resourceGroup().location
 
-resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
+resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: nicName
   location: Location
   properties: {

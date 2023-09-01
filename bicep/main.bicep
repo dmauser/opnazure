@@ -218,15 +218,15 @@ module publicip 'modules/vnet/publicip.bicep' = {
 }
 
 // Build reference of existing subnets
-resource untrustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
+resource untrustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' existing = {
   name: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingUntrustedSubnetName : untrustedSubnetName}'
 }
 
-resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
+resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' existing = {
   name: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
 }
 
-resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (DeployWindows) {
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' existing = if (DeployWindows) {
   name: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}'
 }
 
