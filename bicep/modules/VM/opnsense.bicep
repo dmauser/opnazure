@@ -19,11 +19,11 @@ param Location string = resourceGroup().location
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
+resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
   name: ShellScriptObj.TrustedSubnetName
 }
 
-resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
   name: ShellScriptObj.WindowsSubnetName
 }
 
@@ -108,7 +108,8 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2023-03-01' = {
 }
 
 resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-03-01' = {
-  name: '${OPNsense.name}/CustomScript'
+  parent: OPNsense
+  name: 'CustomScript'
   location: Location
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
