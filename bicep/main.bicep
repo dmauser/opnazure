@@ -409,13 +409,13 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
     Location: Location
     //ShellScriptParameters: '${OpnScriptURI} Secondary ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress}'
     ShellScriptObj: {
-      'OpnScriptURI': OpnScriptURI
-      'OpnVersion': OpnVersion
-      'OpnType': 'Secondary'
-      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
-      'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
-      'publicIPAddress': publicip.outputs.publicipAddress
-      'opnSenseSecondarytrustedNicIP': ''
+      OpnScriptURI: OpnScriptURI
+      OpnVersion: OpnVersion
+      OpnType: 'Secondary'
+      TrustedSubnetName: scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
+      publicIPAddress: publicip.outputs.publicipAddress
+      opnSenseSecondarytrustedNicIP: ''
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -447,13 +447,13 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
     Location: Location
     //ShellScriptParameters: '${OpnScriptURI} Primary ${TrustedSubnetCIDR} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${publicip.outputs.publicipAddress} ${opnSenseSecondary.outputs.trustedNicIP}'
     ShellScriptObj: {
-      'OpnScriptURI': OpnScriptURI
-      'OpnVersion': OpnVersion
-      'OpnType': 'Primary'
-      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
-      'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
-      'publicIPAddress': publicip.outputs.publicipAddress
-      'opnSenseSecondarytrustedNicIP': scenarioOption == 'Active-Active' ? opnSenseSecondary.outputs.trustedNicIP : ''
+      OpnScriptURI: OpnScriptURI
+      OpnVersion: OpnVersion
+      OpnType: 'Primary'
+      TrustedSubnetName: scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
+      publicIPAddress: publicip.outputs.publicipAddress
+      opnSenseSecondarytrustedNicIP: scenarioOption == 'Active-Active' ? opnSenseSecondary.outputs.trustedNicIP : ''
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -483,13 +483,13 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
     Location: Location
     //ShellScriptParameters: '${OpnScriptURI} TwoNics ${trustedSubnet.properties.addressPrefix} ${DeployWindows ? windowsvmsubnet.properties.addressPrefix: '1.1.1.1/32'}'
     ShellScriptObj: {
-      'OpnScriptURI': OpnScriptURI
-      'OpnVersion': OpnVersion
-      'OpnType': 'TwoNics'
-      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
-      'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
-      'publicIPAddress': ''
-      'opnSenseSecondarytrustedNicIP': ''
+      OpnScriptURI: OpnScriptURI
+      OpnVersion: OpnVersion
+      OpnType: 'TwoNics'
+      TrustedSubnetName: scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
+      publicIPAddress: ''
+      opnSenseSecondarytrustedNicIP: ''
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -517,13 +517,13 @@ module opnSenseSingleNic 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Sin
     Location: Location
     //ShellScriptParameters: '${OpnScriptURI} SingNic'
     ShellScriptObj: {
-      'OpnScriptURI': OpnScriptURI
-      'OpnVersion': OpnVersion
-      'OpnType': 'SingleNic'
-      'TrustedSubnetName': ''
-      'WindowsSubnetName': ''
-      'publicIPAddress': ''
-      'opnSenseSecondarytrustedNicIP': ''
+      OpnScriptURI: OpnScriptURI
+      OpnVersion: OpnVersion
+      OpnType: 'SingleNic'
+      TrustedSubnetName: ''
+      WindowsSubnetName: ''
+      publicIPAddress: ''
+      opnSenseSecondarytrustedNicIP: ''
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
