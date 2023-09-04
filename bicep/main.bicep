@@ -49,8 +49,14 @@ param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/
 @sys.description('Shell Script to be executed')
 param ShellScriptName string = 'configureopnsense.sh'
 
+// only allowed versions for FreeBSD 13.1 and 13.2
 @sys.description('OPN Version')
-param OpnVersion string = '23.1'
+@allowed([
+  '22.7'
+  '23.1'
+  '23.7'
+])
+param OpnVersion string = '23.7'
 
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
@@ -72,7 +78,8 @@ param Location string = resourceGroup().location
 
 // Variables
 var TempUsername = 'azureuser'
-var TempPassword = guid(subscription().id,resourceGroup().id)
+// Change password to one knew to be able to login in FreeBSD without root user
+var TempPassword = WinPassword
 var untrustedSubnetName = 'Untrusted-Subnet'
 var trustedSubnetName = 'Trusted-Subnet'
 var VMOPNsensePrimaryName = '${virtualMachineName}-Primary'

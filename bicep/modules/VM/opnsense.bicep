@@ -3,6 +3,7 @@ param trustedSubnetId string = ''
 param publicIPId string = ''
 param virtualMachineName string
 param TempUsername string
+#disable-next-line secure-secrets-in-params
 param TempPassword string
 param virtualMachineSize string
 param OPNScriptURI string
@@ -15,6 +16,28 @@ param ExternalloadBalancerInboundNatRulesId string = ''
 param ShellScriptObj object = {}
 param multiNicSupport bool
 param Location string = resourceGroup().location
+param imageReference_13_1 object = {
+  publisher: 'thefreebsdfoundation'
+  offer: 'freebsd-13_1'
+  sku: '13_1-release'
+  version: 'latest'
+}
+param plan_13_1 object = {
+  name: '13_1-release'
+  publisher: 'thefreebsdfoundation'
+  product: 'freebsd-13_1'
+}
+param imageReference_13_2 object = {
+  publisher: 'thefreebsdfoundation'
+  offer: 'freebsd-13_2'
+  sku: '13_2-release'
+  version: 'latest'
+}
+param plan_13_2 object = {
+  name: '13_2-release'
+  publisher: 'thefreebsdfoundation'
+  product: 'freebsd-13_2'
+}
 
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
@@ -69,12 +92,8 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       osDisk: {
         createOption: 'FromImage'
       }
-      imageReference: {
-        publisher: 'thefreebsdfoundation'
-        offer: 'freebsd-13_1'
-        sku: '13_1-release'
-        version: 'latest'
-      }
+      //imageReference: imageReference_13_1
+      imageReference: (ShellScriptObj.OpnVersion == '23.7') ? imageReference_13_2 : imageReference_13_1
     }
     networkProfile: {
       networkInterfaces: multiNicSupport == true ?[
@@ -100,11 +119,8 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2023-03-01' = {
       ]
     }
   }
-  plan: {
-    name: '13_1-release'
-    publisher: 'thefreebsdfoundation'
-    product: 'freebsd-13_1'
-  }
+  //plan: plan_13_1
+  plan: (ShellScriptObj.OpnVersion == '23.7') ? plan_13_2 : plan_13_1
 }
 
 resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-03-01' = {
