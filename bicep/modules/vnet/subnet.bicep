@@ -7,7 +7,8 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
 }
 
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = {
-  name: '${vnet.name}/${subnetName}'
+  parent: vnet
+  name: subnetName
    properties: properties
 }
 

@@ -108,7 +108,8 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2023-07-01' = {
 }
 
 resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-07-01' = {
-  name: '${OPNsense.name}/CustomScript'
+  parent: OPNsense
+  name: 'CustomScript'
   location: Location
   properties: {
     publisher: 'Microsoft.OSTCExtensions'

@@ -2,6 +2,7 @@ param trustedSubnetId string
 param publicIPId string
 param virtualMachineName string
 param TempUsername string
+#disable-next-line secure-secrets-in-params
 param TempPassword string
 param virtualMachineSize string
 param nsgId string
