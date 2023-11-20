@@ -41,7 +41,7 @@ resource windows11 'Microsoft.Compute/virtualMachines@2023-07-01' = {
       imageReference: {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'windows-11'
-        sku: 'win11-21h2-pro'
+        sku: 'win11-23h2-pro'
         version: 'latest'
       }
     }
