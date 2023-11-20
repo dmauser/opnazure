@@ -3,39 +3,40 @@
 # Script Params
 # $1 = OPNScriptURI
 # $2 = OpnVersion
-# $3 = Primary/Secondary/TwoNics
-# $4 = Trusted Nic subnet prefix - used to get the gw
-# $5 = Windows-VM-Subnet subnet prefix - used to route/nat allow internet access from Windows Management VM
-# $6 = ELB VIP Address
-# $7 = Private IP Secondary Server
+# $3 = WALinuxVersion
+# $4 = Primary/Secondary/TwoNics
+# $5 = Trusted Nic subnet prefix - used to get the gw
+# $6 = Windows-VM-Subnet subnet prefix - used to route/nat allow internet access from Windows Management VM
+# $7 = ELB VIP Address
+# $8 = Private IP Secondary Server
 
 # Check if Primary or Secondary Server to setup Firewal Sync
 # Note: Firewall Sync should only be setup in the Primary Server
-if [ "$3" = "Primary" ]; then
+if [ "$4" = "Primary" ]; then
     fetch $1config-active-active-primary.xml
     fetch $1get_nic_gw.py
-    gwip=$(python get_nic_gw.py $4)
+    gwip=$(python get_nic_gw.py $5)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-primary.xml
-    sed -i "" "s_zzz.zzz.zzz.zzz_$5_" config-active-active-primary.xml
-    sed -i "" "s/www.www.www.www/$6/" config-active-active-primary.xml
-    sed -i "" "s/xxx.xxx.xxx.xxx/$7/" config-active-active-primary.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_$6_" config-active-active-primary.xml
+    sed -i "" "s/www.www.www.www/$7/" config-active-active-primary.xml
+    sed -i "" "s/xxx.xxx.xxx.xxx/$8/" config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" config-active-active-primary.xml
     cp config-active-active-primary.xml /usr/local/etc/config.xml
-elif [ "$3" = "Secondary" ]; then
+elif [ "$4" = "Secondary" ]; then
     fetch $1config-active-active-secondary.xml
     fetch $1get_nic_gw.py
-    gwip=$(python get_nic_gw.py $4)
+    gwip=$(python get_nic_gw.py $5)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config-active-active-secondary.xml
-    sed -i "" "s_zzz.zzz.zzz.zzz_$5_" config-active-active-secondary.xml
-    sed -i "" "s/www.www.www.www/$6/" config-active-active-secondary.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_$6_" config-active-active-secondary.xml
+    sed -i "" "s/www.www.www.www/$7/" config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" config-active-active-secondary.xml
     cp config-active-active-secondary.xml /usr/local/etc/config.xml
-elif [ "$3" = "TwoNics" ]; then
+elif [ "$4" = "TwoNics" ]; then
     fetch $1config.xml
     fetch $1get_nic_gw.py
-    gwip=$(python get_nic_gw.py $4)
+    gwip=$(python get_nic_gw.py $5)
     sed -i "" "s/yyy.yyy.yyy.yyy/$gwip/" config.xml
-    sed -i "" "s_zzz.zzz.zzz.zzz_$5_" config.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_$6_" config.xml
     cp config.xml /usr/local/etc/config.xml
 fi
 
@@ -61,9 +62,9 @@ sed -i "" "s/reboot/shutdown -r +1/g" opnsense-bootstrap.sh.in
 sh ./opnsense-bootstrap.sh.in -y -r "$2"
 
 # Add Azure waagent
-fetch https://github.com/Azure/WALinuxAgent/archive/refs/tags/v2.8.0.11.tar.gz
-tar -xvzf v2.8.0.11.tar.gz
-cd WALinuxAgent-2.8.0.11/
+fetch https://github.com/Azure/WALinuxAgent/archive/refs/tags/v$3.tar.gz
+tar -xvzf v$3.tar.gz
+cd WALinuxAgent-$3/
 python3 setup.py install --register-service --lnx-distro=freebsd --force
 cd ..
 

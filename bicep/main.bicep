@@ -51,6 +51,9 @@ param ShellScriptName string = 'configureopnsense.sh'
 @sys.description('OPN Version')
 param OpnVersion string = '23.1'
 
+@sys.description('Azure WALinux agent Version')
+param WALinuxVersion string = '2.9.1.1'
+
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
@@ -390,6 +393,7 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
     ShellScriptObj: {
       OpnScriptURI: OpnScriptURI
       OpnVersion: OpnVersion
+      WALinuxVersion: WALinuxVersion
       OpnType: 'Secondary'
       TrustedSubnetName: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
@@ -428,6 +432,7 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
     ShellScriptObj: {
       OpnScriptURI: OpnScriptURI
       OpnVersion: OpnVersion
+      WALinuxVersion: WALinuxVersion
       OpnType: 'Primary'
       TrustedSubnetName: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
@@ -464,6 +469,7 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
     ShellScriptObj: {
       OpnScriptURI: OpnScriptURI
       OpnVersion: OpnVersion
+      WALinuxVersion: WALinuxVersion
       OpnType: 'TwoNics'
       TrustedSubnetName: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
