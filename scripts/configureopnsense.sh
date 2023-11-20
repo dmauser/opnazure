@@ -95,3 +95,9 @@ echo static_arp_azvip=\"168.63.129.16 12:34:56:78:9a:bc\" >> /etc/rc.conf
 service static_arp start
 # To survive boots adding to OPNsense Autorun/Bootup:
 echo service static_arp start >> /usr/local/etc/rc.syshook.d/start/20-freebsd
+
+# Reset WebGUI certificate
+echo #\!/bin/sh >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
+echo configctl webgui restart renew >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
+echo rm /usr/local/etc/rc.syshook.d/start/94-restartwebgui >> /usr/local/etc/rc.syshook.d/start/94-restartwebgui
+chmod +x /usr/local/etc/rc.syshook.d/start/94-restartwebgui
