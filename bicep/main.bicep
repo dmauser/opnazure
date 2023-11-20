@@ -1,9 +1,8 @@
 // Parameters
-@sys.description('Select a valid scenario. Active Active: Two OPNSenses deployed in HA mode using SLB and ILB. Two Nics: Single OPNSense deployed with two Nics. Single Nic: Single OPNSense deployed with one Nic.')
+@sys.description('Select a valid scenario. Active Active: Two OPNSenses deployed in HA mode using SLB and ILB. Two Nics: Single OPNSense deployed with two Nics.')
 @allowed([
   'Active-Active'
   'TwoNics'
-  'SingleNic'
 ])
 param scenarioOption string = 'TwoNics'
 
@@ -145,27 +144,7 @@ module vnet 'modules/vnet/vnet.bicep' = if(useexistingvirtualNetwork == false) {
     location: Location
     vnetAddressSpace: VNETAddress
     vnetName: virtualNetworkName
-    subnets: DeployWindows == true && scenarioOption == 'SingleNic' ? [
-      {
-        name: untrustedSubnetName
-        properties: {
-          addressPrefix: UntrustedSubnetCIDR
-        }
-      }
-      {
-        name: windowsvmsubnetname
-        properties: {
-          addressPrefix: DeployWindowsSubnet
-        }
-      }
-    ]: DeployWindows == false && scenarioOption == 'SingleNic' ? [
-      {
-        name: untrustedSubnetName
-        properties: {
-          addressPrefix: UntrustedSubnetCIDR
-        }
-      }
-    ]: DeployWindows == true ? [
+    subnets: DeployWindows == true ? [
       {
         name: untrustedSubnetName
         properties: {
@@ -412,7 +391,7 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
       'OpnScriptURI': OpnScriptURI
       'OpnVersion': OpnVersion
       'OpnType': 'Secondary'
-      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      'TrustedSubnetName': '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       'publicIPAddress': publicip.outputs.publicipAddress
       'opnSenseSecondarytrustedNicIP': ''
@@ -450,7 +429,7 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
       'OpnScriptURI': OpnScriptURI
       'OpnVersion': OpnVersion
       'OpnType': 'Primary'
-      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      'TrustedSubnetName': '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       'publicIPAddress': publicip.outputs.publicipAddress
       'opnSenseSecondarytrustedNicIP': scenarioOption == 'Active-Active' ? opnSenseSecondary.outputs.trustedNicIP : ''
@@ -486,7 +465,7 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
       'OpnScriptURI': OpnScriptURI
       'OpnVersion': OpnVersion
       'OpnType': 'TwoNics'
-      'TrustedSubnetName': scenarioOption != 'SingleNic' ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}' : ''
+      'TrustedSubnetName': '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       'WindowsSubnetName': DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       'publicIPAddress': ''
       'opnSenseSecondarytrustedNicIP': ''
@@ -507,38 +486,6 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
     vnet
     nsgopnsense
     trustedSubnet
-  ]
-}
-
-// Create OPNSense SingleNic
-module opnSenseSingleNic 'modules/VM/opnsense.bicep' = if(scenarioOption == 'SingleNic'){
-  name: '${virtualMachineName}-SingleNic'
-  params: {
-    Location: Location
-    //ShellScriptParameters: '${OpnScriptURI} SingNic'
-    ShellScriptObj: {
-      'OpnScriptURI': OpnScriptURI
-      'OpnVersion': OpnVersion
-      'OpnType': 'SingleNic'
-      'TrustedSubnetName': ''
-      'WindowsSubnetName': ''
-      'publicIPAddress': ''
-      'opnSenseSecondarytrustedNicIP': ''
-    }
-    OPNScriptURI: OpnScriptURI
-    ShellScriptName: ShellScriptName
-    TempPassword: TempPassword
-    TempUsername: TempUsername
-    multiNicSupport: false
-    untrustedSubnetId: untrustedSubnet.id
-    virtualMachineName: virtualMachineName
-    virtualMachineSize: virtualMachineSize
-    publicIPId: publicip.outputs.publicipId
-    nsgId: nsgopnsense.outputs.nsgID
-  }
-  dependsOn: [
-    vnet
-    nsgopnsense
   ]
 }
 
@@ -581,7 +528,6 @@ module nsgwinvm 'modules/vnet/nsg.bicep' = if (DeployWindows) {
     opnSenseSecondary
     opnSensePrimary
     opnSenseTwoNics
-    opnSenseSingleNic
   ]
 }
 
@@ -602,7 +548,6 @@ module winvmpublicip 'modules/vnet/publicip.bicep' = if (DeployWindows) {
     opnSenseSecondary
     opnSensePrimary
     opnSenseTwoNics
-    opnSenseSingleNic
   ]
 }
 
@@ -616,7 +561,6 @@ module winvmroutetable 'modules/vnet/routetable.bicep' = if (DeployWindows) {
     opnSenseSecondary
     opnSensePrimary
     opnSenseTwoNics
-    opnSenseSingleNic
   ]
 }
 
@@ -627,7 +571,7 @@ module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployW
     routeName: 'default'
     properties: {
       nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: scenarioOption == 'Active-Active' ? ilb.outputs.frontendIP.privateIPAddress : scenarioOption == 'TwoNics' ? opnSenseTwoNics.outputs.trustedNicIP : scenarioOption == 'SingleNic' ? opnSenseSingleNic.outputs.untrustedNicIP : ''
+      nextHopIpAddress: scenarioOption == 'Active-Active' ? ilb.outputs.frontendIP.privateIPAddress : scenarioOption == 'TwoNics' ? opnSenseTwoNics.outputs.trustedNicIP : ''
       addressPrefix: '0.0.0.0/0'
     }
   }
@@ -654,6 +598,5 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
     opnSenseSecondary
     opnSensePrimary
     opnSenseTwoNics
-    opnSenseSingleNic
   ]
 }

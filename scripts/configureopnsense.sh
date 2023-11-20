@@ -3,7 +3,7 @@
 # Script Params
 # $1 = OPNScriptURI
 # $2 = OpnVersion
-# $3 = Primary/Secondary/SingNic/TwoNics
+# $3 = Primary/Secondary/TwoNics
 # $4 = Trusted Nic subnet prefix - used to get the gw
 # $5 = Windows-VM-Subnet subnet prefix - used to route/nat allow internet access from Windows Management VM
 # $6 = ELB VIP Address
@@ -30,9 +30,6 @@ elif [ "$3" = "Secondary" ]; then
     sed -i "" "s/www.www.www.www/$6/" config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" config-active-active-secondary.xml
     cp config-active-active-secondary.xml /usr/local/etc/config.xml
-elif [ "$3" = "SingNic" ]; then
-    fetch $1config-snic.xml
-    cp config-snic.xml /usr/local/etc/config.xml
 elif [ "$3" = "TwoNics" ]; then
     fetch $1config.xml
     fetch $1get_nic_gw.py
