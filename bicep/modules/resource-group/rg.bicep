@@ -1,7 +1,7 @@
 targetScope = 'subscription'
 param location string = deployment().location
 param rgName string
-resource rg 'Microsoft.Resources/resourceGroups@2020-06-01' = {
+resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   location: location
   name: rgName
 }

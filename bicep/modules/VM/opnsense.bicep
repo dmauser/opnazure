@@ -19,11 +19,11 @@ param Location string = resourceGroup().location
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
+resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
   name: ShellScriptObj.TrustedSubnetName
 }
 
-resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
   name: ShellScriptObj.WindowsSubnetName
 }
 
@@ -53,7 +53,7 @@ module trustedNic '../vnet/nic.bicep' = if(multiNicSupport){
   }
 }
 
-resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+resource OPNsense 'Microsoft.Compute/virtualMachines@2023-07-01' = {
   name: virtualMachineName
   location: Location
   properties: {
@@ -107,7 +107,7 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   }
 }
 
-resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
+resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-07-01' = {
   name: '${OPNsense.name}/CustomScript'
   location: Location
   properties: {

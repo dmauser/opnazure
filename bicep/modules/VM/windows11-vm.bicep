@@ -21,7 +21,7 @@ module trustedNic '../vnet/nic.bicep' = {
   }
 }
 
-resource windows11 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+resource windows11 'Microsoft.Compute/virtualMachines@2023-07-01' = {
   name: virtualMachineName
   location: Location
   properties: {
