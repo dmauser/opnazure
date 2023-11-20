@@ -13,8 +13,6 @@ on:
   #    - 'master'
   #    - 'dev'
   #   paths:
-  #     - "bicep/main-two-nics.bicep"
-  #     - "bicep/main-two-nics.parameters.json"
   #     - ".github/workflows/deploymentChecker-two-nics.yml"
 
   #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
