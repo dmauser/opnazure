@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.14.46.61228",
-      "templateHash": "7295111324258119511"
+      "version": "0.23.1.45101",
+      "templateHash": "13686447689251741076"
     }
   },
   "parameters": {
@@ -14,11 +14,10 @@
       "defaultValue": "TwoNics",
       "allowedValues": [
         "Active-Active",
-        "TwoNics",
-        "SingleNic"
+        "TwoNics"
       ],
       "metadata": {
-        "description": "Select a valid scenario. Active Active: Two OPNSenses deployed in HA mode using SLB and ILB. Two Nics: Single OPNSense deployed with two Nics. Single Nic: Single OPNSense deployed with one Nic."
+        "description": "Select a valid scenario. Active Active: Two OPNSenses deployed in HA mode using SLB and ILB. Two Nics: Single OPNSense deployed with two Nics."
       }
     },
     "virtualMachineSize": {
@@ -189,7 +188,7 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('networkSecurityGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -240,8 +239,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "4339049196143606838"
+              "version": "0.23.1.45101",
+              "templateHash": "9775470808837952176"
             }
           },
           "parameters": {
@@ -280,7 +279,7 @@
     {
       "condition": "[equals(variables('useexistingvirtualNetwork'), false())]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[parameters('virtualNetworkName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -297,7 +296,7 @@
           "vnetName": {
             "value": "[parameters('virtualNetworkName')]"
           },
-          "subnets": "[if(and(equals(parameters('DeployWindows'), true()), equals(parameters('scenarioOption'), 'SingleNic')), createObject('value', createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet'))))), if(and(equals(parameters('DeployWindows'), false()), equals(parameters('scenarioOption'), 'SingleNic')), createObject('value', createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))))), if(equals(parameters('DeployWindows'), true()), createObject('value', createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet'))))), createObject('value', createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))))))))]"
+          "subnets": "[if(equals(parameters('DeployWindows'), true()), createObject('value', createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))), createObject('name', variables('windowsvmsubnetname'), 'properties', createObject('addressPrefix', parameters('DeployWindowsSubnet'))))), createObject('value', createArray(createObject('name', variables('untrustedSubnetName'), 'properties', createObject('addressPrefix', parameters('UntrustedSubnetCIDR'))), createObject('name', variables('trustedSubnetName'), 'properties', createObject('addressPrefix', parameters('TrustedSubnetCIDR'))))))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -305,8 +304,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "5826149815538783172"
+              "version": "0.23.1.45101",
+              "templateHash": "4464677527515064240"
             }
           },
           "parameters": {
@@ -357,7 +356,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('publicIPAddressName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -389,8 +388,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "12158991959892248295"
+              "version": "0.23.1.45101",
+              "templateHash": "8500506430354567115"
             }
           },
           "parameters": {
@@ -434,7 +433,7 @@
     {
       "condition": "[equals(parameters('scenarioOption'), 'Active-Active')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('externalLoadBalanceName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -454,7 +453,7 @@
                 "name": "[variables('externalLoadBalanceFIPConfName')]",
                 "properties": {
                   "publicIPAddress": {
-                    "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2020-10-01').outputs.publicipId.value]"
+                    "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2022-09-01').outputs.publicipId.value]"
                   }
                 }
               }
@@ -562,8 +561,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "17622630853420594741"
+              "version": "0.23.1.45101",
+              "templateHash": "6870055690773526056"
             }
           },
           "parameters": {
@@ -642,7 +641,7 @@
     {
       "condition": "[equals(parameters('scenarioOption'), 'Active-Active')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('internalLoadBalanceName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -724,8 +723,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "17622630853420594741"
+              "version": "0.23.1.45101",
+              "templateHash": "6870055690773526056"
             }
           },
           "parameters": {
@@ -806,7 +805,7 @@
     {
       "condition": "[equals(parameters('scenarioOption'), 'Active-Active')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('VMOPNsenseSecondaryName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -822,9 +821,9 @@
               "OpnScriptURI": "[parameters('OpnScriptURI')]",
               "OpnVersion": "[parameters('OpnVersion')]",
               "OpnType": "Secondary",
-              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
+              "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
-              "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2020-10-01').outputs.publicipAddress.value]",
+              "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2022-09-01').outputs.publicipAddress.value]",
               "opnSenseSecondarytrustedNicIP": ""
             }
           },
@@ -856,11 +855,11 @@
             "value": "[parameters('virtualMachineSize')]"
           },
           "nsgId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2020-10-01').outputs.nsgID.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2022-09-01').outputs.nsgID.value]"
           },
-          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2020-10-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
-          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2020-10-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
-          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2020-10-01').outputs.inboundNatRules.value[1].id), createObject('value', ''))]"
+          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2022-09-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2022-09-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2022-09-01').outputs.inboundNatRules.value[1].id), createObject('value', ''))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -868,8 +867,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "7046354713802615858"
+              "version": "0.23.1.45101",
+              "templateHash": "13610488845782760949"
             }
           },
           "parameters": {
@@ -961,7 +960,7 @@
                   }
                 },
                 "networkProfile": {
-                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
+                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
                 }
               },
               "plan": {
@@ -997,7 +996,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('untrustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1036,8 +1035,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -1124,7 +1123,7 @@
             {
               "condition": "[parameters('multiNicSupport')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('trustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1157,8 +1156,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -1246,15 +1245,15 @@
           "outputs": {
             "untrustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicIP.value]"
             },
             "trustedNicIP": {
               "type": "string",
-              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicIP.value, '')]"
+              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicIP.value, '')]"
             },
             "untrustedNicProfileId": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIpConfigurationId.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicIpConfigurationId.value]"
             }
           }
         }
@@ -1270,7 +1269,7 @@
     {
       "condition": "[equals(parameters('scenarioOption'), 'Active-Active')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('VMOPNsensePrimaryName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1286,10 +1285,10 @@
               "OpnScriptURI": "[parameters('OpnScriptURI')]",
               "OpnVersion": "[parameters('OpnVersion')]",
               "OpnType": "Primary",
-              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
+              "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
-              "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2020-10-01').outputs.publicipAddress.value]",
-              "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2020-10-01').outputs.trustedNicIP.value, '')]"
+              "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2022-09-01').outputs.publicipAddress.value]",
+              "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2022-09-01').outputs.trustedNicIP.value, '')]"
             }
           },
           "OPNScriptURI": {
@@ -1320,11 +1319,11 @@
             "value": "[parameters('virtualMachineSize')]"
           },
           "nsgId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2020-10-01').outputs.nsgID.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2022-09-01').outputs.nsgID.value]"
           },
-          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2020-10-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
-          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2020-10-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
-          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2020-10-01').outputs.inboundNatRules.value[0].id), createObject('value', ''))]"
+          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2022-09-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2022-09-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2022-09-01').outputs.inboundNatRules.value[0].id), createObject('value', ''))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -1332,8 +1331,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "7046354713802615858"
+              "version": "0.23.1.45101",
+              "templateHash": "13610488845782760949"
             }
           },
           "parameters": {
@@ -1425,7 +1424,7 @@
                   }
                 },
                 "networkProfile": {
-                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
+                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
                 }
               },
               "plan": {
@@ -1461,7 +1460,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('untrustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1500,8 +1499,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -1588,7 +1587,7 @@
             {
               "condition": "[parameters('multiNicSupport')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('trustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1621,8 +1620,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -1710,15 +1709,15 @@
           "outputs": {
             "untrustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicIP.value]"
             },
             "trustedNicIP": {
               "type": "string",
-              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicIP.value, '')]"
+              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicIP.value, '')]"
             },
             "untrustedNicProfileId": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIpConfigurationId.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicIpConfigurationId.value]"
             }
           }
         }
@@ -1735,7 +1734,7 @@
     {
       "condition": "[equals(parameters('scenarioOption'), 'TwoNics')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[format('{0}-TwoNics', parameters('virtualMachineName'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1751,7 +1750,7 @@
               "OpnScriptURI": "[parameters('OpnScriptURI')]",
               "OpnVersion": "[parameters('OpnVersion')]",
               "OpnType": "TwoNics",
-              "TrustedSubnetName": "[if(not(equals(parameters('scenarioOption'), 'SingleNic')), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName'))), '')]",
+              "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "",
               "opnSenseSecondarytrustedNicIP": ""
@@ -1785,10 +1784,10 @@
             "value": "[parameters('virtualMachineSize')]"
           },
           "publicIPId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2020-10-01').outputs.publicipId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2022-09-01').outputs.publicipId.value]"
           },
           "nsgId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2020-10-01').outputs.nsgID.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2022-09-01').outputs.nsgID.value]"
           }
         },
         "template": {
@@ -1797,8 +1796,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "7046354713802615858"
+              "version": "0.23.1.45101",
+              "templateHash": "13610488845782760949"
             }
           },
           "parameters": {
@@ -1890,7 +1889,7 @@
                   }
                 },
                 "networkProfile": {
-                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
+                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
                 }
               },
               "plan": {
@@ -1926,7 +1925,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('untrustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1965,8 +1964,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -2053,7 +2052,7 @@
             {
               "condition": "[parameters('multiNicSupport')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('trustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -2086,8 +2085,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -2175,474 +2174,15 @@
           "outputs": {
             "untrustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicIP.value]"
             },
             "trustedNicIP": {
               "type": "string",
-              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicIP.value, '')]"
+              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicIP.value, '')]"
             },
             "untrustedNicProfileId": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIpConfigurationId.value]"
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName'))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName'))]",
-        "[resourceId('Microsoft.Resources/deployments', parameters('virtualNetworkName'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('scenarioOption'), 'SingleNic')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "name": "[format('{0}-SingleNic', parameters('virtualMachineName'))]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "Location": {
-            "value": "[parameters('Location')]"
-          },
-          "ShellScriptObj": {
-            "value": {
-              "OpnScriptURI": "[parameters('OpnScriptURI')]",
-              "OpnVersion": "[parameters('OpnVersion')]",
-              "OpnType": "SingleNic",
-              "TrustedSubnetName": "",
-              "WindowsSubnetName": "",
-              "publicIPAddress": "",
-              "opnSenseSecondarytrustedNicIP": ""
-            }
-          },
-          "OPNScriptURI": {
-            "value": "[parameters('OpnScriptURI')]"
-          },
-          "ShellScriptName": {
-            "value": "[parameters('ShellScriptName')]"
-          },
-          "TempPassword": {
-            "value": "[variables('TempPassword')]"
-          },
-          "TempUsername": {
-            "value": "[variables('TempUsername')]"
-          },
-          "multiNicSupport": {
-            "value": false
-          },
-          "untrustedSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[0], split(format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingUntrustedSubnetName'), variables('untrustedSubnetName'))), '/')[1])]"
-          },
-          "virtualMachineName": {
-            "value": "[parameters('virtualMachineName')]"
-          },
-          "virtualMachineSize": {
-            "value": "[parameters('virtualMachineSize')]"
-          },
-          "publicIPId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2020-10-01').outputs.publicipId.value]"
-          },
-          "nsgId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2020-10-01').outputs.nsgID.value]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "7046354713802615858"
-            }
-          },
-          "parameters": {
-            "untrustedSubnetId": {
-              "type": "string"
-            },
-            "trustedSubnetId": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "publicIPId": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "virtualMachineName": {
-              "type": "string"
-            },
-            "TempUsername": {
-              "type": "string"
-            },
-            "TempPassword": {
-              "type": "string"
-            },
-            "virtualMachineSize": {
-              "type": "string"
-            },
-            "OPNScriptURI": {
-              "type": "string"
-            },
-            "ShellScriptName": {
-              "type": "string"
-            },
-            "nsgId": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "ExternalLoadBalancerBackendAddressPoolId": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "InternalLoadBalancerBackendAddressPoolId": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "ExternalloadBalancerInboundNatRulesId": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "ShellScriptObj": {
-              "type": "object",
-              "defaultValue": {}
-            },
-            "multiNicSupport": {
-              "type": "bool"
-            },
-            "Location": {
-              "type": "string",
-              "defaultValue": "[resourceGroup().location]"
-            }
-          },
-          "variables": {
-            "untrustedNicName": "[format('{0}-Untrusted-NIC', parameters('virtualMachineName'))]",
-            "trustedNicName": "[format('{0}-Trusted-NIC', parameters('virtualMachineName'))]"
-          },
-          "resources": [
-            {
-              "type": "Microsoft.Compute/virtualMachines",
-              "apiVersion": "2021-03-01",
-              "name": "[parameters('virtualMachineName')]",
-              "location": "[parameters('Location')]",
-              "properties": {
-                "osProfile": {
-                  "computerName": "[parameters('virtualMachineName')]",
-                  "adminUsername": "[parameters('TempUsername')]",
-                  "adminPassword": "[parameters('TempPassword')]"
-                },
-                "hardwareProfile": {
-                  "vmSize": "[parameters('virtualMachineSize')]"
-                },
-                "storageProfile": {
-                  "osDisk": {
-                    "createOption": "FromImage"
-                  },
-                  "imageReference": {
-                    "publisher": "thefreebsdfoundation",
-                    "offer": "freebsd-13_1",
-                    "sku": "13_1-release",
-                    "version": "latest"
-                  }
-                },
-                "networkProfile": {
-                  "networkInterfaces": "[if(equals(parameters('multiNicSupport'), true()), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true())), createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', false()))), createArray(createObject('id', reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicId.value, 'properties', createObject('primary', true()))))]"
-                }
-              },
-              "plan": {
-                "name": "13_1-release",
-                "publisher": "thefreebsdfoundation",
-                "product": "freebsd-13_1"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('trustedNicName'))]",
-                "[resourceId('Microsoft.Resources/deployments', variables('untrustedNicName'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Compute/virtualMachines/extensions",
-              "apiVersion": "2015-06-15",
-              "name": "[format('{0}/CustomScript', parameters('virtualMachineName'))]",
-              "location": "[parameters('Location')]",
-              "properties": {
-                "publisher": "Microsoft.OSTCExtensions",
-                "type": "CustomScriptForLinux",
-                "typeHandlerVersion": "1.5",
-                "autoUpgradeMinorVersion": false,
-                "settings": {
-                  "fileUris": [
-                    "[format('{0}{1}', parameters('OPNScriptURI'), parameters('ShellScriptName'))]"
-                  ],
-                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2020-11-01').addressPrefix, ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2020-11-01').addressPrefix, '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP)]"
-                }
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
-              "name": "[variables('untrustedNicName')]",
-              "properties": {
-                "expressionEvaluationOptions": {
-                  "scope": "inner"
-                },
-                "mode": "Incremental",
-                "parameters": {
-                  "Location": {
-                    "value": "[parameters('Location')]"
-                  },
-                  "nicName": {
-                    "value": "[variables('untrustedNicName')]"
-                  },
-                  "subnetId": {
-                    "value": "[parameters('untrustedSubnetId')]"
-                  },
-                  "publicIPId": {
-                    "value": "[parameters('publicIPId')]"
-                  },
-                  "enableIPForwarding": {
-                    "value": true
-                  },
-                  "nsgId": {
-                    "value": "[parameters('nsgId')]"
-                  },
-                  "loadBalancerBackendAddressPoolId": {
-                    "value": "[parameters('ExternalLoadBalancerBackendAddressPoolId')]"
-                  },
-                  "loadBalancerInboundNatRules": {
-                    "value": "[parameters('ExternalloadBalancerInboundNatRulesId')]"
-                  }
-                },
-                "template": {
-                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                  "contentVersion": "1.0.0.0",
-                  "metadata": {
-                    "_generator": {
-                      "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
-                    }
-                  },
-                  "parameters": {
-                    "subnetId": {
-                      "type": "string"
-                    },
-                    "publicIPId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "enableIPForwarding": {
-                      "type": "bool",
-                      "defaultValue": false
-                    },
-                    "nicName": {
-                      "type": "string"
-                    },
-                    "nsgId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "loadBalancerBackendAddressPoolId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "loadBalancerInboundNatRules": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "Location": {
-                      "type": "string",
-                      "defaultValue": "[resourceGroup().location]"
-                    }
-                  },
-                  "resources": [
-                    {
-                      "type": "Microsoft.Network/networkInterfaces",
-                      "apiVersion": "2021-05-01",
-                      "name": "[parameters('nicName')]",
-                      "location": "[parameters('Location')]",
-                      "properties": {
-                        "enableIPForwarding": "[parameters('enableIPForwarding')]",
-                        "networkSecurityGroup": {
-                          "id": "[parameters('nsgId')]"
-                        },
-                        "ipConfigurations": [
-                          {
-                            "name": "ipconfig1",
-                            "properties": {
-                              "subnet": {
-                                "id": "[parameters('subnetId')]"
-                              },
-                              "privateIPAllocationMethod": "Dynamic",
-                              "publicIPAddress": "[if(equals(first(parameters('publicIPId')), '/'), createObject('id', parameters('publicIPId')), null())]",
-                              "loadBalancerBackendAddressPools": "[if(equals(first(parameters('loadBalancerBackendAddressPoolId')), '/'), createArray(createObject('id', parameters('loadBalancerBackendAddressPoolId'))), null())]",
-                              "loadBalancerInboundNatRules": "[if(equals(first(parameters('loadBalancerInboundNatRules')), '/'), createArray(createObject('id', parameters('loadBalancerInboundNatRules'))), null())]"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ],
-                  "outputs": {
-                    "nicName": {
-                      "type": "string",
-                      "value": "[parameters('nicName')]"
-                    },
-                    "nicId": {
-                      "type": "string",
-                      "value": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
-                    },
-                    "nicIP": {
-                      "type": "string",
-                      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', parameters('nicName')), '2021-05-01').ipConfigurations[0].properties.privateIPAddress]"
-                    },
-                    "nicIpConfigurationId": {
-                      "type": "string",
-                      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', parameters('nicName')), '2021-05-01').ipConfigurations[0].id]"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "condition": "[parameters('multiNicSupport')]",
-              "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
-              "name": "[variables('trustedNicName')]",
-              "properties": {
-                "expressionEvaluationOptions": {
-                  "scope": "inner"
-                },
-                "mode": "Incremental",
-                "parameters": {
-                  "Location": {
-                    "value": "[parameters('Location')]"
-                  },
-                  "nicName": {
-                    "value": "[variables('trustedNicName')]"
-                  },
-                  "subnetId": {
-                    "value": "[parameters('trustedSubnetId')]"
-                  },
-                  "enableIPForwarding": {
-                    "value": true
-                  },
-                  "nsgId": {
-                    "value": "[parameters('nsgId')]"
-                  },
-                  "loadBalancerBackendAddressPoolId": {
-                    "value": "[parameters('InternalLoadBalancerBackendAddressPoolId')]"
-                  }
-                },
-                "template": {
-                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                  "contentVersion": "1.0.0.0",
-                  "metadata": {
-                    "_generator": {
-                      "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
-                    }
-                  },
-                  "parameters": {
-                    "subnetId": {
-                      "type": "string"
-                    },
-                    "publicIPId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "enableIPForwarding": {
-                      "type": "bool",
-                      "defaultValue": false
-                    },
-                    "nicName": {
-                      "type": "string"
-                    },
-                    "nsgId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "loadBalancerBackendAddressPoolId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "loadBalancerInboundNatRules": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
-                    "Location": {
-                      "type": "string",
-                      "defaultValue": "[resourceGroup().location]"
-                    }
-                  },
-                  "resources": [
-                    {
-                      "type": "Microsoft.Network/networkInterfaces",
-                      "apiVersion": "2021-05-01",
-                      "name": "[parameters('nicName')]",
-                      "location": "[parameters('Location')]",
-                      "properties": {
-                        "enableIPForwarding": "[parameters('enableIPForwarding')]",
-                        "networkSecurityGroup": {
-                          "id": "[parameters('nsgId')]"
-                        },
-                        "ipConfigurations": [
-                          {
-                            "name": "ipconfig1",
-                            "properties": {
-                              "subnet": {
-                                "id": "[parameters('subnetId')]"
-                              },
-                              "privateIPAllocationMethod": "Dynamic",
-                              "publicIPAddress": "[if(equals(first(parameters('publicIPId')), '/'), createObject('id', parameters('publicIPId')), null())]",
-                              "loadBalancerBackendAddressPools": "[if(equals(first(parameters('loadBalancerBackendAddressPoolId')), '/'), createArray(createObject('id', parameters('loadBalancerBackendAddressPoolId'))), null())]",
-                              "loadBalancerInboundNatRules": "[if(equals(first(parameters('loadBalancerInboundNatRules')), '/'), createArray(createObject('id', parameters('loadBalancerInboundNatRules'))), null())]"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ],
-                  "outputs": {
-                    "nicName": {
-                      "type": "string",
-                      "value": "[parameters('nicName')]"
-                    },
-                    "nicId": {
-                      "type": "string",
-                      "value": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
-                    },
-                    "nicIP": {
-                      "type": "string",
-                      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', parameters('nicName')), '2021-05-01').ipConfigurations[0].properties.privateIPAddress]"
-                    },
-                    "nicIpConfigurationId": {
-                      "type": "string",
-                      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', parameters('nicName')), '2021-05-01').ipConfigurations[0].id]"
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "outputs": {
-            "untrustedNicIP": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIP.value]"
-            },
-            "trustedNicIP": {
-              "type": "string",
-              "value": "[if(equals(parameters('multiNicSupport'), true()), reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicIP.value, '')]"
-            },
-            "untrustedNicProfileId": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2020-10-01').outputs.nicIpConfigurationId.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('untrustedNicName')), '2022-09-01').outputs.nicIpConfigurationId.value]"
             }
           }
         }
@@ -2656,7 +2196,7 @@
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('winvmnetworkSecurityGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2707,8 +2247,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "4339049196143606838"
+              "version": "0.23.1.45101",
+              "templateHash": "9775470808837952176"
             }
           },
           "parameters": {
@@ -2746,14 +2286,13 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsensePrimaryName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-SingleNic', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName')))]"
       ]
     },
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('winvmpublicipName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2785,8 +2324,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "12158991959892248295"
+              "version": "0.23.1.45101",
+              "templateHash": "8500506430354567115"
             }
           },
           "parameters": {
@@ -2829,14 +2368,13 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsensePrimaryName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-SingleNic', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName')))]"
       ]
     },
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('winvmroutetablename')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2857,8 +2395,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "6073875005810106773"
+              "version": "0.23.1.45101",
+              "templateHash": "2350961992518535215"
             }
           },
           "parameters": {
@@ -2889,14 +2427,13 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsensePrimaryName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-SingleNic', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName')))]"
       ]
     },
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[format('{0}-default', variables('winvmroutetablename'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2913,7 +2450,7 @@
           "properties": {
             "value": {
               "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2020-10-01').outputs.frontendIP.value.privateIPAddress, if(equals(parameters('scenarioOption'), 'TwoNics'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName'))), '2020-10-01').outputs.trustedNicIP.value, if(equals(parameters('scenarioOption'), 'SingleNic'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-SingleNic', parameters('virtualMachineName'))), '2020-10-01').outputs.untrustedNicIP.value, '')))]",
+              "nextHopIpAddress": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2022-09-01').outputs.frontendIP.value.privateIPAddress, if(equals(parameters('scenarioOption'), 'TwoNics'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName'))), '2022-09-01').outputs.trustedNicIP.value, ''))]",
               "addressPrefix": "0.0.0.0/0"
             }
           }
@@ -2924,8 +2461,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "9420253618679410714"
+              "version": "0.23.1.45101",
+              "templateHash": "9583525883230376039"
             }
           },
           "parameters": {
@@ -2951,7 +2488,6 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName'))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-SingleNic', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', variables('winvmroutetablename'))]"
       ]
@@ -2959,7 +2495,7 @@
     {
       "condition": "[parameters('DeployWindows')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('winvmName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -2970,8 +2506,8 @@
           "Location": {
             "value": "[parameters('Location')]"
           },
-          "nsgId": "[if(parameters('DeployWindows'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName')), '2020-10-01').outputs.nsgID.value), createObject('value', ''))]",
-          "publicIPId": "[if(parameters('DeployWindows'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName')), '2020-10-01').outputs.publicipId.value), createObject('value', ''))]",
+          "nsgId": "[if(parameters('DeployWindows'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName')), '2022-09-01').outputs.nsgID.value), createObject('value', ''))]",
+          "publicIPId": "[if(parameters('DeployWindows'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName')), '2022-09-01').outputs.publicipId.value), createObject('value', ''))]",
           "TempUsername": {
             "value": "[parameters('WinUsername')]"
           },
@@ -2994,8 +2530,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.14.46.61228",
-              "templateHash": "4862099486813406346"
+              "version": "0.23.1.45101",
+              "templateHash": "6943481141609452888"
             }
           },
           "parameters": {
@@ -3057,7 +2593,7 @@
                 "networkProfile": {
                   "networkInterfaces": [
                     {
-                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicId.value]",
+                      "id": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicId.value]",
                       "properties": {
                         "primary": true
                       }
@@ -3071,7 +2607,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[variables('trustedNicName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -3104,8 +2640,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.14.46.61228",
-                      "templateHash": "5253299932454719832"
+                      "version": "0.23.1.45101",
+                      "templateHash": "17208138177615079659"
                     }
                   },
                   "parameters": {
@@ -3193,7 +2729,7 @@
           "outputs": {
             "untrustedNicIP": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2020-10-01').outputs.nicIP.value]"
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('trustedNicName')), '2022-09-01').outputs.nicIP.value]"
             }
           }
         }
@@ -3202,7 +2738,6 @@
         "[resourceId('Microsoft.Resources/deployments', variables('winvmnetworkSecurityGroupName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsensePrimaryName'))]",
         "[resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName'))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-SingleNic', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName')))]",
         "[resourceId('Microsoft.Resources/deployments', variables('winvmpublicipName'))]"
       ]
