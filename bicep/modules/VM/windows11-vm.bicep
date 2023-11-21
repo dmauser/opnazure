@@ -2,6 +2,7 @@ param trustedSubnetId string
 param publicIPId string
 param virtualMachineName string
 param TempUsername string
+#disable-next-line secure-secrets-in-params
 param TempPassword string
 param virtualMachineSize string
 param nsgId string
@@ -21,7 +22,7 @@ module trustedNic '../vnet/nic.bicep' = {
   }
 }
 
-resource windows11 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+resource windows11 'Microsoft.Compute/virtualMachines@2023-07-01' = {
   name: virtualMachineName
   location: Location
   properties: {
@@ -40,7 +41,7 @@ resource windows11 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       imageReference: {
         publisher: 'MicrosoftWindowsDesktop'
         offer: 'windows-11'
-        sku: 'win11-21h2-pro'
+        sku: 'win11-23h2-pro'
         version: 'latest'
       }
     }

@@ -5,10 +5,8 @@ CI Name | Actions Workflow | CI Status |
 | BicepBuild | [bicepBuild.yml](./.github/workflows/bicepBuild.yml) | [![bicepBuildCI](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml/badge.svg?branch=dev)](https://github.com/dmauser/opnazure/actions/workflows/bicepBuild.yml) |
 | Deployment Checker - Active Active | [deploymentChecker-active-active.yml](./.github/workflows/deploymentChecker-active-active.yml) | [![deploymentCheckeractiveactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml) |
 | Deployment Checker - two nics | [deploymentChecker-two-nics.yml](./.github/workflows/deploymentChecker-two-nics.yml) | [![deploymentCheckertwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-two-nics.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-two-nics.yml) |
-| Deployment Checker - single nic | [deploymentChecker-sing-nic.yml](./.github/workflows/deploymentChecker-sing-nic.yml) | [![deploymentCheckersingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-sing-nic.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-sing-nic.yml) |
 | Deployment Checker - new vnet Active Active | [deploymentChecker-newvnet-active-active.yml](./.github/workflows/deploymentChecker-newvnet-active-active.yml) | [![deploymentCheckeractivenewvnetactiveactiveCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-active-active.yml) |
 | Deployment Checker - new vnet two nics | [deploymentChecker-newvnet-two-nics.yml](./.github/workflows/deploymentChecker-two-nics.yml) | [![deploymentCheckernewvnettwonicsCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-two-nics.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-two-nics.yml) |
-| Deployment Checker - new vnet single nic | [deploymentChecker-newvnet-sing-nic.yml](./.github/workflows/deploymentChecker-sing-nic.yml) | [![deploymentCheckernewvnetsingnicCI](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-sing-nic.yml/badge.svg?branch=master)](https://github.com/dmauser/opnazure/actions/workflows/deploymentChecker-newvnet-sing-nic.yml) |
 
 **Deployment Wizard**
 
@@ -68,7 +66,7 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 This OPNsense solution is installed in FreeBSD 12.0 (Azure Image).
 Here is what you will see when you deploy this Template:
 
-There are 3 different deployment scenarios:
+There are 2 different deployment scenarios:
 
 - Active-Active:
     1) VNET with Two Subnets and OPNsense VM with two NICs.
@@ -89,13 +87,6 @@ There are 3 different deployment scenarios:
     4) Internal NIC named Trusted Linked to Trusted-Subnet (10.0.1.0/24).
     5) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS. Same NSG is associated to both Subnets.
     6) Option to deploy Windows management VM. (This option requires a management subnet to be created)
-
-- SingleNic:
-    1) VNET with single Subnet and OPNsense VM with single NIC.
-    2) VNET Address space is: 10.0.0.0/16 (suggested Address space, you may change that).
-    3) External NIC named Untrusted Linked to Untrusted-Subnet (10.0.0.0/24).
-    4) It creates a NSG named OPN-NSG which allows incoming SSH and HTTPS.
-    5) Option to deploy Windows management VM. (This option requires a management subnet to be created)
 
 ## Design
 

@@ -3,6 +3,7 @@ param trustedSubnetId string = ''
 param publicIPId string = ''
 param virtualMachineName string
 param TempUsername string
+#disable-next-line secure-secrets-in-params
 param TempPassword string
 param virtualMachineSize string
 param OPNScriptURI string
@@ -19,11 +20,11 @@ param Location string = resourceGroup().location
 var untrustedNicName = '${virtualMachineName}-Untrusted-NIC'
 var trustedNicName = '${virtualMachineName}-Trusted-NIC'
 
-resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
+resource trustedSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = if (!empty(ShellScriptObj.TrustedSubnetName)){
   name: ShellScriptObj.TrustedSubnetName
 }
 
-resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
+resource windowsvmsubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = if (!empty(ShellScriptObj.WindowsSubnetName)) {
   name: ShellScriptObj.WindowsSubnetName
 }
 
@@ -53,7 +54,7 @@ module trustedNic '../vnet/nic.bicep' = if(multiNicSupport){
   }
 }
 
-resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+resource OPNsense 'Microsoft.Compute/virtualMachines@2023-07-01' = {
   name: virtualMachineName
   location: Location
   properties: {
@@ -107,8 +108,9 @@ resource OPNsense 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   }
 }
 
-resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${OPNsense.name}/CustomScript'
+resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-07-01' = {
+  parent: OPNsense
+  name: 'CustomScript'
   location: Location
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
@@ -119,7 +121,7 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
       fileUris: [
         '${OPNScriptURI}${ShellScriptName}'
       ]
-      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnVersion} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP}'
+      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnVersion} ${ShellScriptObj.WALinuxVersion} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP}'
     }
   }
 }

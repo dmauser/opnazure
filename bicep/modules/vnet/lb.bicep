@@ -7,7 +7,7 @@ param inboundNatRules array = []
 param probe array = []
 param Location string = resourceGroup().location
 
-resource lb 'Microsoft.Network/loadBalancers@2021-03-01' = {
+resource lb 'Microsoft.Network/loadBalancers@2023-05-01' = {
   name: lbName
   location: Location
   sku: {
