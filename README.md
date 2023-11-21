@@ -41,7 +41,7 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 ## Nov-2023
 
 - Added support to OPNsense 23.7 (set as default version)
-- Removed Single NIC scenario support (due lack of usage for the scenario)
+- Removed Single NIC scenario support (due to lack of usage for the scenario)
 - Added a configurable option for WAAgent version and changed the default for the latest version.
 - Miscellaneous fixes and improvements:
   - Updated all Bicep API Versions
