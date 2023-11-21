@@ -31,12 +31,21 @@ The login credentials are set during the installation process to:
 - Username: root
 - Password: opnsense (lowercase)
 
-*** **Please** *** Change *default password!!!* (In case of using Active-Active scenario the password must be changed in both Firewalls and under Highavailability settings)
+*** **Please** *** Change *default password!!!* (In case of using Active-Active scenario the password must be changed in both Firewalls and under High availability settings)
 
 After deployment, you can go to <https://PublicIP>, then input the user and password, to configure the OPNsense firewall.
 In case of Active-Active the URL should be <https://PublicIP:50443> for Primary server and <https://PublicIP:50444> for Secondary server.
 
 ## Updates
+
+## Nov-2023
+
+- Added support to OPNsense 23.7 (set as default version)
+- Removed Single NIC scenario support (due lack of usage for the scenario)
+- Add a configurable option for WAAgent version and changed the default for the latest version.
+- Miscellaneous fixes and improvements:
+  - Updated all Bicep API Versions
+  - Fixed some lint warning due to Bicep recent updates
 
 ## Feb-2023
 - Added support to OPNsense 23.1
@@ -99,7 +108,7 @@ Design of two Nic deployment | Design of Active-Active deployment |
 Here are few considerations to deploy this solution correctly:
 
 - When you deploy this template, it will leave only TCP 22 listening to Internet while OPNsense gets installed.
-- To monitor the installation process during template deployment you can just probe the port 22 on OPNsense VM public IP (psping or tcping).
+- To monitor the installation process during the template deployment you can just probe the port 22 on OPNsense VM public IP (psping or tcping).
 - When port is down which means OPNsense is installed and VM will get restarted automatically. At this point you will have only TCP 443.
 
 **Note**: It takes about 10 min to complete the whole process when VM is created and a new VM CustomScript is started to install OPNsense.
@@ -109,7 +118,7 @@ Here are few considerations to deploy this solution correctly:
 - First access can be done using <HTTPS://PublicIP.> Please ignore SSL/TLS errors and proceed. In case of Active-Active the URL should be <https://PublicIP:50443> for Primary server and <https://PublicIP:50444> for Secondary server.
 - Your first login is going to be username "root" and password "opnsense" (**PLEASE change your password right the way**).
 - To access SSH you can either deploy a Jumpbox VM on Trusted Subnet or create a Firewall Rule to allow SSH to Internet.
-- To send traffic to OPNsense you need to create UDR 0.0.0.0 and set IP of trusted NIC IP (10.0.1.4) as next hop. Associate that NVA to Trusted-Subnet.
+- To send traffic to the OPNsense you need to create UDR 0.0.0.0 and set IP of trusted NIC IP (10.0.1.4) as next hop. Associate that NVA to Trusted-Subnet.
 - **Note:** It is necessary to create appropriate Firewall rules inside OPNsense to desired traffic to work properly.
 
 ## Roadmap
@@ -122,4 +131,4 @@ Please use Github [issues tab](https://github.com/dmauser/opnazure/issues) to pr
 
 ## Credits
 
-Thanks for direct feedbacks and contributions from: Adam Torkar, Brian Wurzbacher, [Victor Santana](https://github.com/welasco) and Brady Sondreal.
+Thanks for direct feedbacks and contributions from: Adam Torkar, Brian Wurzbacher, [Victor Santana](https://github.com/welasco) and Brady Sondreal, and many others shown on this repository as contributors.
