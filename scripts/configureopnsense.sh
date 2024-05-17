@@ -47,9 +47,9 @@ fi
 
 # 1. Package to get root certificate bundle from the Mozilla Project (FreeBSD)
 # 2. Install bash to support Azure Backup integration
-env IGNORE_OSVERSION=yes
-pkg bootstrap -f; pkg update -f
-env ASSUME_ALWAYS_YES=YES pkg install ca_root_nss && pkg install -y bash
+#env IGNORE_OSVERSION=yes
+#pkg bootstrap -f; pkg update -f
+#env ASSUME_ALWAYS_YES=YES pkg install ca_root_nss && pkg install -y bash
 
 #Download OPNSense Bootstrap and Permit Root Remote Login
 # fetch https://raw.githubusercontent.com/opnsense/update/master/src/bootstrap/opnsense-bootstrap.sh.in
