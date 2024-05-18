@@ -74,7 +74,7 @@ python3 setup.py install --register-service --lnx-distro=freebsd --force
 cd ..
 
 # Fix waagent by replacing configuration settings
-ln -s /usr/local/bin/python3.9 /usr/local/bin/python
+ln -s /usr/local/bin/python3.11 /usr/local/bin/python
 ##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
 ##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
