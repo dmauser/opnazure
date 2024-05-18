@@ -112,15 +112,15 @@
               "name": "OpnVersion",
               "type": "Microsoft.Common.TextBox",
               "label": "OPNSense Version to deploy",
-              "toolTip": "OPNsense Releases. Latest: 23.1, 23.7 Reference: https://docs.opnsense.org/releases.html",
-              "defaultValue": "23.7"
+              "toolTip": "OPNsense Releases. Latest: 24.1, 23.7 Reference: https://docs.opnsense.org/releases.html",
+              "defaultValue": "24.1"
             },
             {
               "name": "WALinuxVersion",
               "type": "Microsoft.Common.TextBox",
               "label": "Azure WALinux agent Version",
-              "toolTip": "Azure WALinux agent Releases. Only version number, dont add v at the begining. Latest: 2.9.0.4, 2.9.1.1 Reference: https://github.com/Azure/WALinuxAgent/releases",
-              "defaultValue": "2.9.1.1"
+              "toolTip": "Azure WALinux agent Releases. Only version number, dont add v at the begining. Latest: 2.10.0.8, 2.9.1.1 Reference: https://github.com/Azure/WALinuxAgent/releases",
+              "defaultValue": "2.10.0.8"
             },
             {
               "name": "DeployWindows",
