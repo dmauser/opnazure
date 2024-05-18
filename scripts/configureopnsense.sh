@@ -58,6 +58,11 @@ fetch https://raw.githubusercontent.com/opnsense/update/master/src/bootstrap/opn
 sed -i "" 's/#PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 #OPNSense
+# Due to a recent change in pkg the following commands no longer finish with status code 0
+#		pkg unlock -a
+#		pkg delete -fa
+# This resplace of set -e which force the script to finish in case of non status code 0 has to be inplace
+sed -i "" "s/set -e/#set -e/g" opnsense-bootstrap.sh.in
 sed -i "" "s/reboot/shutdown -r +1/g" opnsense-bootstrap.sh.in
 sh ./opnsense-bootstrap.sh.in -y -r "$2"
 
