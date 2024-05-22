@@ -38,6 +38,10 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 
 ## Updates
 
+## May-2024
+- OPNSense 24.1 as default version
+- Fixed deployment issues
+
 ## Nov-2023
 
 - Added support to OPNsense 23.7 (set as default version)
