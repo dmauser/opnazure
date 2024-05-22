@@ -47,9 +47,9 @@ fi
 
 # 1. Package to get root certificate bundle from the Mozilla Project (FreeBSD)
 # 2. Install bash to support Azure Backup integration
-env IGNORE_OSVERSION=yes
-pkg bootstrap -f; pkg update -f
-env ASSUME_ALWAYS_YES=YES pkg install ca_root_nss && pkg install -y bash
+#env IGNORE_OSVERSION=yes
+#pkg bootstrap -f; pkg update -f
+#env ASSUME_ALWAYS_YES=YES pkg install ca_root_nss && pkg install -y bash
 
 #Download OPNSense Bootstrap and Permit Root Remote Login
 # fetch https://raw.githubusercontent.com/opnsense/update/master/src/bootstrap/opnsense-bootstrap.sh.in
@@ -58,6 +58,11 @@ fetch https://raw.githubusercontent.com/opnsense/update/master/src/bootstrap/opn
 sed -i "" 's/#PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 #OPNSense
+# Due to a recent change in pkg the following commands no longer finish with status code 0
+#		pkg unlock -a
+#		pkg delete -fa
+# This resplace of set -e which force the script to finish in case of non status code 0 has to be inplace
+sed -i "" "s/set -e/#set -e/g" opnsense-bootstrap.sh.in
 sed -i "" "s/reboot/shutdown -r +1/g" opnsense-bootstrap.sh.in
 sh ./opnsense-bootstrap.sh.in -y -r "$2"
 
@@ -69,7 +74,7 @@ python3 setup.py install --register-service --lnx-distro=freebsd --force
 cd ..
 
 # Fix waagent by replacing configuration settings
-ln -s /usr/local/bin/python3.9 /usr/local/bin/python
+ln -s /usr/local/bin/python3.11 /usr/local/bin/python
 ##sed -i "" 's/command_interpreter="python"/command_interpreter="python3"/' /etc/rc.d/waagent
 ##sed -i "" 's/#!\/usr\/bin\/env python/#!\/usr\/bin\/env python3/' /usr/local/sbin/waagent
 sed -i "" 's/ResourceDisk.EnableSwap=y/ResourceDisk.EnableSwap=n/' /etc/waagent.conf
