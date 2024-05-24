@@ -111,7 +111,7 @@
     },
     "OpnVersion": {
       "type": "string",
-      "defaultValue": "23.1",
+      "defaultValue": "24.1",
       "metadata": {
         "description": "OPN Version"
       }
