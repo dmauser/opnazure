@@ -242,6 +242,7 @@
     <sudo_allow_wheel>1</sudo_allow_wheel>
     <serialspeed>115200</serialspeed>
     <primaryconsole>video</primaryconsole>
+    <secondaryconsole>serial</secondaryconsole>
     <ssh>
       <enabled>enabled</enabled>
       <passwordauth>1</passwordauth>
