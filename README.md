@@ -38,18 +38,24 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 
 ## Updates
 
+## July-2024
+
+- Added support for [Serial Console](https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/windows/serial-console-overview#access-serial-console-for-virtual-machines-via-azure-portal).
+- FRR plugin for OPNsense is now installed by default.
+
 ## May-2024
-- OPNSense 24.1 as default version
-- Fixed deployment issues
+
+- OPNSense 24.1 as default version.
+- Fixed deployment issues.
 
 ## Nov-2023
 
 - Added support to OPNsense 23.7 (set as default version)
-- Removed Single NIC scenario support (due to lack of usage for the scenario)
+- Removed Single NIC scenario support (due to lack of usage for the scenario).
 - Added a configurable option for WAAgent version and changed the default for the latest version.
 - Miscellaneous fixes and improvements:
-  - Updated all Bicep API Versions
-  - Fixed some lint warning due to Bicep recent updates
+  - Updated all Bicep API Versions.
+  - Fixed some lint warning due to Bicep recent updates.
 
 ## Feb-2023
 - Added support to OPNsense 23.1
