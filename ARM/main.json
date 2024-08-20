@@ -118,7 +118,7 @@
     },
     "WALinuxVersion": {
       "type": "string",
-      "defaultValue": "2.11.1.8",
+      "defaultValue": "2.11.1.4",
       "metadata": {
         "description": "Azure WALinux agent Version"
       }

@@ -52,7 +52,7 @@ param ShellScriptName string = 'configureopnsense.sh'
 param OpnVersion string = '24.7'
 
 @sys.description('Azure WALinux agent Version')
-param WALinuxVersion string = '2.11.1.8'
+param WALinuxVersion string = '2.11.1.4'
 
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
