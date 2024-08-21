@@ -119,8 +119,8 @@
               "name": "WALinuxVersion",
               "type": "Microsoft.Common.TextBox",
               "label": "Azure WALinux agent Version",
-              "toolTip": "Azure WALinux agent Releases. Only version number, dont add v at the begining. Latest: 2.11.1.8 Reference: https://github.com/Azure/WALinuxAgent/releases",
-              "defaultValue": "2.11.1.8"
+              "toolTip": "Azure WALinux agent Releases. Only version number, dont add v at the begining. Latest: 2.11.1.4 Reference: https://github.com/Azure/WALinuxAgent/releases",
+              "defaultValue": "2.11.1.4"
             },
             {
               "name": "DeployWindows",

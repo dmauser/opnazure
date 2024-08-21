@@ -49,7 +49,7 @@ param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/
 param ShellScriptName string = 'configureopnsense.sh'
 
 @sys.description('OPN Version')
-param OpnVersion string = '24.1'
+param OpnVersion string = '24.7'
 
 @sys.description('Azure WALinux agent Version')
 param WALinuxVersion string = '2.11.1.4'

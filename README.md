@@ -38,6 +38,11 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 
 ## Updates
 
+## Aug-2024
+
+- Updated FreeBSD to 14.1.
+- Fixed a bug to deploy in a existing VNet.
+
 ## July-2024
 
 - Added [Serial Console](https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/windows/serial-console-overview#access-serial-console-for-virtual-machines-via-azure-portal) support.
