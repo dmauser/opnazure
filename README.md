@@ -19,11 +19,11 @@ OPNSense is based in FreeBSD what is the official OS image publisher in Azure. T
 You can accept it using either Azure CLI or Azure PowerShell as follow:
 
 ```bash
-az vm image terms accept --urn thefreebsdfoundation:freebsd-13_1:13_1-release:13.1.0 -o none
+az vm image terms accept --urn thefreebsdfoundation:freebsd-14_1:14_1-release-amd64-gen2-zfs:14.1.0 -o none
 ```
 
 ```powershell
-Get-AzMarketplaceTerms -Publisher 'thefreebsdfoundation' -Product 'freebsd-13_1' -Name '13_1-release' -OfferType 'latest' | Set-AzMarketplaceTerms -Accept
+Get-AzMarketplaceTerms -Publisher 'thefreebsdfoundation' -Product 'freebsd-14_1' -Name '14_1-release-amd64-gen2-zfs' -OfferType 'latest' | Set-AzMarketplaceTerms -Accept
 ```
 
 The login credentials are set during the installation process to:
