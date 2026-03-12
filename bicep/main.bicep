@@ -49,10 +49,10 @@ param OpnScriptURI string = 'https://raw.githubusercontent.com/dmauser/opnazure/
 param ShellScriptName string = 'configureopnsense.sh'
 
 @sys.description('OPN Version')
-param OpnVersion string = '25.1'
+param OpnVersion string = '26.1'
 
 @sys.description('Azure WALinux agent Version')
-param WALinuxVersion string = '2.12.0.4'
+param WALinuxVersion string = '2.15.0.1'
 
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false

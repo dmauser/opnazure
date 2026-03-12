@@ -111,14 +111,14 @@
     },
     "OpnVersion": {
       "type": "string",
-      "defaultValue": "25.1",
+      "defaultValue": "26.1",
       "metadata": {
         "description": "OPN Version"
       }
     },
     "WALinuxVersion": {
       "type": "string",
-      "defaultValue": "2.12.0.4",
+      "defaultValue": "2.15.0.1",
       "metadata": {
         "description": "Azure WALinux agent Version"
       }
