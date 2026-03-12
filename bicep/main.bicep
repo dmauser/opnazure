@@ -410,13 +410,12 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
     virtualMachineName: VMOPNsenseSecondaryName
     virtualMachineSize: virtualMachineSize
     nsgId: nsgopnsense.outputs.nsgID
-    ExternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? elb.outputs.backendAddressPools[0].id : ''
-    InternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? ilb.outputs.backendAddressPools[0].id : ''
-    ExternalloadBalancerInboundNatRulesId: scenarioOption == 'Active-Active' ? elb.outputs.inboundNatRules[1].id : ''
+    ExternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? any(elb).outputs.backendAddressPools[0].id : ''
+    InternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? any(ilb).outputs.backendAddressPools[0].id : ''
+    ExternalloadBalancerInboundNatRulesId: scenarioOption == 'Active-Active' ? any(elb).outputs.inboundNatRules[1].id : ''
   }
   dependsOn: [
     vnet
-    nsgopnsense
     untrustedSubnet
     trustedSubnet
     windowsvmsubnet
@@ -437,7 +436,7 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
       TrustedSubnetName: '${virtualNetworkName}/${useexistingvirtualNetwork ? existingTrustedSubnetName : trustedSubnetName}'
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       publicIPAddress: publicip.outputs.publicipAddress
-      opnSenseSecondarytrustedNicIP: scenarioOption == 'Active-Active' ? opnSenseSecondary.outputs.trustedNicIP : ''
+      opnSenseSecondarytrustedNicIP: scenarioOption == 'Active-Active' ? any(opnSenseSecondary).outputs.trustedNicIP : ''
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -449,14 +448,12 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
     virtualMachineName: VMOPNsensePrimaryName
     virtualMachineSize: virtualMachineSize
     nsgId: nsgopnsense.outputs.nsgID
-    ExternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? elb.outputs.backendAddressPools[0].id : ''
-    InternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? ilb.outputs.backendAddressPools[0].id : ''
-    ExternalloadBalancerInboundNatRulesId: scenarioOption == 'Active-Active' ? elb.outputs.inboundNatRules[0].id : ''
+    ExternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? any(elb).outputs.backendAddressPools[0].id : ''
+    InternalLoadBalancerBackendAddressPoolId: scenarioOption == 'Active-Active' ? any(ilb).outputs.backendAddressPools[0].id : ''
+    ExternalloadBalancerInboundNatRulesId: scenarioOption == 'Active-Active' ? any(elb).outputs.inboundNatRules[0].id : ''
   }
   dependsOn: [
     vnet
-    nsgopnsense
-    opnSenseSecondary
   ]
 }
 
@@ -490,7 +487,6 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
   }
   dependsOn: [
     vnet
-    nsgopnsense
     trustedSubnet
   ]
 }
@@ -577,7 +573,7 @@ module winvmroutetableroutes 'modules/vnet/routetableroutes.bicep' = if (DeployW
     routeName: 'default'
     properties: {
       nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: scenarioOption == 'Active-Active' ? ilb.outputs.frontendIP.privateIPAddress : scenarioOption == 'TwoNics' ? opnSenseTwoNics.outputs.trustedNicIP : ''
+      nextHopIpAddress: scenarioOption == 'Active-Active' ? any(ilb).outputs.frontendIP.privateIPAddress : scenarioOption == 'TwoNics' ? any(opnSenseTwoNics).outputs.trustedNicIP : ''
       addressPrefix: '0.0.0.0/0'
     }
   }
@@ -590,8 +586,8 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
   name: winvmName
   params: {
     Location: Location
-    nsgId: DeployWindows ? nsgwinvm.outputs.nsgID : ''
-    publicIPId: DeployWindows ? winvmpublicip.outputs.publicipId : ''
+    nsgId: DeployWindows ? any(nsgwinvm).outputs.nsgID : ''
+    publicIPId: DeployWindows ? any(winvmpublicip).outputs.publicipId : ''
     TempUsername: WinUsername
     TempPassword: WinPassword
     trustedSubnetId: windowsvmsubnet.id
@@ -599,8 +595,6 @@ module winvm 'modules/VM/windows11-vm.bicep' = if (DeployWindows) {
     virtualMachineSize: 'Standard_B4ms'
   }
   dependsOn: [
-    nsgwinvm
-    winvmpublicip
     opnSenseSecondary
     opnSensePrimary
     opnSenseTwoNics
