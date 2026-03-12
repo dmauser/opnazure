@@ -93,7 +93,7 @@ elif [ "$ROLE" = "TwoNics" ]; then
     GWIP=$(fetch_gw_ip)
     sed -i "" "s/yyy.yyy.yyy.yyy/${GWIP}/" configv2.xml
     sed -i "" "s_zzz.zzz.zzz.zzz_${WINDOWS_VM_SUBNET}_" configv2.xml
-    cp config.xml /usr/local/etc/config.xml
+    cp configv2.xml /usr/local/etc/config.xml
 fi
 
 # ── OPNsense Bootstrap ────────────────────────────────────────────────────────
