@@ -89,10 +89,10 @@ elif [ "$ROLE" = "Secondary" ]; then
     cp config-active-active-secondary.xml /usr/local/etc/config.xml
 
 elif [ "$ROLE" = "TwoNics" ]; then
-    fetch -q "${OPN_SCRIPT_URI}config.xml"
+    fetch -q "${OPN_SCRIPT_URI}configv2.xml"
     GWIP=$(fetch_gw_ip)
-    sed -i "" "s/yyy.yyy.yyy.yyy/${GWIP}/" config.xml
-    sed -i "" "s_zzz.zzz.zzz.zzz_${WINDOWS_VM_SUBNET}_" config.xml
+    sed -i "" "s/yyy.yyy.yyy.yyy/${GWIP}/" configv2.xml
+    sed -i "" "s_zzz.zzz.zzz.zzz_${WINDOWS_VM_SUBNET}_" configv2.xml
     cp config.xml /usr/local/etc/config.xml
 fi
 
