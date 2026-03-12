@@ -53,7 +53,7 @@ jobs:
 
           foreach ($bicep in $biceps) {
               Write-Output "Building Bicep file: $bicep"
-              /home/runner/.azure/bin/bicep build $bicep.FullName --outdir $buildPath
+              az bicep build --file $bicep.FullName --outdir $buildPath
           }
 
           Copy-Item bicep/*.parameters.* ARM -Force
