@@ -38,6 +38,12 @@ In case of Active-Active the URL should be <https://PublicIP:50443> for Primary 
 
 ## Updates
 
+## March-2026
+
+- OPNSense 26.1 as default version.
+- Azure Linux Agent updated to 2.15.0.1.
+- Fixed issue [#69](https://github.com/dmauser/opnazure/issues/69): Cannot select existing VNet in the deployment wizard.
+
 ## March-2025
 
 - OPNSense 25.1 as default version
