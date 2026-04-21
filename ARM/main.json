@@ -865,9 +865,9 @@
           "nsgId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2025-04-01').outputs.nsgID.value]"
           },
-          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools[0].id), createObject('value', ''))]",
-          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools[0].id), createObject('value', ''))]",
-          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.inboundNatRules[1].id), createObject('value', ''))]"
+          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.inboundNatRules.value[1].id), createObject('value', ''))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -1297,7 +1297,7 @@
               "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2025-04-01').outputs.publicipAddress.value]",
-              "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2025-04-01').outputs.trustedNicIP, '')]"
+              "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2025-04-01').outputs.trustedNicIP.value, '')]"
             }
           },
           "OPNScriptURI": {
@@ -1330,9 +1330,9 @@
           "nsgId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('networkSecurityGroupName')), '2025-04-01').outputs.nsgID.value]"
           },
-          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools[0].id), createObject('value', ''))]",
-          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools[0].id), createObject('value', ''))]",
-          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.inboundNatRules[0].id), createObject('value', ''))]"
+          "ExternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "InternalLoadBalancerBackendAddressPoolId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2025-04-01').outputs.backendAddressPools.value[0].id), createObject('value', ''))]",
+          "ExternalloadBalancerInboundNatRulesId": "[if(equals(parameters('scenarioOption'), 'Active-Active'), createObject('value', reference(resourceId('Microsoft.Resources/deployments', variables('externalLoadBalanceName')), '2025-04-01').outputs.inboundNatRules.value[0].id), createObject('value', ''))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -2460,7 +2460,7 @@
           "properties": {
             "value": {
               "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2025-04-01').outputs.frontendIP.privateIPAddress, if(equals(parameters('scenarioOption'), 'TwoNics'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName'))), '2025-04-01').outputs.trustedNicIP, ''))]",
+              "nextHopIpAddress": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('internalLoadBalanceName')), '2025-04-01').outputs.frontendIP.value.privateIPAddress, if(equals(parameters('scenarioOption'), 'TwoNics'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-TwoNics', parameters('virtualMachineName'))), '2025-04-01').outputs.trustedNicIP.value, ''))]",
               "addressPrefix": "0.0.0.0/0"
             }
           }
