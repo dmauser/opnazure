@@ -123,6 +123,24 @@
               "defaultValue": "2.15.0.1"
             },
             {
+              "name": "OpnSensePassword",
+              "type": "Microsoft.Common.PasswordBox",
+              "label": {
+                "password": "OPNsense Admin Password",
+                "confirmPassword": "Confirm OPNsense Admin Password"
+              },
+              "toolTip": "Password for the OPNsense root/admin account (WebGUI and SSH). Minimum 8 characters. Default: opnsense",
+              "constraints": {
+                "required": false,
+                "regex": "^.{8,72}$",
+                "validationMessage": "Password must be between 8 and 72 characters (bcrypt limit)."
+              },
+              "options": {
+                "hideConfirmation": false
+              },
+              "visible": true
+            },
+            {
               "name": "DeployWindows",
               "type": "Microsoft.Common.CheckBox",
               "label": "Deploy Windows Management VM in a Management Subnet.",
@@ -383,6 +401,7 @@
         "ShellScriptName": "[steps('VirtualMachineConfig').ShellScriptName]",
         "OpnVersion": "[steps('VirtualMachineConfig').OpnVersion]",
         "WALinuxVersion": "[steps('VirtualMachineConfig').WALinuxVersion]",
+        "OpnSensePassword": "[if(empty(steps('VirtualMachineConfig').OpnSensePassword),'opnsense',steps('VirtualMachineConfig').OpnSensePassword)]",
         "DeployWindows": "[steps('VirtualMachineConfig').DeployWindows]",
         "WinUsername": "[steps('VirtualMachineConfig').WinUsername]",
         "WinPassword": "[steps('VirtualMachineConfig').WinPassword]",

@@ -121,7 +121,9 @@ resource vmext 'Microsoft.Compute/virtualMachines/extensions@2023-07-01' = {
       fileUris: [
         '${OPNScriptURI}${ShellScriptName}'
       ]
-      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnVersion} ${ShellScriptObj.WALinuxVersion} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? contains(trustedSubnet.properties, 'addressPrefixes') ? trustedSubnet.properties.addressPrefixes[0] : trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? contains(windowsvmsubnet.properties, 'addressPrefixes') ? windowsvmsubnet.properties.addressPrefixes[0] : windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP}'
+    }
+    protectedSettings: {
+      commandToExecute: 'sh ${ShellScriptName} ${ShellScriptObj.OpnScriptURI} ${ShellScriptObj.OpnVersion} ${ShellScriptObj.WALinuxVersion} ${ShellScriptObj.OpnType} ${!empty(ShellScriptObj.TrustedSubnetName) ? contains(trustedSubnet.properties, 'addressPrefixes') ? trustedSubnet.properties.addressPrefixes[0] : trustedSubnet.properties.addressPrefix : ''} ${!empty(ShellScriptObj.WindowsSubnetName) ? contains(windowsvmsubnet.properties, 'addressPrefixes') ? windowsvmsubnet.properties.addressPrefixes[0] : windowsvmsubnet.properties.addressPrefix : '1.1.1.1/32'} ${ShellScriptObj.publicIPAddress} ${ShellScriptObj.opnSenseSecondarytrustedNicIP} ${ShellScriptObj.OpnSensePasswordB64}'
     }
   }
 }

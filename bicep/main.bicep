@@ -54,6 +54,11 @@ param OpnVersion string = '26.1'
 @sys.description('Azure WALinux agent Version')
 param WALinuxVersion string = '2.15.0.1'
 
+@sys.description('OPNsense admin (root) password. Passed securely to the VM and hashed with bcrypt before injection into config.xml. Default: opnsense')
+@secure()
+@minLength(8)
+param OpnSensePassword string = 'opnsense'
+
 @sys.description('Deploy Windows VM Trusted Subnet')
 param DeployWindows bool = false
 
@@ -75,6 +80,7 @@ param Location string = resourceGroup().location
 // Variables
 var TempUsername = 'azureuser'
 var TempPassword = guid(subscription().id,resourceGroup().id)
+var OpnSensePasswordB64 = base64(OpnSensePassword)
 var untrustedSubnetName = 'Untrusted-Subnet'
 var trustedSubnetName = 'Trusted-Subnet'
 var VMOPNsensePrimaryName = '${virtualMachineName}-Primary'
@@ -399,6 +405,7 @@ module opnSenseSecondary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Act
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       publicIPAddress: publicip.outputs.publicipAddress
       opnSenseSecondarytrustedNicIP: ''
+      OpnSensePasswordB64: OpnSensePasswordB64
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -437,6 +444,7 @@ module opnSensePrimary 'modules/VM/opnsense.bicep' = if(scenarioOption == 'Activ
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       publicIPAddress: publicip.outputs.publicipAddress
       opnSenseSecondarytrustedNicIP: scenarioOption == 'Active-Active' ? opnSenseSecondary.outputs.trustedNicIP : ''
+      OpnSensePasswordB64: OpnSensePasswordB64
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName
@@ -472,6 +480,7 @@ module opnSenseTwoNics 'modules/VM/opnsense.bicep' = if(scenarioOption == 'TwoNi
       WindowsSubnetName: DeployWindows ? '${virtualNetworkName}/${useexistingvirtualNetwork ? existingWindowsSubnet : windowsvmsubnetname}' : ''
       publicIPAddress: ''
       opnSenseSecondarytrustedNicIP: ''
+      OpnSensePasswordB64: OpnSensePasswordB64
     }
     OPNScriptURI: OpnScriptURI
     ShellScriptName: ShellScriptName

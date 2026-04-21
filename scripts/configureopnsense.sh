@@ -24,6 +24,7 @@
 # $6 = WindowsVMSubnet   Windows Management VM subnet prefix (for routing)
 # $7 = ELBVip            External Load Balancer VIP (Primary only)
 # $8 = SecondaryIP       Private IP of Secondary OPNsense server (Primary only)
+# $9 = PasswordB64       Base64-encoded OPNsense admin password (optional, default: opnsense)
 
 OPN_SCRIPT_URI="$1"
 OPN_VERSION="$2"
@@ -33,6 +34,7 @@ TRUSTED_SUBNET="${5:-}"
 WINDOWS_VM_SUBNET="${6:-}"
 ELB_VIP="${7:-}"
 SECONDARY_IP="${8:-}"
+OPN_PASSWORD_B64="${9:-}"
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 log() {
@@ -53,6 +55,79 @@ case "$ROLE" in
         exit 1
         ;;
 esac
+
+# ── Password Handling ─────────────────────────────────────────────────────────
+# Decode base64-encoded password (passed securely via protectedSettings)
+if [ -n "$OPN_PASSWORD_B64" ]; then
+    OPN_PASSWORD=$(echo "$OPN_PASSWORD_B64" | b64decode -r 2>/dev/null || echo "$OPN_PASSWORD_B64" | base64 -d 2>/dev/null || echo "opnsense")
+else
+    OPN_PASSWORD="opnsense"
+fi
+
+# Default bcrypt hash for "opnsense" — the value baked into the config XML templates
+DEFAULT_HASH='$2b$10$YRVoF4SgskIsrXOvOQjGieB9XqHPRra9R7d80B3BZdbY/j21TwBfS'
+
+# Generate bcrypt hash from plaintext password using python3 (FreeBSD native crypt)
+generate_bcrypt_hash() {
+    _pw="$1"
+    PYTHON_BIN=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || echo "")
+    if [ -z "$PYTHON_BIN" ]; then
+        log "WARNING: No Python interpreter found. Using default password hash."
+        echo "$DEFAULT_HASH"
+        return
+    fi
+    _hash=$("$PYTHON_BIN" -c "
+import crypt, sys
+try:
+    salt = crypt.mksalt(crypt.METHOD_BLOWFISH, rounds=10)
+    print(crypt.crypt(sys.argv[1], salt))
+except Exception as e:
+    sys.exit(1)
+" "$_pw" 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$_hash" ]; then
+        log "WARNING: bcrypt hash generation failed. Using default password hash."
+        echo "$DEFAULT_HASH"
+        return
+    fi
+    echo "$_hash"
+}
+
+# XML-escape a string for safe insertion into XML elements
+xml_escape() {
+    echo "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'
+}
+
+# Replace the default bcrypt hash in config.xml with the user-specified password hash
+replace_password_hash() {
+    _config_file="$1"
+    _new_hash="$2"
+    if [ "$_new_hash" = "$DEFAULT_HASH" ]; then
+        log "Using default OPNsense password (no replacement needed)."
+        return
+    fi
+    # Escape special chars in hash for sed replacement (bcrypt hashes contain $ and /)
+    _escaped_hash=$(echo "$_new_hash" | sed -e 's/[\/&]/\\&/g')
+    _escaped_default=$(echo "$DEFAULT_HASH" | sed -e 's/[\/&]/\\&/g')
+    sed -i "" "s|${_escaped_default}|${_escaped_hash}|g" "$_config_file"
+    log "OPNsense admin password hash updated in ${_config_file}."
+}
+
+# Replace the HA sync plaintext password (Primary only)
+replace_ha_sync_password() {
+    _config_file="$1"
+    _raw_password="$2"
+    _xml_password=$(xml_escape "$_raw_password")
+    sed -i "" "s|<password>opnsense</password>|<password>${_xml_password}</password>|" "$_config_file"
+    log "HA sync password updated in ${_config_file}."
+}
+
+# Generate the password hash once (reused for all config operations)
+if [ "$OPN_PASSWORD" != "opnsense" ]; then
+    log "Generating bcrypt hash for custom OPNsense password..."
+    OPN_HASH=$(generate_bcrypt_hash "$OPN_PASSWORD")
+else
+    OPN_HASH="$DEFAULT_HASH"
+fi
 
 # ── Helper: Resolve trusted NIC gateway IP ────────────────────────────────────
 # Uses python3 directly since the python symlink is created later in this script
@@ -77,6 +152,8 @@ if [ "$ROLE" = "Primary" ]; then
     sed -i "" "s/www.www.www.www/${ELB_VIP}/" config-active-active-primary.xml
     sed -i "" "s/xxx.xxx.xxx.xxx/${SECONDARY_IP}/" config-active-active-primary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Primary<\/hostname>/" config-active-active-primary.xml
+    replace_password_hash config-active-active-primary.xml "$OPN_HASH"
+    replace_ha_sync_password config-active-active-primary.xml "$OPN_PASSWORD"
     cp config-active-active-primary.xml /usr/local/etc/config.xml
 
 elif [ "$ROLE" = "Secondary" ]; then
@@ -86,6 +163,7 @@ elif [ "$ROLE" = "Secondary" ]; then
     sed -i "" "s_zzz.zzz.zzz.zzz_${WINDOWS_VM_SUBNET}_" config-active-active-secondary.xml
     sed -i "" "s/www.www.www.www/${ELB_VIP}/" config-active-active-secondary.xml
     sed -i "" "s/<hostname>OPNsense<\/hostname>/<hostname>OPNsense-Secondary<\/hostname>/" config-active-active-secondary.xml
+    replace_password_hash config-active-active-secondary.xml "$OPN_HASH"
     cp config-active-active-secondary.xml /usr/local/etc/config.xml
 
 elif [ "$ROLE" = "TwoNics" ]; then
@@ -93,6 +171,7 @@ elif [ "$ROLE" = "TwoNics" ]; then
     GWIP=$(fetch_gw_ip)
     sed -i "" "s/yyy.yyy.yyy.yyy/${GWIP}/" config.xml
     sed -i "" "s_zzz.zzz.zzz.zzz_${WINDOWS_VM_SUBNET}_" config.xml
+    replace_password_hash config.xml "$OPN_HASH"
     cp config.xml /usr/local/etc/config.xml
 fi
 
