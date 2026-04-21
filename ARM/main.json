@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.42.1.51946",
-      "templateHash": "11273285480046471050"
+      "templateHash": "15196524758285186873"
     }
   },
   "parameters": {
@@ -123,6 +123,14 @@
         "description": "Azure WALinux agent Version"
       }
     },
+    "OpnSensePassword": {
+      "type": "securestring",
+      "defaultValue": "opnsense",
+      "minLength": 8,
+      "metadata": {
+        "description": "OPNsense admin (root) password. Passed securely to the VM and hashed with bcrypt before injection into config.xml. Default: opnsense"
+      }
+    },
     "DeployWindows": {
       "type": "bool",
       "defaultValue": false,
@@ -166,6 +174,7 @@
   "variables": {
     "TempUsername": "azureuser",
     "TempPassword": "[guid(subscription().id, resourceGroup().id)]",
+    "OpnSensePasswordB64": "[base64(parameters('OpnSensePassword'))]",
     "untrustedSubnetName": "Untrusted-Subnet",
     "trustedSubnetName": "Trusted-Subnet",
     "VMOPNsensePrimaryName": "[format('{0}-Primary', parameters('virtualMachineName'))]",
@@ -832,7 +841,8 @@
               "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2025-04-01').outputs.publicipAddress.value]",
-              "opnSenseSecondarytrustedNicIP": ""
+              "opnSenseSecondarytrustedNicIP": "",
+              "OpnSensePasswordB64": "[variables('OpnSensePasswordB64')]"
             }
           },
           "OPNScriptURI": {
@@ -876,7 +886,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.42.1.51946",
-              "templateHash": "585835473918017477"
+              "templateHash": "15203170730391928147"
             }
           },
           "parameters": {
@@ -994,8 +1004,10 @@
                 "settings": {
                   "fileUris": [
                     "[format('{0}{1}', parameters('OPNScriptURI'), parameters('ShellScriptName'))]"
-                  ],
-                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7} {8}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').WALinuxVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefix), ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefix), '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP)]"
+                  ]
+                },
+                "protectedSettings": {
+                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').WALinuxVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefix), ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefix), '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP, parameters('ShellScriptObj').OpnSensePasswordB64)]"
                 }
               },
               "dependsOn": [
@@ -1297,7 +1309,8 @@
               "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "[reference(resourceId('Microsoft.Resources/deployments', variables('publicIPAddressName')), '2025-04-01').outputs.publicipAddress.value]",
-              "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2025-04-01').outputs.trustedNicIP.value, '')]"
+              "opnSenseSecondarytrustedNicIP": "[if(equals(parameters('scenarioOption'), 'Active-Active'), reference(resourceId('Microsoft.Resources/deployments', variables('VMOPNsenseSecondaryName')), '2025-04-01').outputs.trustedNicIP.value, '')]",
+              "OpnSensePasswordB64": "[variables('OpnSensePasswordB64')]"
             }
           },
           "OPNScriptURI": {
@@ -1341,7 +1354,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.42.1.51946",
-              "templateHash": "585835473918017477"
+              "templateHash": "15203170730391928147"
             }
           },
           "parameters": {
@@ -1459,8 +1472,10 @@
                 "settings": {
                   "fileUris": [
                     "[format('{0}{1}', parameters('OPNScriptURI'), parameters('ShellScriptName'))]"
-                  ],
-                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7} {8}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').WALinuxVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefix), ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefix), '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP)]"
+                  ]
+                },
+                "protectedSettings": {
+                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').WALinuxVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefix), ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefix), '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP, parameters('ShellScriptObj').OpnSensePasswordB64)]"
                 }
               },
               "dependsOn": [
@@ -1763,7 +1778,8 @@
               "TrustedSubnetName": "[format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingTrustedSubnetName'), variables('trustedSubnetName')))]",
               "WindowsSubnetName": "[if(parameters('DeployWindows'), format('{0}/{1}', parameters('virtualNetworkName'), if(variables('useexistingvirtualNetwork'), parameters('existingWindowsSubnet'), variables('windowsvmsubnetname'))), '')]",
               "publicIPAddress": "",
-              "opnSenseSecondarytrustedNicIP": ""
+              "opnSenseSecondarytrustedNicIP": "",
+              "OpnSensePasswordB64": "[variables('OpnSensePasswordB64')]"
             }
           },
           "OPNScriptURI": {
@@ -1807,7 +1823,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.42.1.51946",
-              "templateHash": "585835473918017477"
+              "templateHash": "15203170730391928147"
             }
           },
           "parameters": {
@@ -1925,8 +1941,10 @@
                 "settings": {
                   "fileUris": [
                     "[format('{0}{1}', parameters('OPNScriptURI'), parameters('ShellScriptName'))]"
-                  ],
-                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7} {8}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').WALinuxVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefix), ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefix), '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP)]"
+                  ]
+                },
+                "protectedSettings": {
+                  "commandToExecute": "[format('sh {0} {1} {2} {3} {4} {5} {6} {7} {8} {9}', parameters('ShellScriptName'), parameters('ShellScriptObj').OpnScriptURI, parameters('ShellScriptObj').OpnVersion, parameters('ShellScriptObj').WALinuxVersion, parameters('ShellScriptObj').OpnType, if(not(empty(parameters('ShellScriptObj').TrustedSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').TrustedSubnetName, '/')[0], split(parameters('ShellScriptObj').TrustedSubnetName, '/')[1]), '2023-05-01').addressPrefix), ''), if(not(empty(parameters('ShellScriptObj').WindowsSubnetName)), if(contains(reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01'), 'addressPrefixes'), reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefixes[0], reference(resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('ShellScriptObj').WindowsSubnetName, '/')[0], split(parameters('ShellScriptObj').WindowsSubnetName, '/')[1]), '2023-05-01').addressPrefix), '1.1.1.1/32'), parameters('ShellScriptObj').publicIPAddress, parameters('ShellScriptObj').opnSenseSecondarytrustedNicIP, parameters('ShellScriptObj').OpnSensePasswordB64)]"
                 }
               },
               "dependsOn": [
